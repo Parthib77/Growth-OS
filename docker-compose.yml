@@ -1,15 +1,21 @@
 services:
   mongo:
     image: mongo:8.3.11-noble
-    command:
-      ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--auth', '--keyFile', '/etc/mongo-keyfile']
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cp /run/growthos-mongo-keyfile /tmp/growthos-mongo-keyfile
+        chown mongodb:mongodb /tmp/growthos-mongo-keyfile
+        chmod 400 /tmp/growthos-mongo-keyfile
+        exec docker-entrypoint.sh mongod --replSet rs0 --bind_ip_all --auth --keyFile /tmp/growthos-mongo-keyfile
     environment:
       MONGO_INITDB_ROOT_USERNAME: growthos
       MONGO_INITDB_ROOT_PASSWORD: growthos
       MONGO_INITDB_DATABASE: growthos
     volumes:
       - growthos-mongo:/data/db
-      - ./ops/mongo-keyfile:/etc/mongo-keyfile:ro
+      - ./ops/mongo-keyfile:/run/growthos-mongo-keyfile:ro
     healthcheck:
       test:
         [
@@ -44,7 +50,7 @@ services:
       PORT: 4000
       WEB_ORIGIN: http://localhost:3000
       MONGODB_URI: mongodb://growthos:growthos@mongo:27017/growthos?replicaSet=rs0&authSource=admin
-      SESSION_SECRET: change-this-in-production
+      SESSION_SECRET: ${SESSION_SECRET:-local-compose-session-secret-change-me}
       COOKIE_SECURE: 'false'
     depends_on:
       mongo-init:
