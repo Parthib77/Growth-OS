@@ -2,8 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './apps/web/tests',
-  use: { baseURL: 'http://127.0.0.1:3000', trace: 'retain-on-failure' },
-  webServer: [
+  use: {
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000',
+    trace: 'retain-on-failure',
+  },
+  webServer: process.env.GROWTHOS_E2E_EXTERNAL === '1' ? undefined : [
     {
       command: 'npm run e2e:api',
       url: 'http://127.0.0.1:4000/api/v1/health/live',

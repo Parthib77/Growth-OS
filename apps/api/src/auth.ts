@@ -18,7 +18,7 @@ declare global {
 const SESSION_IDLE_DAYS = 2;
 const SESSION_ABSOLUTE_DAYS = 30;
 export function sessionCookieName(config: AppConfig): string {
-  return config.NODE_ENV === 'production' ? '__Host-growthos.sid' : 'growthos.sid';
+  return config.COOKIE_SECURE ? '__Host-growthos.sid' : 'growthos.sid';
 }
 
 function cookieOptions(config: AppConfig) {

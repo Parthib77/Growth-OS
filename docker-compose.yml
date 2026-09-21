@@ -41,6 +41,24 @@ services:
       ]
     networks: [growthos]
 
+  mongo-migrate:
+    image: growthos-api
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ['node', 'apps/api/dist/scripts/migrate-indexes.js']
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_ORIGIN: http://localhost:3000
+      MONGODB_URI: mongodb://growthos:growthos@mongo:27017/growthos?replicaSet=rs0&authSource=admin
+      SESSION_SECRET: ${SESSION_SECRET:-local-compose-session-secret-change-me}
+      COOKIE_SECURE: 'false'
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
+    networks: [growthos]
+
   api:
     build:
       context: .
@@ -53,10 +71,16 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-local-compose-session-secret-change-me}
       COOKIE_SECURE: 'false'
     depends_on:
-      mongo-init:
+      mongo-migrate:
         condition: service_completed_successfully
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:4000/api/v1/health/live']
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4000/api/v1/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -69,6 +93,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      HOSTNAME: 0.0.0.0
       API_ORIGIN: http://api:4000
     ports:
       - '3000:3000'
@@ -76,7 +101,13 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/']
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 3s
       retries: 10

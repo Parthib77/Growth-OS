@@ -1,5 +1,6 @@
 FROM node:24.21.0-bookworm-slim AS deps
 WORKDIR /app
+ENV MONGOMS_DISABLE_POSTINSTALL=1
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY apps/api/package.json apps/api/package.json
