@@ -1,0 +1,84 @@
+services:
+  mongo:
+    image: mongo:8.3.11-noble
+    command:
+      ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--auth', '--keyFile', '/etc/mongo-keyfile']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: growthos
+      MONGO_INITDB_ROOT_PASSWORD: growthos
+      MONGO_INITDB_DATABASE: growthos
+    volumes:
+      - growthos-mongo:/data/db
+      - ./ops/mongo-keyfile:/etc/mongo-keyfile:ro
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "mongosh --quiet --username growthos --password growthos --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 }).ok' | grep 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [growthos]
+
+  mongo-init:
+    image: mongo:8.3.11-noble
+    depends_on:
+      mongo:
+        condition: service_healthy
+    entrypoint: ['mongosh']
+    command:
+      [
+        'mongodb://growthos:growthos@mongo:27017/admin?authSource=admin',
+        '--eval',
+        "try { rs.status() } catch (e) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongo:27017'}]}) }",
+      ]
+    networks: [growthos]
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_ORIGIN: http://localhost:3000
+      MONGODB_URI: mongodb://growthos:growthos@mongo:27017/growthos?replicaSet=rs0&authSource=admin
+      SESSION_SECRET: change-this-in-production
+      COOKIE_SECURE: 'false'
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:4000/api/v1/health/live']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [growthos]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_ORIGIN: http://api:4000
+    ports:
+      - '3000:3000'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [growthos]
+
+volumes:
+  growthos-mongo:
+
+networks:
+  growthos:
+    driver: bridge
