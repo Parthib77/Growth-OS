@@ -203,11 +203,14 @@ describe('vertical slice with a real MongoDB replica set', () => {
       .set('x-csrf-token', one.csrf)
       .send({ kind: 'note', body: 'Followed up by phone.' });
     expect(interaction.status).toBe(201);
+    const beforeProfileEdit = await one.agent.get(`/api/v1/customers/${create.body.id}/detail`);
     const transition = await one.agent
       .patch(`/api/v1/customers/${create.body.id}`)
       .set('x-csrf-token', one.csrf)
       .send({ lifecycle: 'contacted' });
     expect(transition.status).toBe(200);
+    const afterProfileEdit = await one.agent.get(`/api/v1/customers/${create.body.id}/detail`);
+    expect(afterProfileEdit.body.lastInteractionAt).toBe(beforeProfileEdit.body.lastInteractionAt);
     const consent = await one.agent
       .post(`/api/v1/customers/${create.body.id}/consents`)
       .set('x-csrf-token', one.csrf)
@@ -242,6 +245,12 @@ describe('vertical slice with a real MongoDB replica set', () => {
     expect(committed.status).toBe(200);
     CustomerImportCommitResponseSchema.parse(committed.body);
     expect(committed.body.created).toHaveLength(2);
+    const committedRetry = await one.agent
+      .post(`/api/v1/customer-imports/${preview.body.importId}/commit`)
+      .set('x-csrf-token', one.csrf)
+      .send({ resolutions: { '2': 'create', '3': 'create' } });
+    expect(committedRetry.status).toBe(200);
+    expect(committedRetry.body).toEqual(committed.body);
     const second = await authenticatedAgent('customers-two@example.com', 'Customers Two');
     expect((await second.agent.get(`/api/v1/customers/${create.body.id}`)).status).toBe(404);
     expect((await second.agent.get('/api/v1/customers')).body.items).toHaveLength(0);

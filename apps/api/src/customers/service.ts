@@ -184,7 +184,6 @@ export async function updateCustomer(
     );
   const changedFields = Object.keys(input);
   Object.assign(customer, update);
-  customer.lastInteractionAt = new Date();
   await customer.save();
   const actorUserId = commandActorUserId(context);
   await appendEvent({

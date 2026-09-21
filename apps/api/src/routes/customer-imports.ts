@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { z } from 'zod';
 import {
   CustomerImportCommitRequestSchema,
+  CustomerImportCommitResponseSchema,
   CustomerImportPreviewRequestSchema,
   customerId as customerIdValue,
   importBatchId as importBatchIdValue,
@@ -13,7 +14,7 @@ import { requireSession } from '../auth.js';
 import { commandActorUserId, commandContext, queryContext } from '../context.js';
 import { newId, normalizeEmail, normalizePhone } from '../ids.js';
 import { Customer, ImportBatch, Workspace } from '../models.js';
-import { appendEvent, customerView, latestConsents } from './shared.js';
+import { appendEvent, customerView } from './shared.js';
 import {
   CUSTOMER_IMPORT_LIMITS,
   findDuplicateMatches,
@@ -159,34 +160,38 @@ export function registerCustomerImportRoutes(router: Router, config: AppConfig):
       try {
         const input = CustomerImportCommitRequestSchema.parse(req.body);
         const context = commandContext(req);
-        const batch = await ImportBatch.findOne({
-          _id: req.params.importId,
-          workspaceId: context.workspaceId,
-        });
-        if (!batch)
-          throw new AppError('RESOURCE_NOT_FOUND', 'Import preview not found or expired.', 404);
-        const rows: StoredRow[] = z.array(StoredRowSchema).parse(batch.rows);
-        const duplicateRows = rows.filter(
-          (row) => row.duplicates.length > 0 && row.errors.length === 0,
-        );
-        for (const row of duplicateRows) {
-          const resolution = input.resolutions[String(row.rowNumber)];
-          if (!resolution)
-            throw new AppError(
-              'DUPLICATE_REVIEW_REQUIRED',
-              `Choose create or skip for duplicate row ${row.rowNumber}.`,
-              409,
-              undefined,
-              { rowNumber: row.rowNumber, duplicates: row.duplicates },
-            );
-        }
         const workspace = await Workspace.findById(context.workspaceId).lean();
         if (!workspace) throw new AppError('RESOURCE_NOT_FOUND', 'Workspace not found.', 404);
         const session = await mongoose.startSession();
-        const createdIds: string[] = [];
-        const skippedRows: number[] = [];
+        let response: z.infer<typeof CustomerImportCommitResponseSchema> | undefined;
         try {
           await session.withTransaction(async () => {
+            const batch = await ImportBatch.findOne({
+              _id: req.params.importId,
+              workspaceId: context.workspaceId,
+            }).session(session);
+            if (!batch)
+              throw new AppError('RESOURCE_NOT_FOUND', 'Import preview not found or expired.', 404);
+            if (batch.commitResponse) {
+              response = CustomerImportCommitResponseSchema.parse(batch.commitResponse);
+              return;
+            }
+            const rows: StoredRow[] = z.array(StoredRowSchema).parse(batch.rows);
+            for (const row of rows.filter(
+              (candidate) => candidate.duplicates.length > 0 && candidate.errors.length === 0,
+            )) {
+              const resolution = input.resolutions[String(row.rowNumber)];
+              if (!resolution)
+                throw new AppError(
+                  'DUPLICATE_REVIEW_REQUIRED',
+                  `Choose create or skip for duplicate row ${row.rowNumber}.`,
+                  409,
+                  undefined,
+                  { rowNumber: row.rowNumber, duplicates: row.duplicates },
+                );
+            }
+            const createdCustomers = [];
+            const skippedRows: number[] = [];
             let ordinal = 0;
             for (const row of rows) {
               if (row.errors.length > 0 || input.resolutions[String(row.rowNumber)] === 'skip') {
@@ -195,7 +200,7 @@ export function registerCustomerImportRoutes(router: Router, config: AppConfig):
               }
               const values = rowInput(row);
               const customerId = newId();
-              await Customer.create(
+              const [created] = await Customer.create(
                 [
                   {
                     _id: customerId,
@@ -249,23 +254,23 @@ export function registerCustomerImportRoutes(router: Router, config: AppConfig):
                 session,
               );
               ordinal += 1;
-              createdIds.push(customerId);
+              createdCustomers.push(created);
             }
+            response = {
+              created: createdCustomers.map((customer) =>
+                customerView(customer, undefined, workspace.currency),
+              ),
+              skippedRows,
+            };
+            batch.committedAt = new Date();
+            batch.commitResponse = response;
+            await batch.save({ session });
           });
         } finally {
           await session.endSession();
         }
-        const created = await Customer.find({
-          workspaceId: context.workspaceId,
-          _id: { $in: createdIds },
-        }).lean();
-        const consents = await latestConsents(context.workspaceId, createdIds);
-        res.json({
-          created: created.map((customer) =>
-            customerView(customer, consents.get(String(customer._id)), workspace.currency),
-          ),
-          skippedRows,
-        });
+        if (!response) throw new Error('Import commit returned no response');
+        res.json(response);
       } catch (error: unknown) {
         next(error);
       }

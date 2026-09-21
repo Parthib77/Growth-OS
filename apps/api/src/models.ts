@@ -90,6 +90,8 @@ const ImportBatchSchema = new mongoose.Schema(
     headers: { type: [String], required: true },
     mapping: { type: mongoose.Schema.Types.Mixed, required: true },
     rows: { type: mongoose.Schema.Types.Mixed, required: true },
+    committedAt: Date,
+    commitResponse: mongoose.Schema.Types.Mixed,
     createdAt: { type: Date, required: true },
     expiresAt: { type: Date, required: true },
   },
