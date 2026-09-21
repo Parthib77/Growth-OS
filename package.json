@@ -1,6 +1,7 @@
 {
   "name": "growthos",
   "private": true,
+  "type": "module",
   "version": "0.1.0",
   "workspaces": [
     "packages/contracts",
@@ -13,6 +14,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate:openapi": "tsx apps/api/src/scripts/generate-openapi.ts",
+    "migrate:indexes": "npm run migrate:indexes --workspace @growthos/api",
+    "check:openapi": "npm run check:openapi --workspace @growthos/api",
+    "check:rewrite": "npm run check:rewrite --workspace @growthos/web",
     "lint": "tsc -b packages/contracts apps/api apps/web",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",

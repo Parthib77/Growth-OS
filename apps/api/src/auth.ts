@@ -4,6 +4,7 @@ import { AppError } from './errors.js';
 import { hashToken, newToken } from './ids.js';
 import { Session, User } from './models.js';
 import type { AppConfig } from './config.js';
+import type { ClientSession } from 'mongoose';
 
 declare global {
   namespace Express {
@@ -14,7 +15,8 @@ declare global {
   }
 }
 
-const SESSION_DAYS = 7;
+const SESSION_IDLE_DAYS = 2;
+const SESSION_ABSOLUTE_DAYS = 30;
 export function sessionCookieName(config: AppConfig): string {
   return config.NODE_ENV === 'production' ? '__Host-growthos.sid' : 'growthos.sid';
 }
@@ -25,7 +27,7 @@ function cookieOptions(config: AppConfig) {
     secure: config.COOKIE_SECURE,
     sameSite: 'lax' as const,
     path: '/',
-    maxAge: SESSION_DAYS * 86400000,
+    maxAge: SESSION_ABSOLUTE_DAYS * 86400000,
   };
 }
 
@@ -34,17 +36,27 @@ export async function createSession(input: {
   workspaceId: string;
   generation: number;
   config: AppConfig;
+  session?: ClientSession;
 }): Promise<{ token: string; csrfToken: string; id: string }> {
   const token = newToken();
   const csrfToken = newToken(24);
-  const session = await Session.create({
-    tokenHash: hashToken(token),
-    csrfHash: hashToken(csrfToken),
-    userId: input.userId,
-    workspaceId: input.workspaceId,
-    generation: input.generation,
-    expiresAt: new Date(Date.now() + SESSION_DAYS * 86400000),
-  });
+  const [session] = await Session.create(
+    [
+      {
+        tokenHash: hashToken(token),
+        csrfHash: hashToken(csrfToken),
+        userId: input.userId,
+        workspaceId: input.workspaceId,
+        generation: input.generation,
+        issuedAt: new Date(),
+        lastSeenAt: new Date(),
+        idleExpiresAt: new Date(Date.now() + SESSION_IDLE_DAYS * 86400000),
+        absoluteExpiresAt: new Date(Date.now() + SESSION_ABSOLUTE_DAYS * 86400000),
+        expiresAt: new Date(Date.now() + SESSION_ABSOLUTE_DAYS * 86400000),
+      },
+    ],
+    { session: input.session },
+  );
   return { token, csrfToken, id: String(session._id) };
 }
 
@@ -62,18 +74,29 @@ export function clearSessionCookie(res: Response, config: AppConfig): void {
 }
 
 async function loadSession(req: Request, config: AppConfig) {
-  const raw = req.cookies?.[sessionCookieName(config)] as string | undefined;
+  const raw = req.cookies?.[sessionCookieName(config)];
   if (!raw) throw new AppError('UNAUTHENTICATED', 'Sign in to continue.', 401);
   const session = await Session.findOne({
     tokenHash: hashToken(raw),
     revokedAt: { $exists: false },
     expiresAt: { $gt: new Date() },
+    idleExpiresAt: { $gt: new Date() },
+    absoluteExpiresAt: { $gt: new Date() },
   });
   if (!session || session.userId === 'anonymous')
     throw new AppError('UNAUTHENTICATED', 'Sign in to continue.', 401);
   const user = await User.findById(session.userId).select('sessionGeneration');
   if (!user || user.sessionGeneration !== session.generation)
     throw new AppError('UNAUTHENTICATED', 'Sign in to continue.', 401);
+  await Session.updateOne(
+    { _id: session._id },
+    {
+      $set: {
+        lastSeenAt: new Date(),
+        idleExpiresAt: new Date(Date.now() + SESSION_IDLE_DAYS * 86400000),
+      },
+    },
+  );
   return { session, raw };
 }
 
@@ -100,16 +123,22 @@ export function requireCsrf(config: AppConfig) {
       const origin = req.get('origin');
       if (origin && origin !== config.WEB_ORIGIN)
         throw new AppError('CSRF_FAILED', 'Request origin is not allowed.', 403);
+      if (config.NODE_ENV === 'production' && !origin)
+        throw new AppError('CSRF_FAILED', 'Request origin is required.', 403);
       const fetchSite = req.get('sec-fetch-site');
       if (fetchSite && !['same-origin', 'same-site', 'none'].includes(fetchSite))
         throw new AppError('CSRF_FAILED', 'Cross-site request rejected.', 403);
-      const rawCookie = req.cookies?.[sessionCookieName(config)] as string | undefined;
+      if (config.NODE_ENV === 'production' && !fetchSite)
+        throw new AppError('CSRF_FAILED', 'Fetch metadata is required.', 403);
+      const rawCookie = req.cookies?.[sessionCookieName(config)];
       const supplied = req.get('x-csrf-token');
       if (!rawCookie || !supplied)
         throw new AppError('CSRF_FAILED', 'A fresh security token is required.', 403);
       const session = await Session.findOne({
         tokenHash: hashToken(rawCookie),
         expiresAt: { $gt: new Date() },
+        idleExpiresAt: { $gt: new Date() },
+        absoluteExpiresAt: { $gt: new Date() },
         revokedAt: { $exists: false },
       });
       if (
@@ -134,6 +163,10 @@ export async function issueAnonymousCsrf(res: Response, config: AppConfig): Prom
     userId: 'anonymous',
     workspaceId: 'anonymous',
     generation: 0,
+    issuedAt: new Date(),
+    lastSeenAt: new Date(),
+    idleExpiresAt: new Date(Date.now() + 3600000),
+    absoluteExpiresAt: new Date(Date.now() + 3600000),
     expiresAt: new Date(Date.now() + 3600000),
   });
   setSessionCookie(res, config, current);

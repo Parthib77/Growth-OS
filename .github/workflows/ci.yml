@@ -18,5 +18,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run generate:openapi
-      - run: git diff --exit-code -- docs/openapi.json
+      - run: npm run check:openapi
       - run: npm run build
+      - run: npm run check:rewrite

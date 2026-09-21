@@ -6,7 +6,13 @@ const EnvironmentSchema = z.object({
   WEB_ORIGIN: z.string().url().default('http://localhost:3000'),
   MONGODB_URI: z.string().min(1).default('mongodb://localhost:27017/growthos'),
   SESSION_SECRET: z.string().min(32),
-  COOKIE_SECURE: z.coerce.boolean().default(false),
+  COOKIE_SECURE: z.preprocess((value) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value !== 'string') return value;
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  }, z.boolean().default(false)),
 });
 
 export type AppConfig = z.infer<typeof EnvironmentSchema>;

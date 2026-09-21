@@ -9,4 +9,3 @@ playwright-report/
 test-results/
 *.log
 *.tsbuildinfo
-docs/openapi.json

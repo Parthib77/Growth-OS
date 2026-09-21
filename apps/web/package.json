@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 --port 3000",
     "build": "next build",
+    "check:rewrite": "node scripts/check-rewrite.mjs",
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@growthos/contracts": "0.1.0",
+    "zod": "4.6.5",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",

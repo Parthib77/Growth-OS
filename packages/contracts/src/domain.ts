@@ -19,6 +19,16 @@ export type CurrencyCode = Brand<string, 'CurrencyCode'>;
 export type MinorUnits = Brand<number, 'MinorUnits'>;
 export type IdempotencyKey = Brand<string, 'IdempotencyKey'>;
 
+export const subjectKinds = [
+  'customer',
+  'campaign',
+  'recipient',
+  'booking',
+  'review',
+  'workspace',
+] as const;
+export type SubjectKind = (typeof subjectKinds)[number];
+
 const idPattern = /^[a-f0-9-]{8,64}$/i;
 
 function brandedId<T extends string>(value: string, label: T): Brand<string, T> {
@@ -119,6 +129,18 @@ export const bookingStateKinds = [
   'no_show',
 ] as const;
 
+export function customerLifecycleKind(value: string): CustomerLifecycle['kind'] {
+  if ((customerLifecycleKinds as readonly string[]).includes(value))
+    return value as CustomerLifecycle['kind'];
+  throw new Error('Invalid customer lifecycle');
+}
+
+export function bookingStateKind(value: string): BookingState['kind'] {
+  if ((bookingStateKinds as readonly string[]).includes(value))
+    return value as BookingState['kind'];
+  throw new Error('Invalid booking state');
+}
+
 export type TransitionError = Readonly<{ code: 'INVALID_TRANSITION'; from: string; to: string }>;
 
 const customerTransitionTable: Record<
@@ -194,7 +216,9 @@ export type OperationalEventPayload =
       customerId: CustomerId;
       agreedMinorUnits: number;
       currency: CurrencyCode;
-    };
+    }
+  | { type: 'account.registered'; userId: UserId; workspaceId: WorkspaceId }
+  | { type: 'workspace.settings_changed'; changedFields: readonly string[] };
 
 export type OperationalEvent = Readonly<{
   eventId: EventId;
@@ -205,9 +229,36 @@ export type OperationalEvent = Readonly<{
   occurredAt: UtcInstant;
   actor: Actor;
   requestId: RequestId;
-  subject: { kind: 'customer' | 'booking' | 'workspace'; id: string };
+  subject: { kind: SubjectKind; id: string };
   payload: OperationalEventPayload;
 }>;
+
+export function operationalEvent(input: {
+  eventId: string;
+  workspaceId: string;
+  commandId: string;
+  ordinal: number;
+  occurredAt: string;
+  actor: Actor;
+  requestId: string;
+  subject: { kind: SubjectKind; id: string };
+  payload: OperationalEventPayload;
+}): OperationalEvent {
+  if (!Number.isSafeInteger(input.ordinal) || input.ordinal < 0)
+    throw new Error('Event ordinal must be a non-negative safe integer');
+  return {
+    eventId: eventId(input.eventId),
+    schemaVersion: 1,
+    workspaceId: workspaceId(input.workspaceId),
+    commandId: commandId(input.commandId),
+    ordinal: input.ordinal,
+    occurredAt: utcInstant(input.occurredAt),
+    actor: input.actor,
+    requestId: requestId(input.requestId),
+    subject: input.subject,
+    payload: input.payload,
+  };
+}
 
 export const operationalEventPayloadSchemas = {
   'enquiry.created': z.object({
@@ -230,33 +281,45 @@ export const operationalEventPayloadSchemas = {
     agreedMinorUnits: z.number().int(),
     currency: z.string(),
   }),
+  'account.registered': z.object({
+    type: z.literal('account.registered'),
+    userId: z.string(),
+    workspaceId: z.string(),
+  }),
+  'workspace.settings_changed': z.object({
+    type: z.literal('workspace.settings_changed'),
+    changedFields: z.array(z.string()),
+  }),
 } as const;
+
+export const operationalEventSchemaByType: ReadonlyMap<string, z.ZodType> = new Map(
+  Object.entries(operationalEventPayloadSchemas),
+);
+
+export const eventRedactors: {
+  [K in OperationalEventPayload['type']]: (
+    payload: Extract<OperationalEventPayload, { type: K }>,
+  ) => Record<string, unknown>;
+} = {
+  'enquiry.created': (payload) => ({ ...payload }),
+  'consent.recorded': (payload) => ({ ...payload }),
+  'booking.recorded': (payload) => ({ ...payload }),
+  'account.registered': (payload) => ({ ...payload }),
+  'workspace.settings_changed': (payload) => ({ ...payload }),
+};
 
 export function redactEventPayload(payload: OperationalEventPayload): Record<string, unknown> {
   switch (payload.type) {
     case 'enquiry.created':
-      return {
-        type: payload.type,
-        customerId: payload.customerId,
-        source: payload.source,
-        quotedMinorUnits: payload.quotedMinorUnits,
-      };
+      return eventRedactors['enquiry.created'](payload);
     case 'consent.recorded':
-      return {
-        type: payload.type,
-        customerId: payload.customerId,
-        channel: payload.channel,
-        decision: payload.decision,
-        consentRecordId: payload.consentRecordId,
-      };
+      return eventRedactors['consent.recorded'](payload);
     case 'booking.recorded':
-      return {
-        type: payload.type,
-        bookingId: payload.bookingId,
-        customerId: payload.customerId,
-        agreedMinorUnits: payload.agreedMinorUnits,
-        currency: payload.currency,
-      };
+      return eventRedactors['booking.recorded'](payload);
+    case 'account.registered':
+      return eventRedactors['account.registered'](payload);
+    case 'workspace.settings_changed':
+      return eventRedactors['workspace.settings_changed'](payload);
     default: {
       const exhaustive: never = payload;
       return exhaustive;

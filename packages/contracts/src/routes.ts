@@ -7,6 +7,7 @@ import {
   ErrorResponseSchema,
   OnboardingRequestSchema,
   RegisterRequestSchema,
+  RegisterResponseSchema,
   ResultsResponseSchema,
   SignInRequestSchema,
   TodayResponseSchema,
@@ -16,6 +17,15 @@ import {
 
 export type RouteDefinition = Readonly<{
   operationId: string;
+  module:
+    | 'health'
+    | 'auth'
+    | 'workspace'
+    | 'customers'
+    | 'today'
+    | 'bookings'
+    | 'results'
+    | 'openapi';
   method: 'get' | 'post' | 'patch';
   path: string;
   auth: 'public' | 'session' | 'csrf';
@@ -26,6 +36,7 @@ export type RouteDefinition = Readonly<{
 export const routeRegistry = [
   {
     operationId: 'healthLive',
+    module: 'health',
     method: 'get',
     path: '/api/v1/health/live',
     auth: 'public',
@@ -33,6 +44,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'healthReady',
+    module: 'health',
     method: 'get',
     path: '/api/v1/health/ready',
     auth: 'public',
@@ -40,6 +52,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'csrf',
+    module: 'auth',
     method: 'get',
     path: '/api/v1/auth/csrf',
     auth: 'public',
@@ -47,28 +60,31 @@ export const routeRegistry = [
   },
   {
     operationId: 'register',
+    module: 'auth',
     method: 'post',
     path: '/api/v1/auth/register',
     auth: 'csrf',
     request: RegisterRequestSchema,
     responses: {
-      201: z.object({ userId: z.string(), workspaceId: z.string() }),
+      201: RegisterResponseSchema,
       400: ErrorResponseSchema,
     },
   },
   {
     operationId: 'signIn',
+    module: 'auth',
     method: 'post',
     path: '/api/v1/auth/sign-in',
     auth: 'csrf',
     request: SignInRequestSchema,
     responses: {
-      200: z.object({ userId: z.string(), workspaceId: z.string() }),
+      200: RegisterResponseSchema,
       401: ErrorResponseSchema,
     },
   },
   {
     operationId: 'signOut',
+    module: 'auth',
     method: 'post',
     path: '/api/v1/auth/sign-out',
     auth: 'csrf',
@@ -76,6 +92,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'session',
+    module: 'auth',
     method: 'get',
     path: '/api/v1/session',
     auth: 'session',
@@ -86,6 +103,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'getWorkspace',
+    module: 'workspace',
     method: 'get',
     path: '/api/v1/workspace',
     auth: 'session',
@@ -93,6 +111,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'updateWorkspace',
+    module: 'workspace',
     method: 'patch',
     path: '/api/v1/workspace',
     auth: 'csrf',
@@ -101,6 +120,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'listCustomers',
+    module: 'customers',
     method: 'get',
     path: '/api/v1/customers',
     auth: 'session',
@@ -110,7 +130,16 @@ export const routeRegistry = [
     },
   },
   {
+    operationId: 'getCustomer',
+    module: 'customers',
+    method: 'get',
+    path: '/api/v1/customers/{customerId}',
+    auth: 'session',
+    responses: { 200: CustomerResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
     operationId: 'createCustomer',
+    module: 'customers',
     method: 'post',
     path: '/api/v1/customers',
     auth: 'csrf',
@@ -119,6 +148,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'getToday',
+    module: 'today',
     method: 'get',
     path: '/api/v1/today',
     auth: 'session',
@@ -126,6 +156,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'createBooking',
+    module: 'bookings',
     method: 'post',
     path: '/api/v1/bookings',
     auth: 'csrf',
@@ -134,6 +165,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'listBookings',
+    module: 'bookings',
     method: 'get',
     path: '/api/v1/bookings',
     auth: 'session',
@@ -144,6 +176,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'getResults',
+    module: 'results',
     method: 'get',
     path: '/api/v1/results',
     auth: 'session',
@@ -151,6 +184,7 @@ export const routeRegistry = [
   },
   {
     operationId: 'openapi',
+    module: 'openapi',
     method: 'get',
     path: '/api/v1/openapi.json',
     auth: 'public',

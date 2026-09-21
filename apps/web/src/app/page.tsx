@@ -1,8 +1,25 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { z } from 'zod';
+import {
+  BookingListResponseSchema,
+  BookingResponseSchema,
+  CreateBookingRequestSchema,
+  CreateCustomerRequestSchema,
+  CsrfResponseSchema,
+  CustomerResponseSchema,
+  ResultsResponseSchema,
+  SessionResponseSchema,
+  SignInResponseSchema,
+  TodayResponseSchema,
+  WorkspaceResponseSchema,
+  RegisterResponseSchema,
+} from '@growthos/contracts';
+import { commandIdFor, formValues, localDateTimeToUtc, request } from './api-client';
+import { Field, StatusLine, type Status } from './ui';
+import { TodayDialogs } from './dialogs';
 
-type Status = { kind: 'idle' | 'pending' | 'success' | 'error'; message?: string };
 type Customer = {
   id: string;
   firstName: string;
@@ -31,38 +48,14 @@ type Results = {
   bookingsRecorded: number;
   recordedBookingValue: { currency: string; minorUnits: number };
 };
-
-async function api(path: string, init: RequestInit = {}) {
-  const response = await fetch(path, {
-    credentials: 'include',
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init.headers || {}) },
-  });
-  const data = (response.status === 204 ? null : await response.json()) as any;
-  if (!response.ok) throw new Error(data?.error?.message || 'Something went wrong. Try again.');
-  return data;
-}
-
-function Field({
-  label,
-  name,
-  type = 'text',
-  defaultValue = '',
-  required = true,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  defaultValue?: string;
-  required?: boolean;
-}) {
-  return (
-    <label className="field">
-      <span>{label}</span>
-      <input name={name} type={type} defaultValue={defaultValue} required={required} />
-    </label>
-  );
-}
+type Booking = {
+  id: string;
+  customerId: string;
+  service: string;
+  appointmentAt: string;
+  agreedMoney: { currency: string; minorUnits: number };
+  state: string;
+};
 
 export default function Home() {
   const [csrf, setCsrf] = useState('');
@@ -72,28 +65,35 @@ export default function Home() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [today, setToday] = useState<Customer[]>([]);
   const [results, setResults] = useState<Results | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [selected, setSelected] = useState<Customer | null>(null);
   const [showCustomer, setShowCustomer] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const bookingSubmission = useRef<{ fingerprint: string; key: string } | null>(null);
 
   async function refreshCsrf() {
-    const value = await api('/api/v1/auth/csrf');
+    const value = await request('/api/v1/auth/csrf', CsrfResponseSchema);
     setCsrf(value.csrfToken);
-    return value.csrfToken as string;
+    return value.csrfToken;
   }
   async function refreshWorkspace() {
-    const current = await api('/api/v1/workspace');
+    const current = await request('/api/v1/workspace', WorkspaceResponseSchema);
     setWorkspace(current);
     setScreen(current.onboardingComplete ? 'today' : 'onboarding');
   }
   async function refreshToday() {
-    const [queue, report] = await Promise.all([api('/api/v1/today'), api('/api/v1/results')]);
+    const [queue, report, bookingList] = await Promise.all([
+      request('/api/v1/today', TodayResponseSchema),
+      request('/api/v1/results', ResultsResponseSchema),
+      request('/api/v1/bookings', BookingListResponseSchema),
+    ]);
     setToday(queue.items);
     setResults(report);
+    setBookings(bookingList.items);
   }
   useEffect(() => {
     void refreshCsrf().then(() =>
-      api('/api/v1/session')
+      request('/api/v1/session', SessionResponseSchema)
         .then(refreshWorkspace)
         .catch(() => undefined),
     );
@@ -109,12 +109,16 @@ export default function Home() {
     const form = new FormData(event.currentTarget);
     try {
       const token = csrf || (await refreshCsrf());
-      const result = await api(`/api/v1/auth/${authMode === 'register' ? 'register' : 'sign-in'}`, {
-        method: 'POST',
-        headers: { 'X-CSRF-Token': token },
-        body: JSON.stringify(Object.fromEntries(form.entries())),
-      });
-      setCsrf(result.csrfToken || token);
+      const result = await request(
+        `/api/v1/auth/${authMode === 'register' ? 'register' : 'sign-in'}`,
+        authMode === 'register' ? RegisterResponseSchema : SignInResponseSchema,
+        {
+          method: 'POST',
+          headers: { 'X-CSRF-Token': token },
+          body: JSON.stringify(formValues(event.currentTarget)),
+        },
+      );
+      setCsrf(result.csrfToken);
       await refreshWorkspace();
       setStatus({
         kind: 'success',
@@ -131,12 +135,13 @@ export default function Home() {
     event.preventDefault();
     setStatus({ kind: 'pending', message: 'Saving business details…' });
     try {
-      const result = await api('/api/v1/workspace', {
+      const values = formValues(event.currentTarget);
+      const result = await request('/api/v1/workspace', WorkspaceResponseSchema, {
         method: 'PATCH',
         headers: { 'X-CSRF-Token': csrf },
         body: JSON.stringify({
-          ...Object.fromEntries(new FormData(event.currentTarget).entries()),
-          followUpDays: Number(new FormData(event.currentTarget).get('followUpDays')),
+          ...values,
+          followUpDays: Number(values.followUpDays),
         }),
       });
       setWorkspace(result);
@@ -153,17 +158,15 @@ export default function Home() {
     event.preventDefault();
     setStatus({ kind: 'pending', message: 'Saving enquiry…' });
     try {
-      const input = Object.fromEntries(new FormData(event.currentTarget).entries()) as Record<
-        string,
-        string
-      >;
-      await api('/api/v1/customers', {
+      const values = formValues(event.currentTarget);
+      const input = CreateCustomerRequestSchema.parse({
+        ...values,
+        quotedMinorUnits: values.quotedMinorUnits ? Number(values.quotedMinorUnits) : undefined,
+      });
+      await request('/api/v1/customers', CustomerResponseSchema, {
         method: 'POST',
         headers: { 'X-CSRF-Token': csrf },
-        body: JSON.stringify({
-          ...input,
-          quotedMinorUnits: input.quotedMinorUnits ? Number(input.quotedMinorUnits) : undefined,
-        }),
+        body: JSON.stringify(input),
       });
       setShowCustomer(false);
       setStatus({ kind: 'success', message: 'Enquiry saved to Today.' });
@@ -180,21 +183,28 @@ export default function Home() {
     if (!selected) return;
     setStatus({ kind: 'pending', message: 'Recording booking…' });
     try {
-      const input = Object.fromEntries(new FormData(event.currentTarget).entries()) as Record<
-        string,
-        string
-      >;
-      await api('/api/v1/bookings', {
+      const values = formValues(event.currentTarget);
+      const command = {
+        customerId: selected.id,
+        service: values.service,
+        appointmentAt: localDateTimeToUtc(values.appointmentAt, workspace?.timezone || 'UTC'),
+        agreedMinorUnits: Number(values.agreedMinorUnits),
+        currency: workspace?.currency || 'USD',
+        notes: values.notes || '',
+      };
+      const validated = CreateBookingRequestSchema.parse(command);
+      const fingerprint = commandIdFor(validated);
+      if (!bookingSubmission.current || bookingSubmission.current.fingerprint !== fingerprint)
+        bookingSubmission.current = { fingerprint, key: crypto.randomUUID() };
+      await request('/api/v1/bookings', BookingResponseSchema, {
         method: 'POST',
-        headers: { 'X-CSRF-Token': csrf, 'Idempotency-Key': crypto.randomUUID() },
-        body: JSON.stringify({
-          ...input,
-          customerId: selected.id,
-          appointmentAt: new Date(input.appointmentAt).toISOString(),
-          agreedMinorUnits: Number(input.agreedMinorUnits),
-          currency: workspace?.currency || 'USD',
-        }),
+        headers: {
+          'X-CSRF-Token': csrf,
+          'Idempotency-Key': bookingSubmission.current.key,
+        },
+        body: JSON.stringify(validated),
       });
+      bookingSubmission.current = null;
       setShowBooking(false);
       setSelected(null);
       setStatus({ kind: 'success', message: 'Booking recorded. The enquiry moved out of Today.' });
@@ -209,7 +219,10 @@ export default function Home() {
   async function signOut() {
     setStatus({ kind: 'pending', message: 'Signing out…' });
     try {
-      await api('/api/v1/auth/sign-out', { method: 'POST', headers: { 'X-CSRF-Token': csrf } });
+      await request('/api/v1/auth/sign-out', z.null(), {
+        method: 'POST',
+        headers: { 'X-CSRF-Token': csrf },
+      });
       setScreen('auth');
       setWorkspace(null);
       setToday([]);
@@ -336,6 +349,30 @@ export default function Home() {
           </strong>
         </div>
       </section>
+      <section className="panel results-panel" aria-labelledby="results-title">
+        <div className="toolbar compact">
+          <div>
+            <h2 id="results-title">Results</h2>
+            <p className="muted">Stored bookings and recorded value from the current workspace.</p>
+          </div>
+        </div>
+        {bookings.length === 0 ? (
+          <p className="muted">No bookings recorded in this workspace yet.</p>
+        ) : (
+          <div className="booking-register">
+            {bookings.map((booking) => (
+              <div className="booking-record" key={booking.id}>
+                <strong>{booking.service}</strong>
+                <span>{new Date(booking.appointmentAt).toLocaleString()}</span>
+                <span>
+                  {booking.agreedMoney.currency} {(booking.agreedMoney.minorUnits / 100).toFixed(2)}
+                </span>
+                <span>{booking.state}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
       <div className="toolbar">
         <div>
           <h2>Priority register</h2>
@@ -379,165 +416,20 @@ export default function Home() {
         )}
       </section>
       <StatusLine status={status} />
-      {selected && (
-        <div className="dialog-backdrop" role="presentation">
-          <section
-            className="dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="customer-title"
-          >
-            <button
-              className="close"
-              onClick={() => setSelected(null)}
-              aria-label="Close customer details"
-            >
-              Close
-            </button>
-            <p className="eyebrow">Enquiry detail</p>
-            <h2 id="customer-title">
-              {selected.firstName} {selected.lastName}
-            </h2>
-            <dl className="facts">
-              <div>
-                <dt>Service</dt>
-                <dd>{selected.service}</dd>
-              </div>
-              <div>
-                <dt>Source</dt>
-                <dd>{selected.source}</dd>
-              </div>
-              <div>
-                <dt>Consent</dt>
-                <dd>
-                  {selected.consent?.decision === 'granted'
-                    ? `Granted for ${selected.consent.channel}`
-                    : 'Needs review'}
-                </dd>
-              </div>
-              <div>
-                <dt>Quoted value</dt>
-                <dd>
-                  {selected.quotedMoney
-                    ? `${selected.quotedMoney.currency} ${(selected.quotedMoney.minorUnits / 100).toFixed(2)}`
-                    : 'Not provided'}
-                </dd>
-              </div>
-            </dl>
-            <p className="reason-box">
-              <strong>Why this is here</strong>
-              <br />
-              {selected.reasons?.join(' · ')}
-            </p>
-            {selected.consent?.decision === 'granted' && (
-              <button className="button primary" onClick={() => setShowBooking(true)}>
-                Record booking
-              </button>
-            )}
-            <p className="muted small">
-              A booking is stored with an idempotency key and appears in Results.
-            </p>
-          </section>
-        </div>
-      )}
-      {showCustomer && (
-        <div className="dialog-backdrop">
-          <section
-            className="dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="customer-form-title"
-          >
-            <button
-              className="close"
-              onClick={() => setShowCustomer(false)}
-              aria-label="Close add enquiry"
-            >
-              Close
-            </button>
-            <h2 id="customer-form-title">Add an enquiry</h2>
-            <form onSubmit={submitCustomer}>
-              <div className="form-grid">
-                <Field label="First name" name="firstName" />
-                <Field label="Last name" name="lastName" required={false} />
-                <Field label="Phone" name="phone" />
-                <Field label="Email" name="email" type="email" required={false} />
-                <Field label="Service" name="service" defaultValue="Consultation" />
-                <Field label="Source" name="source" defaultValue="Phone call" />
-                <Field
-                  label="Quoted value (cents)"
-                  name="quotedMinorUnits"
-                  type="number"
-                  required={false}
-                />
-                <label className="field">
-                  <span>Consent channel</span>
-                  <select name="consentChannel" defaultValue="whatsapp">
-                    <option value="whatsapp">WhatsApp</option>
-                    <option value="phone">Phone</option>
-                    <option value="sms">SMS</option>
-                    <option value="email">Email</option>
-                  </select>
-                </label>
-                <label className="field">
-                  <span>Consent decision</span>
-                  <select name="consentDecision" defaultValue="granted">
-                    <option value="granted">Granted</option>
-                    <option value="withdrawn">Withdrawn</option>
-                  </select>
-                </label>
-              </div>
-              <button className="button primary" disabled={status.kind === 'pending'}>
-                {status.kind === 'pending' ? 'Saving…' : 'Save enquiry'}
-              </button>
-            </form>
-          </section>
-        </div>
-      )}
-      {showBooking && selected && (
-        <div className="dialog-backdrop">
-          <section
-            className="dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="booking-title"
-          >
-            <button
-              className="close"
-              onClick={() => setShowBooking(false)}
-              aria-label="Close booking form"
-            >
-              Close
-            </button>
-            <h2 id="booking-title">Record booking</h2>
-            <form onSubmit={submitBooking}>
-              <Field label="Service" name="service" defaultValue={selected.service} />
-              <Field label="Appointment" name="appointmentAt" type="datetime-local" />
-              <Field
-                label="Agreed value (cents)"
-                name="agreedMinorUnits"
-                type="number"
-                defaultValue={String(selected.quotedMoney?.minorUnits || 0)}
-              />
-              <label className="field">
-                <span>Notes</span>
-                <textarea name="notes" rows={3} />
-              </label>
-              <button className="button primary" disabled={status.kind === 'pending'}>
-                {status.kind === 'pending' ? 'Recording…' : 'Record booking'}
-              </button>
-            </form>
-          </section>
-        </div>
-      )}
+      <TodayDialogs
+        selected={selected}
+        showCustomer={showCustomer}
+        showBooking={showBooking}
+        status={status}
+        onCloseCustomer={() => {
+          setSelected(null);
+          setShowCustomer(false);
+        }}
+        onOpenBooking={() => setShowBooking(true)}
+        onCloseBooking={() => setShowBooking(false)}
+        onCustomerSubmit={submitCustomer}
+        onBookingSubmit={submitBooking}
+      />
     </main>
-  );
-}
-
-function StatusLine({ status }: { status: Status }) {
-  return status.kind === 'idle' ? null : (
-    <p className={`status ${status.kind}`} role={status.kind === 'error' ? 'alert' : 'status'}>
-      {status.message}
-    </p>
   );
 }

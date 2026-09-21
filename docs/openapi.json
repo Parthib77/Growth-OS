@@ -1,0 +1,1492 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Growth OS API", "version": "0.1.0" },
+  "paths": {
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "healthLive",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "status": { "type": "string", "enum": ["ok"] } },
+                  "required": ["status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "healthReady",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "status": { "type": "string" } },
+                  "required": ["status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/csrf": {
+      "get": {
+        "operationId": "csrf",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "csrfToken": { "type": "string", "minLength": 16 } },
+                  "required": ["csrfToken"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "register",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": { "type": "string" },
+                    "workspaceId": { "type": "string" },
+                    "csrfToken": { "type": "string", "minLength": 16 }
+                  },
+                  "required": ["userId", "workspaceId", "csrfToken"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": { "type": "string", "minLength": 12, "maxLength": 128 },
+                  "businessName": { "type": "string", "minLength": 2, "maxLength": 120 }
+                },
+                "required": ["email", "password", "businessName"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sign-in": {
+      "post": {
+        "operationId": "signIn",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": { "type": "string" },
+                    "workspaceId": { "type": "string" },
+                    "csrfToken": { "type": "string", "minLength": 16 }
+                  },
+                  "required": ["userId", "workspaceId", "csrfToken"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": { "type": "string", "minLength": 1, "maxLength": 128 }
+                },
+                "required": ["email", "password"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sign-out": {
+      "post": {
+        "operationId": "signOut",
+        "responses": {
+          "204": { "description": "No content" },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/session": {
+      "get": {
+        "operationId": "session",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": { "type": "string" },
+                    "workspaceId": { "type": "string" }
+                  },
+                  "required": ["userId", "workspaceId"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspace": {
+      "get": {
+        "operationId": "getWorkspace",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "businessName": { "type": "string" },
+                    "category": { "nullable": true, "type": "string" },
+                    "timezone": { "type": "string" },
+                    "currency": { "type": "string" },
+                    "defaultCountryCode": { "type": "string" },
+                    "bookingLink": { "nullable": true, "type": "string" },
+                    "followUpDays": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "onboardingComplete": { "type": "boolean" }
+                  },
+                  "required": [
+                    "id",
+                    "businessName",
+                    "category",
+                    "timezone",
+                    "currency",
+                    "defaultCountryCode",
+                    "bookingLink",
+                    "followUpDays",
+                    "onboardingComplete"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateWorkspace",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "businessName": { "type": "string" },
+                    "category": { "nullable": true, "type": "string" },
+                    "timezone": { "type": "string" },
+                    "currency": { "type": "string" },
+                    "defaultCountryCode": { "type": "string" },
+                    "bookingLink": { "nullable": true, "type": "string" },
+                    "followUpDays": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "onboardingComplete": { "type": "boolean" }
+                  },
+                  "required": [
+                    "id",
+                    "businessName",
+                    "category",
+                    "timezone",
+                    "currency",
+                    "defaultCountryCode",
+                    "bookingLink",
+                    "followUpDays",
+                    "onboardingComplete"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "businessName": { "type": "string", "minLength": 2, "maxLength": 120 },
+                  "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+                  "timezone": { "type": "string", "minLength": 1, "maxLength": 100 },
+                  "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+                  "defaultCountryCode": { "type": "string", "pattern": "^\\+[1-9][0-9]{0,3}$" },
+                  "bookingLink": {
+                    "anyOf": [
+                      { "type": "string", "maxLength": 500, "format": "uri" },
+                      { "type": "string", "enum": [""] }
+                    ]
+                  },
+                  "followUpDays": { "type": "integer", "minimum": 1, "maximum": 90 }
+                },
+                "required": [
+                  "businessName",
+                  "category",
+                  "timezone",
+                  "currency",
+                  "defaultCountryCode",
+                  "followUpDays"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers": {
+      "get": {
+        "operationId": "listCustomers",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "type": "string" },
+                          "email": { "nullable": true, "type": "string" },
+                          "source": { "type": "string" },
+                          "service": { "type": "string" },
+                          "quotedMoney": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "currency": { "type": "string" },
+                              "minorUnits": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": ["currency", "minorUnits"],
+                            "additionalProperties": false
+                          },
+                          "consent": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "channel": { "type": "string" },
+                              "decision": { "type": "string" }
+                            },
+                            "required": ["channel", "decision"],
+                            "additionalProperties": false
+                          },
+                          "lifecycle": { "type": "string" },
+                          "lastInteractionAt": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "email",
+                          "source",
+                          "service",
+                          "quotedMoney",
+                          "consent",
+                          "lifecycle",
+                          "lastInteractionAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": { "nullable": true, "type": "string" }
+                  },
+                  "required": ["items", "nextCursor"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCustomer",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "email": { "nullable": true, "type": "string" },
+                    "source": { "type": "string" },
+                    "service": { "type": "string" },
+                    "quotedMoney": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    },
+                    "consent": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "channel": { "type": "string" },
+                        "decision": { "type": "string" }
+                      },
+                      "required": ["channel", "decision"],
+                      "additionalProperties": false
+                    },
+                    "lifecycle": { "type": "string" },
+                    "lastInteractionAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "phone",
+                    "email",
+                    "source",
+                    "service",
+                    "quotedMoney",
+                    "consent",
+                    "lifecycle",
+                    "lastInteractionAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "lastName": { "default": "", "type": "string", "maxLength": 80 },
+                  "phone": { "type": "string", "minLength": 7, "maxLength": 40 },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 254,
+                        "format": "email",
+                        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                      },
+                      { "type": "string", "enum": [""] }
+                    ]
+                  },
+                  "source": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "service": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "quotedMinorUnits": { "type": "integer", "minimum": 0, "maximum": 100000000 },
+                  "consentChannel": {
+                    "type": "string",
+                    "enum": ["whatsapp", "sms", "email", "phone"]
+                  },
+                  "consentDecision": { "type": "string", "enum": ["granted", "withdrawn"] }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "phone",
+                  "source",
+                  "service",
+                  "consentChannel",
+                  "consentDecision"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{customerId}": {
+      "get": {
+        "operationId": "getCustomer",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "email": { "nullable": true, "type": "string" },
+                    "source": { "type": "string" },
+                    "service": { "type": "string" },
+                    "quotedMoney": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    },
+                    "consent": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "channel": { "type": "string" },
+                        "decision": { "type": "string" }
+                      },
+                      "required": ["channel", "decision"],
+                      "additionalProperties": false
+                    },
+                    "lifecycle": { "type": "string" },
+                    "lastInteractionAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "phone",
+                    "email",
+                    "source",
+                    "service",
+                    "quotedMoney",
+                    "consent",
+                    "lifecycle",
+                    "lastInteractionAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "operationId": "getToday",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "type": "string" },
+                          "email": { "nullable": true, "type": "string" },
+                          "source": { "type": "string" },
+                          "service": { "type": "string" },
+                          "quotedMoney": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "currency": { "type": "string" },
+                              "minorUnits": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": ["currency", "minorUnits"],
+                            "additionalProperties": false
+                          },
+                          "consent": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "channel": { "type": "string" },
+                              "decision": { "type": "string" }
+                            },
+                            "required": ["channel", "decision"],
+                            "additionalProperties": false
+                          },
+                          "lifecycle": { "type": "string" },
+                          "lastInteractionAt": { "type": "string" },
+                          "reasons": { "type": "array", "items": { "type": "string" } },
+                          "nextAction": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "email",
+                          "source",
+                          "service",
+                          "quotedMoney",
+                          "consent",
+                          "lifecycle",
+                          "lastInteractionAt",
+                          "reasons",
+                          "nextAction"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "generatedAt": { "type": "string" }
+                  },
+                  "required": ["items", "generatedAt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings": {
+      "post": {
+        "operationId": "createBooking",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "customerId": { "type": "string" },
+                    "service": { "type": "string" },
+                    "appointmentAt": { "type": "string" },
+                    "agreedMoney": {
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    },
+                    "state": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "customerId",
+                    "service",
+                    "appointmentAt",
+                    "agreedMoney",
+                    "state"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerId": { "type": "string", "pattern": "^[a-f0-9-]{8,64}$" },
+                  "service": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "appointmentAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "agreedMinorUnits": { "type": "integer", "minimum": 0, "maximum": 100000000 },
+                  "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+                  "notes": { "default": "", "type": "string", "maxLength": 2000 }
+                },
+                "required": [
+                  "customerId",
+                  "service",
+                  "appointmentAt",
+                  "agreedMinorUnits",
+                  "currency",
+                  "notes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listBookings",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "service": { "type": "string" },
+                          "appointmentAt": { "type": "string" },
+                          "agreedMoney": {
+                            "type": "object",
+                            "properties": {
+                              "currency": { "type": "string" },
+                              "minorUnits": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": ["currency", "minorUnits"],
+                            "additionalProperties": false
+                          },
+                          "state": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "customerId",
+                          "service",
+                          "appointmentAt",
+                          "agreedMoney",
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": ["items"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/results": {
+      "get": {
+        "operationId": "getResults",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "object",
+                      "properties": {
+                        "from": { "type": "string" },
+                        "to": { "type": "string" },
+                        "fromLocal": { "type": "string" },
+                        "toLocal": { "type": "string" },
+                        "timezone": { "type": "string" }
+                      },
+                      "required": ["from", "to", "fromLocal", "toLocal", "timezone"],
+                      "additionalProperties": false
+                    },
+                    "newEnquiries": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "bookingsRecorded": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "bookingDefinition": { "type": "string" },
+                    "recordedValueDefinition": { "type": "string" },
+                    "recordedBookingValue": {
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "newEnquiries",
+                    "bookingsRecorded",
+                    "bookingDefinition",
+                    "recordedValueDefinition",
+                    "recordedBookingValue"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/openapi.json": {
+      "get": {
+        "operationId": "openapi",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": { "schema": { "type": "object", "additionalProperties": {} } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

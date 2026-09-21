@@ -6,6 +6,9 @@ import {
   currencyCode,
   minorUnits,
   money,
+  operationalEvent,
+  redactEventPayload,
+  userId,
 } from './domain.js';
 
 describe('domain primitives', () => {
@@ -31,5 +34,22 @@ describe('domain primitives', () => {
     expect(() => assertCustomerTransition('completed', 'booked')).toThrow('Cannot move');
     expect(canTransitionBooking('confirmed', 'completed')).toBe(true);
     expect(canTransitionBooking('completed', 'confirmed')).toBe(false);
+  });
+
+  it('constructs complete operational facts with caller-supplied ordinals', () => {
+    const event = operationalEvent({
+      eventId: 'dead-beef',
+      workspaceId: 'cafe-babe',
+      commandId: 'face-feed',
+      ordinal: 3,
+      occurredAt: '2026-09-21T12:00:00.000Z',
+      actor: { kind: 'user', userId: userId('bad-cafe1') },
+      requestId: 'bead-feed',
+      subject: { kind: 'workspace', id: 'cafe-babe' },
+      payload: { type: 'workspace.settings_changed', changedFields: ['timezone'] },
+    });
+    expect(event.ordinal).toBe(3);
+    expect(event.schemaVersion).toBe(1);
+    expect(redactEventPayload(event.payload)).toEqual(event.payload);
   });
 });

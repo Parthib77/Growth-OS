@@ -12,7 +12,10 @@ export type ErrorCode =
   | 'CONFLICT'
   | 'INTERNAL_ERROR'
   | 'CSRF_FAILED'
-  | 'DUPLICATE_CUSTOMER';
+  | 'DUPLICATE_CUSTOMER'
+  | 'DUPLICATE_REVIEW_REQUIRED'
+  | 'CONSENT_REQUIRED'
+  | 'CAMPAIGN_VERSION_CONFLICT';
 
 export class AppError extends Error {
   constructor(
@@ -63,7 +66,9 @@ export const errorHandler: ErrorRequestHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const requestId = String(req.headers['x-request-id'] ?? 'unknown');
+  const requestId = String(
+    res.getHeader('x-request-id') ?? req.headers['x-request-id'] ?? 'unknown',
+  );
   const status = error instanceof AppError ? error.status : error instanceof ZodError ? 400 : 500;
   if (status >= 500)
     console.error(

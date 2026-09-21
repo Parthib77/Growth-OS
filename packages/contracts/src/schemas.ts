@@ -12,6 +12,9 @@ export const ErrorCodeSchema = z.enum([
   'INTERNAL_ERROR',
   'CSRF_FAILED',
   'DUPLICATE_CUSTOMER',
+  'DUPLICATE_REVIEW_REQUIRED',
+  'CONSENT_REQUIRED',
+  'CAMPAIGN_VERSION_CONFLICT',
 ]);
 
 export const ErrorResponseSchema = z.object({
@@ -49,7 +52,19 @@ export const WorkspaceResponseSchema = z.object({
 export const OnboardingRequestSchema = z.object({
   businessName: z.string().trim().min(2).max(120),
   category: z.string().trim().min(2).max(80),
-  timezone: z.string().trim().min(1).max(100),
+  timezone: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .refine((value) => {
+      try {
+        new Intl.DateTimeFormat('en-US', { timeZone: value }).format();
+        return true;
+      } catch {
+        return false;
+      }
+    }, 'Use a valid IANA timezone.'),
   currency: z.string().regex(/^[A-Z]{3}$/),
   defaultCountryCode: z.string().regex(/^\+[1-9][0-9]{0,3}$/),
   bookingLink: z.string().url().max(500).optional().or(z.literal('')),
@@ -69,7 +84,7 @@ export const CreateCustomerRequestSchema = z.object({
 });
 
 export const CreateBookingRequestSchema = z.object({
-  customerId: z.string().min(8).max(64),
+  customerId: z.string().regex(/^[a-f0-9-]{8,64}$/i),
   service: z.string().trim().min(1).max(120),
   appointmentAt: z.string().datetime({ offset: true }),
   agreedMinorUnits: z.number().int().min(0).max(100_000_000),
@@ -93,6 +108,19 @@ export const CustomerResponseSchema = z.object({
   lastInteractionAt: z.string(),
 });
 
+export const RegisterResponseSchema = z.object({
+  userId: z.string(),
+  workspaceId: z.string(),
+  csrfToken: z.string().min(16),
+});
+
+export const SignInResponseSchema = RegisterResponseSchema;
+export const SessionResponseSchema = z.object({ userId: z.string(), workspaceId: z.string() });
+export const CustomerListResponseSchema = z.object({
+  items: z.array(CustomerResponseSchema),
+  nextCursor: z.string().nullable(),
+});
+
 export const TodayResponseSchema = z.object({
   items: z.array(
     CustomerResponseSchema.extend({ reasons: z.array(z.string()), nextAction: z.string() }),
@@ -109,10 +137,20 @@ export const BookingResponseSchema = z.object({
   state: z.string(),
 });
 
+export const BookingListResponseSchema = z.object({ items: z.array(BookingResponseSchema) });
+
 export const ResultsResponseSchema = z.object({
-  range: z.object({ from: z.string(), to: z.string(), timezone: z.string() }),
+  range: z.object({
+    from: z.string(),
+    to: z.string(),
+    fromLocal: z.string(),
+    toLocal: z.string(),
+    timezone: z.string(),
+  }),
   newEnquiries: z.number().int(),
   bookingsRecorded: z.number().int(),
+  bookingDefinition: z.string(),
+  recordedValueDefinition: z.string(),
   recordedBookingValue: z.object({ currency: z.string(), minorUnits: z.number().int() }),
 });
 

@@ -1,4 +1,9 @@
 import mongoose, { type InferSchemaType, type Model } from 'mongoose';
+import {
+  operationalEventPayloadSchemas,
+  operationalEventSchemaByType,
+  subjectKinds,
+} from '@growthos/contracts';
 
 const base = { timestamps: true, versionKey: false } as const;
 
@@ -72,13 +77,11 @@ const BookingSchema = new mongoose.Schema(
     currency: { type: String, required: true },
     notes: { type: String, default: '' },
     state: { type: String, required: true, default: 'confirmed' },
-    idempotencyKeyHash: { type: String, required: true },
-    requestFingerprint: { type: String, required: true },
   },
   base,
 );
 BookingSchema.index({ workspaceId: 1, appointmentAt: -1, _id: -1 });
-BookingSchema.index({ workspaceId: 1, idempotencyKeyHash: 1 }, { unique: true });
+BookingSchema.index({ workspaceId: 1, customerId: 1, createdAt: -1, _id: -1 });
 const SessionSchema = new mongoose.Schema(
   {
     tokenHash: { type: String, required: true, unique: true },
@@ -86,6 +89,10 @@ const SessionSchema = new mongoose.Schema(
     workspaceId: { type: String, required: true },
     csrfHash: { type: String, required: true },
     expiresAt: { type: Date, required: true },
+    idleExpiresAt: { type: Date, required: true },
+    absoluteExpiresAt: { type: Date, required: true },
+    lastSeenAt: { type: Date, required: true },
+    issuedAt: { type: Date, required: true },
     generation: { type: Number, required: true },
     revokedAt: Date,
   },
@@ -94,21 +101,55 @@ const SessionSchema = new mongoose.Schema(
 SessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 const EventSchema = new mongoose.Schema(
   {
+    ...stringIdentity,
+    eventId: { type: String, required: true, unique: true },
+    schemaVersion: { type: Number, required: true, enum: [1] },
     workspaceId: { type: String, required: true, index: true },
     commandId: { type: String, required: true },
     ordinal: { type: Number, required: true },
     occurredAt: { type: Date, required: true },
-    actorUserId: { type: String, required: true },
+    actorUserId: { type: String, default: null },
+    actorKind: { type: String, required: true, enum: ['user', 'system'] },
     requestId: { type: String, required: true },
-    subjectKind: { type: String, required: true },
+    subjectKind: { type: String, required: true, enum: subjectKinds },
     subjectId: { type: String, required: true },
-    type: { type: String, required: true },
-    payload: { type: mongoose.Schema.Types.Mixed, required: true },
+    type: { type: String, required: true, enum: Object.keys(operationalEventPayloadSchemas) },
+    payload: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
+      validate: {
+        validator: (value: unknown) => {
+          if (!value || typeof value !== 'object' || !('type' in value)) return false;
+          const eventType = value.type;
+          if (typeof eventType !== 'string') return false;
+          const schema = operationalEventSchemaByType.get(eventType);
+          return schema ? schema.safeParse(value).success : false;
+        },
+        message: 'Operational event payload is not a registered event variant',
+      },
+    },
   },
   base,
 );
 EventSchema.index({ workspaceId: 1, commandId: 1, ordinal: 1 }, { unique: true });
 EventSchema.index({ workspaceId: 1, type: 1, occurredAt: -1, _id: -1 });
+EventSchema.index({ workspaceId: 1, occurredAt: -1, _id: -1 });
+EventSchema.index({ workspaceId: 1, subjectKind: 1, subjectId: 1, occurredAt: -1, _id: -1 });
+
+const CommandReceiptSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true },
+    operation: { type: String, required: true },
+    keyHash: { type: String, required: true },
+    requestFingerprint: { type: String, required: true },
+    resourceId: { type: String, required: true },
+    response: { type: mongoose.Schema.Types.Mixed, required: true },
+  },
+  base,
+);
+CommandReceiptSchema.index({ workspaceId: 1, operation: 1, keyHash: 1 }, { unique: true });
+CommandReceiptSchema.index({ workspaceId: 1, operation: 1, createdAt: -1 });
 
 export type UserDoc = InferSchemaType<typeof UserSchema> & { _id: string };
 export type WorkspaceDoc = InferSchemaType<typeof WorkspaceSchema> & { _id: string };
@@ -116,6 +157,8 @@ export type CustomerDoc = InferSchemaType<typeof CustomerSchema> & { _id: string
 export type ConsentDoc = InferSchemaType<typeof ConsentSchema> & { _id: string };
 export type BookingDoc = InferSchemaType<typeof BookingSchema> & { _id: string };
 export type SessionDoc = InferSchemaType<typeof SessionSchema> & { _id: mongoose.Types.ObjectId };
+export type OperationalEventDoc = InferSchemaType<typeof EventSchema> & { _id: string };
+export type CommandReceiptDoc = InferSchemaType<typeof CommandReceiptSchema> & { _id: string };
 
 export const User: Model<UserDoc> = mongoose.models.User ?? mongoose.model('User', UserSchema);
 export const Workspace: Model<WorkspaceDoc> =
@@ -130,6 +173,8 @@ export const Session: Model<SessionDoc> =
   mongoose.models.Session ?? mongoose.model('Session', SessionSchema);
 export const OperationalEvent =
   mongoose.models.OperationalEvent ?? mongoose.model('OperationalEvent', EventSchema);
+export const CommandReceipt: Model<CommandReceiptDoc> =
+  mongoose.models.CommandReceipt ?? mongoose.model('CommandReceipt', CommandReceiptSchema);
 
 export async function ensureIndexes(): Promise<void> {
   await Promise.all([
@@ -140,5 +185,64 @@ export async function ensureIndexes(): Promise<void> {
     Booking.syncIndexes(),
     Session.syncIndexes(),
     OperationalEvent.syncIndexes(),
+    CommandReceipt.syncIndexes(),
   ]);
+}
+
+export async function verifyIndexes(): Promise<void> {
+  const expected: Readonly<Record<string, readonly string[]>> = {
+    User: ['email_1', 'normalizedEmail_1'],
+    Workspace: ['ownerUserId_1'],
+    Customer: [
+      'workspaceId_1',
+      'workspaceId_1_normalizedPhone_1',
+      'workspaceId_1_normalizedEmail_1',
+      'workspaceId_1_lifecycle_1_lastInteractionAt_1__id_1',
+    ],
+    Consent: ['workspaceId_1', 'workspaceId_1_customerId_1_channel_1_capturedAt_-1__id_-1'],
+    Booking: [
+      'workspaceId_1',
+      'workspaceId_1_appointmentAt_-1__id_-1',
+      'workspaceId_1_customerId_1_createdAt_-1__id_-1',
+    ],
+    Session: ['tokenHash_1', 'expiresAt_1'],
+    OperationalEvent: [
+      'eventId_1',
+      'workspaceId_1',
+      'workspaceId_1_commandId_1_ordinal_1',
+      'workspaceId_1_type_1_occurredAt_-1__id_-1',
+      'workspaceId_1_occurredAt_-1__id_-1',
+      'workspaceId_1_subjectKind_1_subjectId_1_occurredAt_-1__id_-1',
+    ],
+    CommandReceipt: [
+      'workspaceId_1_operation_1_keyHash_1',
+      'workspaceId_1_operation_1_createdAt_-1',
+    ],
+  };
+  const models = [
+    User,
+    Workspace,
+    Customer,
+    Consent,
+    Booking,
+    Session,
+    OperationalEvent,
+    CommandReceipt,
+  ];
+  for (const model of models) {
+    const indexes = await model.listIndexes();
+    const names = new Set(
+      indexes.flatMap((index) => (typeof index.name === 'string' ? [index.name] : [])),
+    );
+    const missing = (expected[model.modelName] ?? []).filter((name) => !names.has(name));
+    if (missing.length > 0)
+      throw new Error(`${model.modelName} indexes missing: ${missing.join(', ')}`);
+  }
+}
+
+export async function supportsTransactions(): Promise<boolean> {
+  const db = mongoose.connection.db;
+  if (!db) return false;
+  const hello = await db.admin().command({ hello: 1 });
+  return typeof hello.setName === 'string' || hello.msg === 'isdbgrid';
 }
