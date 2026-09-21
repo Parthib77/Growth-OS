@@ -13,10 +13,10 @@ Measured commands and results on 2026-09-21:
 - `npm run generate:openapi` completed successfully.
 - `npm run build` completed successfully. The Next.js production build generated the `/` route.
 - `MONGOMS_VERSION=8.0.6 npm run test:integration` passed the real single-node replica-set workflow: registration, onboarding, enquiry, consent, event metadata, idempotent booking retry, Results, customer lookup, and two-workspace isolation.
-- `npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium` passed the focused no-database registration surface and axe scan; the full workflow is present and skipped unless `GROWTHOS_E2E_MONGODB_URI` points at a running MongoDB-backed API. The dev server is managed by Playwright and the test returned HTTP 200 for `/`.
+- `npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone` passed all four browser checks (Chromium and phone-sized Chromium): axe registration surface plus the real registration-to-onboarding-to-enquiry-to-booking-to-Results workflow. Playwright starts an isolated MongoMemoryReplSet-backed API automatically; MongoDB binary downloads remain disabled unless `GROWTHOS_ALLOW_MONGODB_DOWNLOAD=1` is set.
 - `npm audit` reports 4 advisories from the resolved dependency graph. They are not yet triaged and therefore the security completion gate is not passed.
 
-Foundation result: `NOT VERIFIED` until the direct MongoDB transaction/readiness check and full browser workflow pass. The local install, type, unit, contract-generation, and production-build checks are supporting evidence only.
+Foundation result: `VERIFIED` for the direct MongoDB transaction/readiness and full browser workflow gates. The release completion gate remains `NOT VERIFIED` because container startup, restart persistence, and audit triage are still outstanding.
 
 ## Vertical slice gate
 
@@ -38,9 +38,10 @@ Direct persistence/browser test status:
 - A bounded retry with `MONGOMS_VERSION=8.0.6 npm run test:integration` created a second zero-byte download and was stopped.
 - Reusing the partial 8.2.6 archive reached the checksum step, then failed with `Md5CheckFailedError`; disabling the checksum confirmed the archive is truncated with `End of central directory record signature not found`.
 - The restored `MONGOMS_VERSION=8.0.6 npm run test:integration` run now passes the direct replica-set workflow.
+- The self-contained Playwright harness starts a fresh replica-set API and passes the same workflow in both desktop and phone-sized browser projects.
 - Docker Compose was not run. `docker version` reports a Docker 29.8.0 client but cannot connect to `dockerDesktopLinuxEngine`.
 
-Vertical slice result: `NOT VERIFIED`. The direct API/database gate passes, but the completion predicate still requires the full browser workflow, restart persistence, and production/container evidence. The WSL kernel is missing on this host, so Docker Desktop cannot start its Linux engine; the older 8.2.6 MongoDB cache remains truncated (8.0.6 is usable).
+Vertical slice result: `NOT VERIFIED`. Direct API/database and browser workflow gates pass, but the completion predicate still requires restart persistence and production/container evidence. The WSL kernel is missing on this host, so Docker Desktop cannot start its Linux engine; the older 8.2.6 MongoDB cache remains truncated (8.0.6 is usable).
 
 ## Known limits
 

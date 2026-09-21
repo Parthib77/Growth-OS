@@ -17,6 +17,7 @@
     "migrate:indexes": "npm run migrate:indexes --workspace @growthos/api",
     "check:openapi": "npm run check:openapi --workspace @growthos/api",
     "check:rewrite": "npm run check:rewrite --workspace @growthos/web",
+    "e2e:api": "tsx apps/api/src/scripts/e2e-server.ts",
     "lint": "tsc -b packages/contracts apps/api apps/web",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",

@@ -11,10 +11,6 @@ test('real app exposes an accessible registration surface', async ({ page }) => 
 });
 
 test('full workflow stores the booking and recorded value in Results', async ({ page }) => {
-  test.skip(
-    !process.env.GROWTHOS_E2E_MONGODB_URI,
-    'Set GROWTHOS_E2E_MONGODB_URI to run the browser workflow against MongoDB.',
-  );
   const email = `browser-${Date.now()}@example.com`;
   await page.goto('/');
   await page.getByLabel('Business name').fill('Browser Salon');
@@ -34,7 +30,7 @@ test('full workflow stores the booking and recorded value in Results', async ({ 
     .click();
   await page.getByLabel('First name').fill('Asha');
   await page.getByLabel('Last name').fill('Patel');
-  await page.getByLabel('Phone').fill('+15550001001');
+  await page.getByRole('textbox', { name: 'Phone' }).fill('+15550001001');
   await page.getByLabel('Service').fill('Colour consultation');
   await page.getByRole('button', { name: 'Save enquiry' }).click();
 
@@ -47,5 +43,5 @@ test('full workflow stores the booking and recorded value in Results', async ({ 
 
   await expect(page.getByText('Booking recorded. The enquiry moved out of Today.')).toBeVisible();
   await expect(page.getByText('Colour consultation')).toBeVisible();
-  await expect(page.getByText('USD 200.00')).toBeVisible();
+  await expect(page.locator('.results-panel').getByText('USD 200.00')).toBeVisible();
 });
