@@ -10,6 +10,8 @@ export type CommandId = Brand<string, 'CommandId'>;
 export type RequestId = Brand<string, 'RequestId'>;
 export type SessionId = Brand<string, 'SessionId'>;
 export type ConsentRecordId = Brand<string, 'ConsentRecordId'>;
+export type InteractionId = Brand<string, 'InteractionId'>;
+export type ImportBatchId = Brand<string, 'ImportBatchId'>;
 export type CampaignId = Brand<string, 'CampaignId'>;
 export type CampaignRecipientId = Brand<string, 'CampaignRecipientId'>;
 export type Version = Brand<number, 'Version'>;
@@ -46,6 +48,8 @@ export const requestId = (value: string): RequestId => brandedId(value, 'Request
 export const sessionId = (value: string): SessionId => brandedId(value, 'SessionId');
 export const consentRecordId = (value: string): ConsentRecordId =>
   brandedId(value, 'ConsentRecordId');
+export const interactionId = (value: string): InteractionId => brandedId(value, 'InteractionId');
+export const importBatchId = (value: string): ImportBatchId => brandedId(value, 'ImportBatchId');
 export const campaignId = (value: string): CampaignId => brandedId(value, 'CampaignId');
 export const campaignRecipientId = (value: string): CampaignRecipientId =>
   brandedId(value, 'CampaignRecipientId');
@@ -211,6 +215,28 @@ export type OperationalEventPayload =
       consentRecordId: ConsentRecordId;
     }
   | {
+      type: 'customer.updated';
+      customerId: CustomerId;
+      changedFields: readonly string[];
+    }
+  | {
+      type: 'customer.lifecycle_changed';
+      customerId: CustomerId;
+      from: CustomerLifecycle['kind'];
+      to: CustomerLifecycle['kind'];
+    }
+  | {
+      type: 'interaction.recorded';
+      customerId: CustomerId;
+      interactionId: InteractionId;
+      kind: 'enquiry' | 'call' | 'message' | 'note';
+    }
+  | {
+      type: 'customer.imported';
+      customerId: CustomerId;
+      importBatchId: ImportBatchId;
+    }
+  | {
       type: 'booking.recorded';
       bookingId: BookingId;
       customerId: CustomerId;
@@ -274,6 +300,28 @@ export const operationalEventPayloadSchemas = {
     decision: z.enum(['granted', 'withdrawn']),
     consentRecordId: z.string(),
   }),
+  'customer.updated': z.object({
+    type: z.literal('customer.updated'),
+    customerId: z.string(),
+    changedFields: z.array(z.string()),
+  }),
+  'customer.lifecycle_changed': z.object({
+    type: z.literal('customer.lifecycle_changed'),
+    customerId: z.string(),
+    from: z.enum(customerLifecycleKinds),
+    to: z.enum(customerLifecycleKinds),
+  }),
+  'interaction.recorded': z.object({
+    type: z.literal('interaction.recorded'),
+    customerId: z.string(),
+    interactionId: z.string(),
+    kind: z.enum(['enquiry', 'call', 'message', 'note']),
+  }),
+  'customer.imported': z.object({
+    type: z.literal('customer.imported'),
+    customerId: z.string(),
+    importBatchId: z.string(),
+  }),
   'booking.recorded': z.object({
     type: z.literal('booking.recorded'),
     bookingId: z.string(),
@@ -303,6 +351,10 @@ export const eventRedactors: {
 } = {
   'enquiry.created': (payload) => ({ ...payload }),
   'consent.recorded': (payload) => ({ ...payload }),
+  'customer.updated': (payload) => ({ ...payload }),
+  'customer.lifecycle_changed': (payload) => ({ ...payload }),
+  'interaction.recorded': (payload) => ({ ...payload }),
+  'customer.imported': (payload) => ({ ...payload }),
   'booking.recorded': (payload) => ({ ...payload }),
   'account.registered': (payload) => ({ ...payload }),
   'workspace.settings_changed': (payload) => ({ ...payload }),
@@ -314,6 +366,14 @@ export function redactEventPayload(payload: OperationalEventPayload): Record<str
       return eventRedactors['enquiry.created'](payload);
     case 'consent.recorded':
       return eventRedactors['consent.recorded'](payload);
+    case 'customer.updated':
+      return eventRedactors['customer.updated'](payload);
+    case 'customer.lifecycle_changed':
+      return eventRedactors['customer.lifecycle_changed'](payload);
+    case 'interaction.recorded':
+      return eventRedactors['interaction.recorded'](payload);
+    case 'customer.imported':
+      return eventRedactors['customer.imported'](payload);
     case 'booking.recorded':
       return eventRedactors['booking.recorded'](payload);
     case 'account.registered':

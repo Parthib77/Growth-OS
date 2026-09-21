@@ -23,6 +23,7 @@ export class AppError extends Error {
     message: string,
     public readonly status = 400,
     public readonly fieldErrors?: Record<string, string[]>,
+    public readonly details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'AppError';
@@ -37,6 +38,7 @@ export function errorBody(error: unknown, requestId: string): { error: Record<st
         message: error.message,
         requestId,
         ...(error.fieldErrors ? { fieldErrors: error.fieldErrors } : {}),
+        ...(error.details ? { details: error.details } : {}),
       },
     };
   }

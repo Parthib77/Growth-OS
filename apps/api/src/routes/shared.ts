@@ -8,6 +8,7 @@ import {
 } from '@growthos/contracts';
 import {
   Consent,
+  Interaction,
   OperationalEvent,
   type BookingDoc,
   type ConsentDoc,
@@ -35,8 +36,13 @@ type CustomerProjection = Pick<
   | 'quotedMinorUnits'
   | 'lifecycle'
   | 'lastInteractionAt'
+  | 'serviceInterests'
+  | 'internalNotes'
 >;
-export type ConsentProjection = Pick<ConsentDoc, 'channel' | 'decision'>;
+export type ConsentProjection = Pick<ConsentDoc, 'channel' | 'decision'> & {
+  _id?: string;
+  capturedAt?: Date;
+};
 
 export function customerView(
   customer: CustomerProjection,
@@ -58,6 +64,9 @@ export function customerView(
     consent: consent ? { channel: consent.channel, decision: consent.decision } : null,
     lifecycle: customer.lifecycle,
     lastInteractionAt: dateValue(customer.lastInteractionAt),
+    serviceInterests: customer.serviceInterests ?? [],
+    internalNotes: customer.internalNotes ?? '',
+    contactEligible: consent?.decision === 'granted',
   };
 }
 
@@ -68,6 +77,14 @@ export async function latestConsents(workspaceId: string, customerIds: string[])
   const map = new Map<string, ConsentProjection>();
   for (const row of rows) if (!map.has(row.customerId)) map.set(row.customerId, row);
   return map;
+}
+
+export async function consentHistory(workspaceId: string, customerId: string) {
+  return Consent.find({ workspaceId, customerId }).sort({ capturedAt: -1, _id: -1 }).lean();
+}
+
+export async function interactionHistory(workspaceId: string, customerId: string) {
+  return Interaction.find({ workspaceId, customerId }).sort({ occurredAt: -1, _id: -1 }).lean();
 }
 
 export function bookingView(

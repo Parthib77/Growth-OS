@@ -35,7 +35,7 @@ export function createApp(options: AppOptions = {}) {
     next();
   });
   // CSRF, origin, and fetch-metadata checks must run before parsing attacker-controlled JSON.
-  app.use(express.json({ limit: '100kb', strict: true }));
+  app.use(express.json({ limit: '1mb', strict: true }));
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 20,

@@ -73,7 +73,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -163,7 +164,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -255,7 +257,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -330,7 +333,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -399,7 +403,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -489,7 +494,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -577,7 +583,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -673,7 +680,10 @@
                             "additionalProperties": false
                           },
                           "lifecycle": { "type": "string" },
-                          "lastInteractionAt": { "type": "string" }
+                          "lastInteractionAt": { "type": "string" },
+                          "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                          "internalNotes": { "type": "string" },
+                          "contactEligible": { "type": "boolean" }
                         },
                         "required": [
                           "id",
@@ -686,7 +696,10 @@
                           "quotedMoney",
                           "consent",
                           "lifecycle",
-                          "lastInteractionAt"
+                          "lastInteractionAt",
+                          "serviceInterests",
+                          "internalNotes",
+                          "contactEligible"
                         ],
                         "additionalProperties": false
                       }
@@ -733,7 +746,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -789,7 +803,10 @@
                       "additionalProperties": false
                     },
                     "lifecycle": { "type": "string" },
-                    "lastInteractionAt": { "type": "string" }
+                    "lastInteractionAt": { "type": "string" },
+                    "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                    "internalNotes": { "type": "string" },
+                    "contactEligible": { "type": "boolean" }
                   },
                   "required": [
                     "id",
@@ -802,7 +819,10 @@
                     "quotedMoney",
                     "consent",
                     "lifecycle",
-                    "lastInteractionAt"
+                    "lastInteractionAt",
+                    "serviceInterests",
+                    "internalNotes",
+                    "contactEligible"
                   ],
                   "additionalProperties": false
                 }
@@ -843,7 +863,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -884,7 +905,15 @@
                     "type": "string",
                     "enum": ["whatsapp", "sms", "email", "phone"]
                   },
-                  "consentDecision": { "type": "string", "enum": ["granted", "withdrawn"] }
+                  "consentDecision": { "type": "string", "enum": ["granted", "withdrawn"] },
+                  "serviceInterests": {
+                    "default": [],
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+                  },
+                  "internalNotes": { "default": "", "type": "string", "maxLength": 5000 },
+                  "confirmDuplicate": { "default": false, "type": "boolean" }
                 },
                 "required": [
                   "firstName",
@@ -893,7 +922,10 @@
                   "source",
                   "service",
                   "consentChannel",
-                  "consentDecision"
+                  "consentDecision",
+                  "serviceInterests",
+                  "internalNotes",
+                  "confirmDuplicate"
                 ],
                 "additionalProperties": false
               }
@@ -945,7 +977,10 @@
                       "additionalProperties": false
                     },
                     "lifecycle": { "type": "string" },
-                    "lastInteractionAt": { "type": "string" }
+                    "lastInteractionAt": { "type": "string" },
+                    "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                    "internalNotes": { "type": "string" },
+                    "contactEligible": { "type": "boolean" }
                   },
                   "required": [
                     "id",
@@ -958,7 +993,10 @@
                     "quotedMoney",
                     "consent",
                     "lifecycle",
-                    "lastInteractionAt"
+                    "lastInteractionAt",
+                    "serviceInterests",
+                    "internalNotes",
+                    "contactEligible"
                   ],
                   "additionalProperties": false
                 }
@@ -999,7 +1037,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -1008,6 +1047,851 @@
                   "required": ["error"],
                   "additionalProperties": false
                 }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCustomer",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "email": { "nullable": true, "type": "string" },
+                    "source": { "type": "string" },
+                    "service": { "type": "string" },
+                    "quotedMoney": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    },
+                    "consent": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "channel": { "type": "string" },
+                        "decision": { "type": "string" }
+                      },
+                      "required": ["channel", "decision"],
+                      "additionalProperties": false
+                    },
+                    "lifecycle": { "type": "string" },
+                    "lastInteractionAt": { "type": "string" },
+                    "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                    "internalNotes": { "type": "string" },
+                    "contactEligible": { "type": "boolean" }
+                  },
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "phone",
+                    "email",
+                    "source",
+                    "service",
+                    "quotedMoney",
+                    "consent",
+                    "lifecycle",
+                    "lastInteractionAt",
+                    "serviceInterests",
+                    "internalNotes",
+                    "contactEligible"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "lastName": { "type": "string", "maxLength": 80 },
+                  "phone": { "type": "string", "minLength": 7, "maxLength": 40 },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 254,
+                        "format": "email",
+                        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                      },
+                      { "type": "string", "enum": [""] }
+                    ]
+                  },
+                  "source": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "service": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "quotedMinorUnits": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000000
+                  },
+                  "serviceInterests": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+                  },
+                  "internalNotes": { "type": "string", "maxLength": 5000 },
+                  "lifecycle": {
+                    "type": "string",
+                    "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{customerId}/detail": {
+      "get": {
+        "operationId": "getCustomerDetail",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "email": { "nullable": true, "type": "string" },
+                    "source": { "type": "string" },
+                    "service": { "type": "string" },
+                    "quotedMoney": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "currency": { "type": "string" },
+                        "minorUnits": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["currency", "minorUnits"],
+                      "additionalProperties": false
+                    },
+                    "consent": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "channel": { "type": "string" },
+                        "decision": { "type": "string" }
+                      },
+                      "required": ["channel", "decision"],
+                      "additionalProperties": false
+                    },
+                    "lifecycle": { "type": "string" },
+                    "lastInteractionAt": { "type": "string" },
+                    "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                    "internalNotes": { "type": "string" },
+                    "contactEligible": { "type": "boolean" },
+                    "interactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "kind": {
+                            "type": "string",
+                            "enum": ["enquiry", "call", "message", "note"]
+                          },
+                          "body": { "type": "string" },
+                          "serviceInterest": { "nullable": true, "type": "string" },
+                          "occurredAt": { "type": "string" }
+                        },
+                        "required": ["id", "kind", "body", "serviceInterest", "occurredAt"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "consentHistory": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "channel": {
+                            "type": "string",
+                            "enum": ["whatsapp", "sms", "email", "phone"]
+                          },
+                          "decision": { "type": "string", "enum": ["granted", "withdrawn"] },
+                          "capturedAt": { "type": "string" }
+                        },
+                        "required": ["id", "channel", "decision", "capturedAt"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "phone",
+                    "email",
+                    "source",
+                    "service",
+                    "quotedMoney",
+                    "consent",
+                    "lifecycle",
+                    "lastInteractionAt",
+                    "serviceInterests",
+                    "internalNotes",
+                    "contactEligible",
+                    "interactions",
+                    "consentHistory"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{customerId}/interactions": {
+      "post": {
+        "operationId": "recordInteraction",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "kind": { "type": "string", "enum": ["enquiry", "call", "message", "note"] },
+                    "body": { "type": "string" },
+                    "serviceInterest": { "nullable": true, "type": "string" },
+                    "occurredAt": { "type": "string" }
+                  },
+                  "required": ["id", "kind", "body", "serviceInterest", "occurredAt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": { "type": "string", "enum": ["enquiry", "call", "message", "note"] },
+                  "body": { "type": "string", "minLength": 1, "maxLength": 5000 },
+                  "serviceInterest": { "type": "string", "maxLength": 120 },
+                  "occurredAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  }
+                },
+                "required": ["kind", "body"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{customerId}/consents": {
+      "post": {
+        "operationId": "recordConsent",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "channel": { "type": "string" },
+                    "decision": { "type": "string" },
+                    "capturedAt": { "type": "string" }
+                  },
+                  "required": ["id", "channel", "decision", "capturedAt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel": { "type": "string", "enum": ["whatsapp", "sms", "email", "phone"] },
+                  "decision": { "type": "string", "enum": ["granted", "withdrawn"] }
+                },
+                "required": ["channel", "decision"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customer-imports/preview": {
+      "post": {
+        "operationId": "previewCustomerImport",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "importId": { "type": "string" },
+                    "headers": { "type": "array", "items": { "type": "string" } },
+                    "mapping": {
+                      "type": "object",
+                      "additionalProperties": { "nullable": true, "type": "string" }
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rowNumber": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "values": {
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
+                          },
+                          "errors": { "type": "array", "items": { "type": "string" } },
+                          "duplicates": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "matchedOn": {
+                                  "type": "array",
+                                  "items": { "type": "string", "enum": ["phone", "email"] }
+                                }
+                              },
+                              "required": ["id", "matchedOn"],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": ["rowNumber", "values", "errors", "duplicates"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "limits": {
+                      "type": "object",
+                      "properties": {
+                        "maxRows": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "maxBytes": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["maxRows", "maxBytes"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["importId", "headers", "mapping", "rows", "limits"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "csv": { "type": "string", "minLength": 1, "maxLength": 1000000 },
+                  "mapping": { "type": "object", "additionalProperties": { "type": "string" } }
+                },
+                "required": ["csv"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customer-imports/{importId}/commit": {
+      "post": {
+        "operationId": "commitCustomerImport",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "created": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "type": "string" },
+                          "email": { "nullable": true, "type": "string" },
+                          "source": { "type": "string" },
+                          "service": { "type": "string" },
+                          "quotedMoney": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "currency": { "type": "string" },
+                              "minorUnits": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": ["currency", "minorUnits"],
+                            "additionalProperties": false
+                          },
+                          "consent": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "channel": { "type": "string" },
+                              "decision": { "type": "string" }
+                            },
+                            "required": ["channel", "decision"],
+                            "additionalProperties": false
+                          },
+                          "lifecycle": { "type": "string" },
+                          "lastInteractionAt": { "type": "string" },
+                          "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                          "internalNotes": { "type": "string" },
+                          "contactEligible": { "type": "boolean" }
+                        },
+                        "required": [
+                          "id",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "email",
+                          "source",
+                          "service",
+                          "quotedMoney",
+                          "consent",
+                          "lifecycle",
+                          "lastInteractionAt",
+                          "serviceInterests",
+                          "internalNotes",
+                          "contactEligible"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "skippedRows": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    }
+                  },
+                  "required": ["created", "skippedRows"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resolutions": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string", "enum": ["create", "skip"] }
+                  }
+                },
+                "required": ["resolutions"],
+                "additionalProperties": false
               }
             }
           }
@@ -1063,6 +1947,9 @@
                           },
                           "lifecycle": { "type": "string" },
                           "lastInteractionAt": { "type": "string" },
+                          "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                          "internalNotes": { "type": "string" },
+                          "contactEligible": { "type": "boolean" },
                           "reasons": { "type": "array", "items": { "type": "string" } },
                           "nextAction": { "type": "string" }
                         },
@@ -1078,6 +1965,9 @@
                           "consent",
                           "lifecycle",
                           "lastInteractionAt",
+                          "serviceInterests",
+                          "internalNotes",
+                          "contactEligible",
                           "reasons",
                           "nextAction"
                         ],
@@ -1126,7 +2016,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -1218,7 +2109,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -1349,7 +2241,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false
@@ -1460,7 +2353,8 @@
                         "fieldErrors": {
                           "type": "object",
                           "additionalProperties": { "type": "array", "items": { "type": "string" } }
-                        }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
                       },
                       "required": ["code", "message", "requestId"],
                       "additionalProperties": false

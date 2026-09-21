@@ -23,6 +23,7 @@ export const ErrorResponseSchema = z.object({
     message: z.string(),
     requestId: z.string(),
     fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
+    details: z.record(z.string(), z.unknown()).optional(),
   }),
 });
 
@@ -81,6 +82,37 @@ export const CreateCustomerRequestSchema = z.object({
   quotedMinorUnits: z.number().int().min(0).max(100_000_000).optional(),
   consentChannel: z.enum(['whatsapp', 'sms', 'email', 'phone']),
   consentDecision: z.enum(['granted', 'withdrawn']),
+  serviceInterests: z.array(z.string().trim().min(1).max(120)).max(20).default([]),
+  internalNotes: z.string().trim().max(5000).default(''),
+  confirmDuplicate: z.boolean().default(false),
+});
+
+export const UpdateCustomerRequestSchema = z
+  .object({
+    firstName: z.string().trim().min(1).max(80),
+    lastName: z.string().trim().max(80),
+    phone: z.string().trim().min(7).max(40),
+    email: z.string().trim().email().max(254).or(z.literal('')),
+    source: z.string().trim().min(1).max(80),
+    service: z.string().trim().min(1).max(120),
+    quotedMinorUnits: z.number().int().min(0).max(100_000_000).nullable(),
+    serviceInterests: z.array(z.string().trim().min(1).max(120)).max(20),
+    internalNotes: z.string().trim().max(5000),
+    lifecycle: z.enum(['enquiry', 'contacted', 'replied', 'booked', 'completed', 'lost']),
+  })
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, 'At least one field is required.');
+
+export const CreateInteractionRequestSchema = z.object({
+  kind: z.enum(['enquiry', 'call', 'message', 'note']),
+  body: z.string().trim().min(1).max(5000),
+  serviceInterest: z.string().trim().max(120).optional(),
+  occurredAt: z.string().datetime({ offset: true }).optional(),
+});
+
+export const RecordConsentRequestSchema = z.object({
+  channel: z.enum(['whatsapp', 'sms', 'email', 'phone']),
+  decision: z.enum(['granted', 'withdrawn']),
 });
 
 export const CreateBookingRequestSchema = z.object({
@@ -106,6 +138,60 @@ export const CustomerResponseSchema = z.object({
   consent: z.object({ channel: z.string(), decision: z.string() }).nullable(),
   lifecycle: z.string(),
   lastInteractionAt: z.string(),
+  serviceInterests: z.array(z.string()),
+  internalNotes: z.string(),
+  contactEligible: z.boolean(),
+});
+
+export const InteractionResponseSchema = z.object({
+  id: z.string(),
+  kind: z.enum(['enquiry', 'call', 'message', 'note']),
+  body: z.string(),
+  serviceInterest: z.string().nullable(),
+  occurredAt: z.string(),
+});
+
+export const ConsentHistoryResponseSchema = z.object({
+  id: z.string(),
+  channel: z.enum(['whatsapp', 'sms', 'email', 'phone']),
+  decision: z.enum(['granted', 'withdrawn']),
+  capturedAt: z.string(),
+});
+
+export const CustomerDetailResponseSchema = CustomerResponseSchema.extend({
+  interactions: z.array(InteractionResponseSchema),
+  consentHistory: z.array(ConsentHistoryResponseSchema),
+});
+
+export const CustomerImportPreviewRequestSchema = z.object({
+  csv: z.string().min(1).max(1_000_000),
+  mapping: z.record(z.string(), z.string()).optional(),
+});
+
+export const CustomerImportPreviewResponseSchema = z.object({
+  importId: z.string(),
+  headers: z.array(z.string()),
+  mapping: z.record(z.string(), z.string().nullable()),
+  rows: z.array(
+    z.object({
+      rowNumber: z.number().int(),
+      values: z.record(z.string(), z.string()),
+      errors: z.array(z.string()),
+      duplicates: z.array(
+        z.object({ id: z.string(), matchedOn: z.array(z.enum(['phone', 'email'])) }),
+      ),
+    }),
+  ),
+  limits: z.object({ maxRows: z.number().int(), maxBytes: z.number().int() }),
+});
+
+export const CustomerImportCommitRequestSchema = z.object({
+  resolutions: z.record(z.string(), z.enum(['create', 'skip'])),
+});
+
+export const CustomerImportCommitResponseSchema = z.object({
+  created: z.array(CustomerResponseSchema),
+  skippedRows: z.array(z.number().int()),
 });
 
 export const RegisterResponseSchema = z.object({
@@ -158,5 +244,7 @@ export type RegisterRequest = z.infer<typeof RegisterRequestSchema>;
 export type SignInRequest = z.infer<typeof SignInRequestSchema>;
 export type OnboardingRequest = z.infer<typeof OnboardingRequestSchema>;
 export type CreateCustomerRequest = z.infer<typeof CreateCustomerRequestSchema>;
+export type UpdateCustomerRequest = z.infer<typeof UpdateCustomerRequestSchema>;
+export type CreateInteractionRequest = z.infer<typeof CreateInteractionRequestSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;
 export type WorkspaceResponse = z.infer<typeof WorkspaceResponseSchema>;

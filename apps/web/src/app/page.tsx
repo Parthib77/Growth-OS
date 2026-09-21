@@ -19,6 +19,7 @@ import {
 import { commandIdFor, formValues, localDateTimeToUtc, request } from './api-client';
 import { Field, StatusLine, type Status } from './ui';
 import { TodayDialogs } from './dialogs';
+import { CustomersView } from './customers-view';
 
 type Customer = {
   id: string;
@@ -60,7 +61,7 @@ type Booking = {
 export default function Home() {
   const [csrf, setCsrf] = useState('');
   const [authMode, setAuthMode] = useState<'register' | 'sign-in'>('register');
-  const [screen, setScreen] = useState<'auth' | 'onboarding' | 'today'>('auth');
+  const [screen, setScreen] = useState<'auth' | 'onboarding' | 'today' | 'customers'>('auth');
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [today, setToday] = useState<Customer[]>([]);
@@ -320,6 +321,15 @@ export default function Home() {
         </section>
       </main>
     );
+  if (screen === 'customers')
+    return (
+      <CustomersView
+        csrf={csrf}
+        status={status}
+        setStatus={setStatus}
+        onBack={() => setScreen('today')}
+      />
+    );
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -327,9 +337,14 @@ export default function Home() {
           <p className="eyebrow">{workspace?.businessName || 'Growth OS'} / Today</p>
           <h1>Who needs attention?</h1>
         </div>
-        <button className="button quiet" onClick={signOut}>
-          Sign out
-        </button>
+        <div>
+          <button className="button secondary" onClick={() => setScreen('customers')}>
+            Customers
+          </button>{' '}
+          <button className="button quiet" onClick={signOut}>
+            Sign out
+          </button>
+        </div>
       </header>
       <section className="summary-row">
         <div>

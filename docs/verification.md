@@ -9,11 +9,11 @@ Measured commands and results on 2026-09-21:
 - `MONGOMS_DISABLE_POSTINSTALL=1 MONGOMS_RUNTIME_DOWNLOAD=0 npm ci` completed successfully from the committed lockfile. The environment variables prevent an unbounded test-binary download during dependency installation.
 - `npm run format` completed successfully.
 - `npm run typecheck` completed successfully with `tsc -b packages/contracts apps/api apps/web`.
-- `npm test` completed successfully with 7 files and 12 tests passing.
+- `npm test` completed successfully with 8 files and 17 tests passing, including CSV parsing, duplicate review, lifecycle transitions, and formula-safe cells.
 - `npm run generate:openapi` completed successfully.
 - `npm run build` completed successfully. The Next.js production build generated the `/` route.
-- `MONGOMS_VERSION=8.0.6 npm run test:integration` passed the real single-node replica-set workflow: registration, onboarding, enquiry, consent, event metadata, idempotent booking retry, Results, customer lookup, and two-workspace isolation.
-- `npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone` passed all four browser checks (Chromium and iPhone 13/WebKit): axe registration surface plus the real registration-to-onboarding-to-enquiry-to-booking-to-Results workflow. Playwright starts an isolated MongoMemoryReplSet-backed API automatically; MongoDB binary downloads remain disabled unless `GROWTHOS_ALLOW_MONGODB_DOWNLOAD=1` is set.
+- `MONGOMS_VERSION=8.0.6 MONGOMS_RUNTIME_DOWNLOAD=0 npm run test:integration` passed the real single-node replica-set workflow: registration, onboarding, enquiry, consent, event metadata, idempotent booking retry, Results, customer lookup, two-workspace isolation, duplicate review, import preview/commit, interaction history, lifecycle transitions, and consent withdrawal.
+- `MONGOMS_VERSION=8.0.6 MONGOMS_RUNTIME_DOWNLOAD=0 npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone` passed all six browser checks (Chromium and iPhone 13/WebKit): axe registration surface, registration-to-booking-to-Results, and add/search/detail/history/consent-withdrawal customer workflows. Playwright starts an isolated MongoMemoryReplSet-backed API automatically; MongoDB binary downloads remain disabled unless `GROWTHOS_ALLOW_MONGODB_DOWNLOAD=1` is set.
 - `npm audit` reports 4 advisories from the resolved dependency graph. They are not yet triaged and therefore the security completion gate is not passed.
 
 Foundation result: `VERIFIED` for the direct MongoDB transaction/readiness and full browser workflow gates. The release completion gate remains `NOT VERIFIED` because container startup, restart persistence, and audit triage are still outstanding.
@@ -25,6 +25,8 @@ Implemented behavior:
 - Registration creates a user and workspace and rotates the anonymous session.
 - Onboarding persists business category, timezone, currency, country code, booking link, and follow-up interval.
 - Customer creation persists the enquiry, consent record, and safe operational events in the workspace.
+- Customer register supports workspace-scoped search, lifecycle filters, cursor pagination, detail records, service interests, internal notes, interaction history, complete consent history, server-validated lifecycle transitions, and consent withdrawal contact suppression.
+- CSV import enforces byte/row/column/cell limits, rejects formula-like cells, suggests column mappings, stores a short-lived preview, surfaces normalized phone/email duplicate matches, and requires an explicit create-separately or skip decision before commit.
 - Today reads the stored enquiry and visibly explains the reason and next action.
 - Booking creation requires an idempotency key, updates customer lifecycle, persists a booking event, and returns the same booking for a retry with the same body and key.
 - Results counts stored enquiry events and stored booking value.
@@ -45,4 +47,4 @@ Vertical slice result: `NOT VERIFIED`. Direct API/database and browser workflow 
 
 ## Known limits
 
-Campaigns, CSV import, reviews, exports, account deletion, and legal pages remain later delivery phases. The API and web app do not claim those features exist. Docker health, production image startup, Lighthouse, and a persisted Playwright workflow require a working MongoDB or Docker runtime.
+Campaigns, reviews, exports, account deletion, and legal pages remain later delivery phases. Customer CSV import is now implemented; export remains later. Docker health, production image startup, Lighthouse, and a persisted Playwright workflow require a working Docker runtime.

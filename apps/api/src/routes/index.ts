@@ -4,6 +4,7 @@ import type { AppConfig } from '../config.js';
 import { registerAuthRoutes } from './auth.js';
 import { registerBookingRoutes } from './bookings.js';
 import { registerCustomerRoutes } from './customers.js';
+import { registerCustomerImportRoutes } from './customer-imports.js';
 import { registerHealthRoutes } from './health.js';
 import { registerOpenApiRoute } from './openapi.js';
 import { registerResultsRoutes } from './results.js';
@@ -15,6 +16,7 @@ const registrations = {
   auth: registerAuthRoutes,
   workspace: registerWorkspaceRoutes,
   customers: registerCustomerRoutes,
+  customerImports: registerCustomerImportRoutes,
   today: registerTodayRoutes,
   bookings: registerBookingRoutes,
   results: registerResultsRoutes,

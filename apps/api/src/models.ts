@@ -48,6 +48,8 @@ const CustomerSchema = new mongoose.Schema(
     quotedMinorUnits: Number,
     lifecycle: { type: String, required: true, default: 'enquiry' },
     lastInteractionAt: { type: Date, required: true },
+    serviceInterests: { type: [String], default: [] },
+    internalNotes: { type: String, default: '' },
   },
   base,
 );
@@ -66,6 +68,35 @@ const ConsentSchema = new mongoose.Schema(
   base,
 );
 ConsentSchema.index({ workspaceId: 1, customerId: 1, channel: 1, capturedAt: -1, _id: -1 });
+const InteractionSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    customerId: { type: String, required: true },
+    actorUserId: { type: String, required: true },
+    kind: { type: String, required: true, enum: ['enquiry', 'call', 'message', 'note'] },
+    body: { type: String, required: true },
+    serviceInterest: { type: String, default: null },
+    occurredAt: { type: Date, required: true },
+  },
+  base,
+);
+InteractionSchema.index({ workspaceId: 1, customerId: 1, occurredAt: -1, _id: -1 });
+const ImportBatchSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    createdBy: { type: String, required: true },
+    headers: { type: [String], required: true },
+    mapping: { type: mongoose.Schema.Types.Mixed, required: true },
+    rows: { type: mongoose.Schema.Types.Mixed, required: true },
+    createdAt: { type: Date, required: true },
+    expiresAt: { type: Date, required: true },
+  },
+  { versionKey: false, timestamps: false },
+);
+ImportBatchSchema.index({ workspaceId: 1, createdAt: -1, _id: -1 });
+ImportBatchSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 const BookingSchema = new mongoose.Schema(
   {
     ...stringIdentity,
@@ -155,6 +186,8 @@ export type UserDoc = InferSchemaType<typeof UserSchema> & { _id: string };
 export type WorkspaceDoc = InferSchemaType<typeof WorkspaceSchema> & { _id: string };
 export type CustomerDoc = InferSchemaType<typeof CustomerSchema> & { _id: string };
 export type ConsentDoc = InferSchemaType<typeof ConsentSchema> & { _id: string };
+export type InteractionDoc = InferSchemaType<typeof InteractionSchema> & { _id: string };
+export type ImportBatchDoc = InferSchemaType<typeof ImportBatchSchema> & { _id: string };
 export type BookingDoc = InferSchemaType<typeof BookingSchema> & { _id: string };
 export type SessionDoc = InferSchemaType<typeof SessionSchema> & { _id: mongoose.Types.ObjectId };
 export type OperationalEventDoc = InferSchemaType<typeof EventSchema> & { _id: string };
@@ -167,6 +200,10 @@ export const Customer: Model<CustomerDoc> =
   mongoose.models.Customer ?? mongoose.model('Customer', CustomerSchema);
 export const Consent: Model<ConsentDoc> =
   mongoose.models.Consent ?? mongoose.model('Consent', ConsentSchema);
+export const Interaction: Model<InteractionDoc> =
+  mongoose.models.Interaction ?? mongoose.model('Interaction', InteractionSchema);
+export const ImportBatch: Model<ImportBatchDoc> =
+  mongoose.models.ImportBatch ?? mongoose.model('ImportBatch', ImportBatchSchema);
 export const Booking: Model<BookingDoc> =
   mongoose.models.Booking ?? mongoose.model('Booking', BookingSchema);
 export const Session: Model<SessionDoc> =
@@ -182,6 +219,8 @@ export async function ensureIndexes(): Promise<void> {
     Workspace.syncIndexes(),
     Customer.syncIndexes(),
     Consent.syncIndexes(),
+    Interaction.syncIndexes(),
+    ImportBatch.syncIndexes(),
     Booking.syncIndexes(),
     Session.syncIndexes(),
     OperationalEvent.syncIndexes(),
@@ -200,6 +239,8 @@ export async function verifyIndexes(): Promise<void> {
       'workspaceId_1_lifecycle_1_lastInteractionAt_1__id_1',
     ],
     Consent: ['workspaceId_1', 'workspaceId_1_customerId_1_channel_1_capturedAt_-1__id_-1'],
+    Interaction: ['workspaceId_1', 'workspaceId_1_customerId_1_occurredAt_-1__id_-1'],
+    ImportBatch: ['workspaceId_1', 'workspaceId_1_createdAt_-1__id_-1', 'expiresAt_1'],
     Booking: [
       'workspaceId_1',
       'workspaceId_1_appointmentAt_-1__id_-1',
@@ -224,6 +265,8 @@ export async function verifyIndexes(): Promise<void> {
     Workspace,
     Customer,
     Consent,
+    Interaction,
+    ImportBatch,
     Booking,
     Session,
     OperationalEvent,

@@ -4,6 +4,9 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import {
   BookingResponseSchema,
   CustomerResponseSchema,
+  CustomerDetailResponseSchema,
+  CustomerImportPreviewResponseSchema,
+  CustomerImportCommitResponseSchema,
   RegisterResponseSchema,
   ResultsResponseSchema,
 } from '@growthos/contracts';
@@ -155,5 +158,92 @@ describe('vertical slice with a real MongoDB replica set', () => {
     expect((await two.agent.get('/api/v1/bookings')).body.items).toHaveLength(0);
     expect((await two.agent.get('/api/v1/results')).body.newEnquiries).toBe(0);
     expect(await Booking.countDocuments({ workspaceId: two.workspaceId })).toBe(0);
+  }, 120_000);
+
+  it('reviews duplicates, imports safely, records history, withdraws consent, and isolates customers', async () => {
+    const one = await authenticatedAgent('customers-one@example.com', 'Customers One');
+    const create = await one.agent
+      .post('/api/v1/customers')
+      .set('x-csrf-token', one.csrf)
+      .send({
+        firstName: 'Mina',
+        lastName: 'Lee',
+        phone: '+15550002001',
+        email: 'mina@example.com',
+        source: 'website',
+        service: 'Facial',
+        consentChannel: 'email',
+        consentDecision: 'granted',
+        serviceInterests: ['Facial'],
+        internalNotes: 'Prefers mornings',
+      });
+    expect(create.status).toBe(201);
+    const duplicate = await one.agent.post('/api/v1/customers').set('x-csrf-token', one.csrf).send({
+      firstName: 'Mina Copy',
+      phone: '+1 555 000 2001',
+      source: 'import',
+      service: 'Facial',
+      consentChannel: 'email',
+      consentDecision: 'granted',
+    });
+    expect(duplicate.status).toBe(409);
+    expect(duplicate.body.error.details.candidates[0].id).toBe(create.body.id);
+    const separate = await one.agent.post('/api/v1/customers').set('x-csrf-token', one.csrf).send({
+      firstName: 'Mina Copy',
+      phone: '+1 555 000 2001',
+      source: 'import',
+      service: 'Facial',
+      consentChannel: 'email',
+      consentDecision: 'granted',
+      confirmDuplicate: true,
+    });
+    expect(separate.status).toBe(201);
+    const interaction = await one.agent
+      .post(`/api/v1/customers/${create.body.id}/interactions`)
+      .set('x-csrf-token', one.csrf)
+      .send({ kind: 'note', body: 'Followed up by phone.' });
+    expect(interaction.status).toBe(201);
+    const transition = await one.agent
+      .patch(`/api/v1/customers/${create.body.id}`)
+      .set('x-csrf-token', one.csrf)
+      .send({ lifecycle: 'contacted' });
+    expect(transition.status).toBe(200);
+    const consent = await one.agent
+      .post(`/api/v1/customers/${create.body.id}/consents`)
+      .set('x-csrf-token', one.csrf)
+      .send({ channel: 'email', decision: 'withdrawn' });
+    expect(consent.status).toBe(201);
+    const detail = await one.agent.get(`/api/v1/customers/${create.body.id}/detail`);
+    expect(detail.status).toBe(200);
+    CustomerDetailResponseSchema.parse(detail.body);
+    expect(detail.body.contactEligible).toBe(false);
+    expect(detail.body.interactions[0].body).toContain('Followed up');
+    expect(detail.body.consentHistory.map((item: { decision: string }) => item.decision)).toContain(
+      'withdrawn',
+    );
+    const preview = await one.agent
+      .post('/api/v1/customer-imports/preview')
+      .set('x-csrf-token', one.csrf)
+      .send({
+        csv: 'first name,phone,email,source,service\nMina,+15550002001,mina@example.com,import,Facial\nNora,+15550002009,nora@example.com,import,Massage',
+      });
+    expect(preview.status).toBe(200);
+    CustomerImportPreviewResponseSchema.parse(preview.body);
+    expect(preview.body.rows[0].duplicates.length).toBeGreaterThan(0);
+    const missingResolution = await one.agent
+      .post(`/api/v1/customer-imports/${preview.body.importId}/commit`)
+      .set('x-csrf-token', one.csrf)
+      .send({ resolutions: {} });
+    expect(missingResolution.status).toBe(409);
+    const committed = await one.agent
+      .post(`/api/v1/customer-imports/${preview.body.importId}/commit`)
+      .set('x-csrf-token', one.csrf)
+      .send({ resolutions: { '2': 'create', '3': 'create' } });
+    expect(committed.status).toBe(200);
+    CustomerImportCommitResponseSchema.parse(committed.body);
+    expect(committed.body.created).toHaveLength(2);
+    const second = await authenticatedAgent('customers-two@example.com', 'Customers Two');
+    expect((await second.agent.get(`/api/v1/customers/${create.body.id}`)).status).toBe(404);
+    expect((await second.agent.get('/api/v1/customers')).body.items).toHaveLength(0);
   }, 120_000);
 });

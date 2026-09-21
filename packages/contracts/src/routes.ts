@@ -4,6 +4,15 @@ import {
   CreateBookingRequestSchema,
   CreateCustomerRequestSchema,
   CustomerResponseSchema,
+  CustomerDetailResponseSchema,
+  CustomerImportCommitRequestSchema,
+  CustomerImportCommitResponseSchema,
+  CustomerImportPreviewRequestSchema,
+  CustomerImportPreviewResponseSchema,
+  CreateInteractionRequestSchema,
+  InteractionResponseSchema,
+  RecordConsentRequestSchema,
+  UpdateCustomerRequestSchema,
   ErrorResponseSchema,
   OnboardingRequestSchema,
   RegisterRequestSchema,
@@ -22,6 +31,7 @@ export type RouteDefinition = Readonly<{
     | 'auth'
     | 'workspace'
     | 'customers'
+    | 'customerImports'
     | 'today'
     | 'bookings'
     | 'results'
@@ -138,6 +148,14 @@ export const routeRegistry = [
     responses: { 200: CustomerResponseSchema, 404: ErrorResponseSchema },
   },
   {
+    operationId: 'getCustomerDetail',
+    module: 'customers',
+    method: 'get',
+    path: '/api/v1/customers/{customerId}/detail',
+    auth: 'session',
+    responses: { 200: CustomerDetailResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
     operationId: 'createCustomer',
     module: 'customers',
     method: 'post',
@@ -145,6 +163,59 @@ export const routeRegistry = [
     auth: 'csrf',
     request: CreateCustomerRequestSchema,
     responses: { 201: CustomerResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'updateCustomer',
+    module: 'customers',
+    method: 'patch',
+    path: '/api/v1/customers/{customerId}',
+    auth: 'csrf',
+    request: UpdateCustomerRequestSchema,
+    responses: { 200: CustomerResponseSchema, 400: ErrorResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'recordInteraction',
+    module: 'customers',
+    method: 'post',
+    path: '/api/v1/customers/{customerId}/interactions',
+    auth: 'csrf',
+    request: CreateInteractionRequestSchema,
+    responses: { 201: InteractionResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'recordConsent',
+    module: 'customers',
+    method: 'post',
+    path: '/api/v1/customers/{customerId}/consents',
+    auth: 'csrf',
+    request: RecordConsentRequestSchema,
+    responses: {
+      201: z.object({
+        id: z.string(),
+        channel: z.string(),
+        decision: z.string(),
+        capturedAt: z.string(),
+      }),
+      404: ErrorResponseSchema,
+    },
+  },
+  {
+    operationId: 'previewCustomerImport',
+    module: 'customerImports',
+    method: 'post',
+    path: '/api/v1/customer-imports/preview',
+    auth: 'csrf',
+    request: CustomerImportPreviewRequestSchema,
+    responses: { 200: CustomerImportPreviewResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'commitCustomerImport',
+    module: 'customerImports',
+    method: 'post',
+    path: '/api/v1/customer-imports/{importId}/commit',
+    auth: 'csrf',
+    request: CustomerImportCommitRequestSchema,
+    responses: { 200: CustomerImportCommitResponseSchema, 400: ErrorResponseSchema },
   },
   {
     operationId: 'getToday',
