@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 --port 3000",
-    "build": "next build && prettier --write next-env.d.ts",
+    "build": "next build",
     "check:rewrite": "node scripts/check-rewrite.mjs",
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "tsc -p tsconfig.json --noEmit",
