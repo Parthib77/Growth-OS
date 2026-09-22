@@ -20,6 +20,7 @@ import { commandIdFor, formValues, localDateTimeToUtc, request } from './api-cli
 import { Field, StatusLine, type Status } from './ui';
 import { TodayDialogs } from './dialogs';
 import { CustomersView } from './customers-view';
+import { CampaignsView } from './campaigns-view';
 
 type Customer = {
   id: string;
@@ -48,6 +49,10 @@ type Results = {
   newEnquiries: number;
   bookingsRecorded: number;
   recordedBookingValue: { currency: string; minorUnits: number };
+  followUpsPrepared: number;
+  followUpsSent: number;
+  campaignReplies: number;
+  campaignConversions: number;
 };
 type Booking = {
   id: string;
@@ -61,7 +66,9 @@ type Booking = {
 export default function Home() {
   const [csrf, setCsrf] = useState('');
   const [authMode, setAuthMode] = useState<'register' | 'sign-in'>('register');
-  const [screen, setScreen] = useState<'auth' | 'onboarding' | 'today' | 'customers'>('auth');
+  const [screen, setScreen] = useState<'auth' | 'onboarding' | 'today' | 'customers' | 'campaigns'>(
+    'auth',
+  );
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [today, setToday] = useState<Customer[]>([]);
@@ -330,6 +337,15 @@ export default function Home() {
         onBack={() => setScreen('today')}
       />
     );
+  if (screen === 'campaigns')
+    return (
+      <CampaignsView
+        csrf={csrf}
+        status={status}
+        setStatus={setStatus}
+        onBack={() => setScreen('today')}
+      />
+    );
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -340,6 +356,9 @@ export default function Home() {
         <div>
           <button className="button secondary" onClick={() => setScreen('customers')}>
             Customers
+          </button>{' '}
+          <button className="button secondary" onClick={() => setScreen('campaigns')}>
+            Campaigns
           </button>{' '}
           <button className="button quiet" onClick={signOut}>
             Sign out
@@ -369,6 +388,24 @@ export default function Home() {
           <div>
             <h2 id="results-title">Results</h2>
             <p className="muted">Stored bookings and recorded value from the current workspace.</p>
+          </div>
+        </div>
+        <div className="summary-row campaign-results" aria-label="Campaign results">
+          <div>
+            <span>Follow-ups prepared</span>
+            <strong>{results?.followUpsPrepared ?? 0}</strong>
+          </div>
+          <div>
+            <span>Marked sent</span>
+            <strong>{results?.followUpsSent ?? 0}</strong>
+          </div>
+          <div>
+            <span>Replies recorded</span>
+            <strong>{results?.campaignReplies ?? 0}</strong>
+          </div>
+          <div>
+            <span>Attributed bookings</span>
+            <strong>{results?.campaignConversions ?? 0}</strong>
           </div>
         </div>
         {bookings.length === 0 ? (

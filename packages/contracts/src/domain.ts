@@ -21,6 +21,28 @@ export type CurrencyCode = Brand<string, 'CurrencyCode'>;
 export type MinorUnits = Brand<number, 'MinorUnits'>;
 export type IdempotencyKey = Brand<string, 'IdempotencyKey'>;
 
+export const campaignStatuses = ['draft', 'ready', 'active', 'completed', 'cancelled'] as const;
+export type CampaignStatus = (typeof campaignStatuses)[number];
+export const campaignOutcomes = ['sent', 'skipped', 'replied', 'booked'] as const;
+export type CampaignOutcome = (typeof campaignOutcomes)[number];
+export const campaignTemplateVariables = ['first_name', 'service', 'business_name'] as const;
+export type CampaignTemplateVariable = (typeof campaignTemplateVariables)[number];
+
+const campaignTransitionTable: Record<CampaignStatus, readonly CampaignStatus[]> = {
+  draft: ['ready', 'cancelled'],
+  ready: ['draft', 'active', 'cancelled'],
+  active: ['completed', 'cancelled'],
+  completed: [],
+  cancelled: [],
+};
+export function canTransitionCampaign(from: CampaignStatus, to: CampaignStatus): boolean {
+  return campaignTransitionTable[from].includes(to);
+}
+export function assertCampaignTransition(from: CampaignStatus, to: CampaignStatus): void {
+  if (!canTransitionCampaign(from, to))
+    throw new DomainError('INVALID_TRANSITION', `Cannot move campaign from ${from} to ${to}`);
+}
+
 export const subjectKinds = [
   'customer',
   'campaign',
@@ -236,6 +258,37 @@ export type OperationalEventPayload =
       customerId: CustomerId;
       importBatchId: ImportBatchId;
     }
+  | { type: 'campaign.created'; campaignId: CampaignId; version: number }
+  | {
+      type: 'campaign.updated';
+      campaignId: CampaignId;
+      version: number;
+      changedFields: readonly string[];
+    }
+  | {
+      type: 'campaign.status_changed';
+      campaignId: CampaignId;
+      from: CampaignStatus;
+      to: CampaignStatus;
+      version: number;
+    }
+  | { type: 'campaign.recipient_removed'; campaignId: CampaignId; recipientId: CampaignRecipientId }
+  | {
+      type: 'campaign.outcome_recorded';
+      campaignId: CampaignId;
+      recipientId: CampaignRecipientId;
+      outcome: CampaignOutcome;
+      bookingId?: BookingId;
+    }
+  | { type: 'campaign.message_prepared'; campaignId: CampaignId; recipientId: CampaignRecipientId }
+  | { type: 'campaign.message_sent'; campaignId: CampaignId; recipientId: CampaignRecipientId }
+  | { type: 'campaign.reply_recorded'; campaignId: CampaignId; recipientId: CampaignRecipientId }
+  | {
+      type: 'campaign.booking_attributed';
+      campaignId: CampaignId;
+      recipientId: CampaignRecipientId;
+      bookingId: BookingId;
+    }
   | {
       type: 'booking.recorded';
       bookingId: BookingId;
@@ -322,6 +375,57 @@ export const operationalEventPayloadSchemas = {
     customerId: z.string(),
     importBatchId: z.string(),
   }),
+  'campaign.created': z.object({
+    type: z.literal('campaign.created'),
+    campaignId: z.string(),
+    version: z.number().int(),
+  }),
+  'campaign.updated': z.object({
+    type: z.literal('campaign.updated'),
+    campaignId: z.string(),
+    version: z.number().int(),
+    changedFields: z.array(z.string()),
+  }),
+  'campaign.status_changed': z.object({
+    type: z.literal('campaign.status_changed'),
+    campaignId: z.string(),
+    from: z.enum(campaignStatuses),
+    to: z.enum(campaignStatuses),
+    version: z.number().int(),
+  }),
+  'campaign.recipient_removed': z.object({
+    type: z.literal('campaign.recipient_removed'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+  }),
+  'campaign.outcome_recorded': z.object({
+    type: z.literal('campaign.outcome_recorded'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+    outcome: z.enum(campaignOutcomes),
+    bookingId: z.string().optional(),
+  }),
+  'campaign.message_prepared': z.object({
+    type: z.literal('campaign.message_prepared'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+  }),
+  'campaign.message_sent': z.object({
+    type: z.literal('campaign.message_sent'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+  }),
+  'campaign.reply_recorded': z.object({
+    type: z.literal('campaign.reply_recorded'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+  }),
+  'campaign.booking_attributed': z.object({
+    type: z.literal('campaign.booking_attributed'),
+    campaignId: z.string(),
+    recipientId: z.string(),
+    bookingId: z.string(),
+  }),
   'booking.recorded': z.object({
     type: z.literal('booking.recorded'),
     bookingId: z.string(),
@@ -355,6 +459,15 @@ export const eventRedactors: {
   'customer.lifecycle_changed': (payload) => ({ ...payload }),
   'interaction.recorded': (payload) => ({ ...payload }),
   'customer.imported': (payload) => ({ ...payload }),
+  'campaign.created': (payload) => ({ ...payload }),
+  'campaign.updated': (payload) => ({ ...payload }),
+  'campaign.status_changed': (payload) => ({ ...payload }),
+  'campaign.recipient_removed': (payload) => ({ ...payload }),
+  'campaign.outcome_recorded': (payload) => ({ ...payload }),
+  'campaign.message_prepared': (payload) => ({ ...payload }),
+  'campaign.message_sent': (payload) => ({ ...payload }),
+  'campaign.reply_recorded': (payload) => ({ ...payload }),
+  'campaign.booking_attributed': (payload) => ({ ...payload }),
   'booking.recorded': (payload) => ({ ...payload }),
   'account.registered': (payload) => ({ ...payload }),
   'workspace.settings_changed': (payload) => ({ ...payload }),
@@ -374,6 +487,24 @@ export function redactEventPayload(payload: OperationalEventPayload): Record<str
       return eventRedactors['interaction.recorded'](payload);
     case 'customer.imported':
       return eventRedactors['customer.imported'](payload);
+    case 'campaign.created':
+      return eventRedactors['campaign.created'](payload);
+    case 'campaign.updated':
+      return eventRedactors['campaign.updated'](payload);
+    case 'campaign.status_changed':
+      return eventRedactors['campaign.status_changed'](payload);
+    case 'campaign.recipient_removed':
+      return eventRedactors['campaign.recipient_removed'](payload);
+    case 'campaign.outcome_recorded':
+      return eventRedactors['campaign.outcome_recorded'](payload);
+    case 'campaign.message_prepared':
+      return eventRedactors['campaign.message_prepared'](payload);
+    case 'campaign.message_sent':
+      return eventRedactors['campaign.message_sent'](payload);
+    case 'campaign.reply_recorded':
+      return eventRedactors['campaign.reply_recorded'](payload);
+    case 'campaign.booking_attributed':
+      return eventRedactors['campaign.booking_attributed'](payload);
     case 'booking.recorded':
       return eventRedactors['booking.recorded'](payload);
     case 'account.registered':

@@ -419,6 +419,113 @@ dt {
 .small {
   font-size: 0.8rem;
 }
+.campaign-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.8fr) minmax(20rem, 1.2fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.campaign-composer textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  padding: 0.75rem;
+  font: inherit;
+  resize: vertical;
+}
+.campaign-items,
+.recipient-list {
+  display: grid;
+  gap: 0.6rem;
+}
+.campaign-item {
+  display: grid;
+  gap: 0.25rem;
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 0.8rem;
+  border-radius: 0.4rem;
+  color: inherit;
+  cursor: pointer;
+}
+.campaign-item.selected,
+.campaign-item:hover {
+  border-color: var(--ink-2);
+  background: var(--mineral);
+}
+.campaign-item span,
+.recipient-card span,
+.recipient-card small {
+  color: var(--ink-2);
+  font-size: 0.85rem;
+}
+.campaign-edit {
+  border-top: 1px solid var(--line);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.recipient-panel {
+  margin-bottom: 1rem;
+}
+.recipient-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--line);
+  padding: 1rem 0;
+}
+.recipient-card > div:first-child {
+  display: grid;
+  gap: 0.25rem;
+}
+.recipient-card p {
+  margin: 0.25rem 0 0;
+  color: var(--ink);
+}
+.campaign-audit {
+  border-top: 1px solid var(--line);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.activity-list {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.activity-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--ink-2);
+}
+.activity-list strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+@media (max-width: 760px) {
+  .campaign-layout {
+    grid-template-columns: 1fr;
+  }
+  .recipient-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .recipient-card .button-row,
+  .recipient-card .button {
+    width: 100%;
+  }
+}
 @keyframes enter {
   from {
     transform: translateX(12px);

@@ -23,13 +23,29 @@ export function registerResultsRoutes(router: Router, config: AppConfig): void {
         workspaceId: query.workspaceId,
         occurredAt: { $gte: bounds.from, $lt: bounds.to },
       };
-      const [newEnquiries, bookings] = await Promise.all([
+      const [
+        newEnquiries,
+        bookings,
+        followUpsPrepared,
+        followUpsSent,
+        campaignReplies,
+        campaignConversions,
+      ] = await Promise.all([
         OperationalEvent.countDocuments({ ...eventFilter, type: 'enquiry.created' }),
         Booking.find({
           workspaceId: query.workspaceId,
           createdAt: { $gte: bounds.from, $lt: bounds.to },
           state: { $in: ['tentative', 'confirmed', 'completed', 'no_show'] },
         }).lean(),
+        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.message_prepared' }),
+        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.message_sent' }),
+        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.reply_recorded' }),
+        Booking.countDocuments({
+          workspaceId: query.workspaceId,
+          createdAt: { $gte: bounds.from, $lt: bounds.to },
+          sourceCampaignRecipientId: { $exists: true, $ne: null },
+          state: { $in: ['tentative', 'confirmed', 'completed', 'no_show'] },
+        }),
       ]);
       res.json({
         range: {
@@ -49,6 +65,10 @@ export function registerResultsRoutes(router: Router, config: AppConfig): void {
           currency: workspace.currency,
           minorUnits: bookings.reduce((sum, item) => sum + item.agreedMinorUnits, 0),
         },
+        followUpsPrepared,
+        followUpsSent,
+        campaignReplies,
+        campaignConversions,
       });
     } catch (error: unknown) {
       next(error);

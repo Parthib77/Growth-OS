@@ -10,8 +10,10 @@ test('real app exposes an accessible registration surface', async ({ page }) => 
   ).toBe(0);
 });
 
-test('full workflow stores the booking and recorded value in Results', async ({ page }) => {
-  const email = `browser-${Date.now()}@example.com`;
+test('full workflow stores the booking and recorded value in Results', async ({
+  page,
+}, testInfo) => {
+  const email = `browser-${testInfo.project.name}-${Date.now()}@example.com`;
   await page.goto('/');
   await page.getByLabel('Business name').fill('Browser Salon');
   await page.getByLabel('Email').fill(email);
@@ -48,8 +50,8 @@ test('full workflow stores the booking and recorded value in Results', async ({ 
 
 test('customer register supports add, search, detail history, and consent withdrawal', async ({
   page,
-}) => {
-  const email = `customers-${Date.now()}@example.com`;
+}, testInfo) => {
+  const email = `customers-${testInfo.project.name}-${Date.now()}@example.com`;
   await page.goto('/');
   await page.getByLabel('Business name').fill('Customer Salon');
   await page.getByLabel('Email').fill(email);
@@ -76,4 +78,37 @@ test('customer register supports add, search, detail history, and consent withdr
   await expect(page.getByText('Prefers mornings')).toBeVisible();
   await page.getByRole('button', { name: 'Withdraw consent' }).click();
   await expect(page.getByText('Contact eligibility: suppressed', { exact: true })).toBeVisible();
+});
+
+test('campaign workflow reviews recipients, opens a WhatsApp link, and records sent', async ({
+  page,
+}, testInfo) => {
+  const email = `campaign-${testInfo.project.name}-${Date.now()}@example.com`;
+  await page.goto('/');
+  await page.getByLabel('Business name').fill('Campaign Salon');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill('correct horse battery staple');
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await page.getByLabel('Timezone').fill('America/Los_Angeles');
+  await page.getByRole('button', { name: 'Save and open Today' }).click();
+  await page.getByRole('button', { name: 'Add enquiry' }).first().click();
+  await page.getByLabel('First name').fill('Ari');
+  await page.getByRole('textbox', { name: 'Phone', exact: true }).fill('+15550003001');
+  await page.getByLabel('Service').fill('Massage');
+  await page.getByRole('button', { name: 'Save enquiry' }).click();
+  await page.getByRole('button', { name: 'Campaigns' }).click();
+  await expect(page.getByRole('heading', { name: /permission-aware follow-up/i })).toBeVisible();
+  await page.getByLabel('Campaign name').fill('Spring follow-up');
+  await page.getByRole('button', { name: 'Save draft' }).click();
+  await page.getByRole('button', { name: 'Review recipients' }).click();
+  await expect(page.getByText(/eligible recipient\(s\) prepared/i)).toBeVisible();
+  await page.getByRole('button', { name: 'Mark ready' }).click();
+  await page.getByRole('button', { name: 'Activate' }).click();
+  const popupPromise = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'Prepare WhatsApp' }).click();
+  const popup = await popupPromise;
+  await expect.poll(() => popup.url()).toMatch(/(?:wa\.me|whatsapp\.com)/);
+  await page.getByRole('button', { name: 'Mark sent' }).click();
+  await expect(page.getByText(/outcome recorded: sent/i)).toBeVisible();
 });

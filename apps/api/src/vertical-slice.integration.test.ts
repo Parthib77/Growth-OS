@@ -7,11 +7,16 @@ import {
   CustomerDetailResponseSchema,
   CustomerImportPreviewResponseSchema,
   CustomerImportCommitResponseSchema,
+  CampaignListResponseSchema,
+  CampaignAuditResponseSchema,
+  CampaignRecipientListResponseSchema,
+  CampaignResponseSchema,
+  CampaignOutcomeResponseSchema,
   RegisterResponseSchema,
   ResultsResponseSchema,
 } from '@growthos/contracts';
 import { createApp, connectDatabase, disconnectDatabase } from './app.js';
-import { Booking, CommandReceipt, OperationalEvent } from './models.js';
+import { Booking, CampaignRevision, CommandReceipt, OperationalEvent } from './models.js';
 
 const config = {
   NODE_ENV: 'test' as const,
@@ -254,5 +259,158 @@ describe('vertical slice with a real MongoDB replica set', () => {
     const second = await authenticatedAgent('customers-two@example.com', 'Customers Two');
     expect((await second.agent.get(`/api/v1/customers/${create.body.id}`)).status).toBe(404);
     expect((await second.agent.get('/api/v1/customers')).body.items).toHaveLength(0);
+  }, 120_000);
+
+  it('reviews, versions, activates, and records an auditable campaign outcome', async () => {
+    const one = await authenticatedAgent('campaign-one@example.com', 'Campaign One');
+    const customer = await one.agent.post('/api/v1/customers').set('x-csrf-token', one.csrf).send({
+      firstName: 'Ari',
+      lastName: 'Stone',
+      phone: '+15550003001',
+      email: 'ari@example.com',
+      source: 'website',
+      service: 'Massage',
+      consentChannel: 'whatsapp',
+      consentDecision: 'granted',
+    });
+    expect(customer.status).toBe(201);
+    const created = await one.agent
+      .post('/api/v1/campaigns')
+      .set('x-csrf-token', one.csrf)
+      .send({
+        name: 'Spring follow-up',
+        channel: 'whatsapp',
+        template: 'Hi {first_name}, your {service} at {business_name} is ready.',
+        audience: { consentChannel: 'whatsapp' },
+      });
+    expect(created.status).toBe(201);
+    CampaignResponseSchema.parse(created.body);
+    const missingMatch = await one.agent
+      .patch(`/api/v1/campaigns/${created.body.id}`)
+      .set('x-csrf-token', one.csrf)
+      .send({ version: 1, name: 'Changed' });
+    expect(missingMatch.status).toBe(412);
+    const review = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/recipients/refresh`)
+      .set('x-csrf-token', one.csrf)
+      .set('If-Match', created.headers.etag)
+      .send({ version: 1 });
+    expect(review.status).toBe(200);
+    CampaignRecipientListResponseSchema.parse(review.body);
+    expect(review.body.items).toHaveLength(1);
+    const detailAfterReview = await one.agent.get(`/api/v1/campaigns/${created.body.id}`);
+    expect(detailAfterReview.headers.etag).toMatch(/^"[a-f0-9-]+:2"$/);
+    const ready = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/transition`)
+      .set('x-csrf-token', one.csrf)
+      .set('If-Match', detailAfterReview.headers.etag)
+      .send({ version: 2, to: 'ready' });
+    expect(ready.status).toBe(200);
+    const activeDetail = await one.agent.get(`/api/v1/campaigns/${created.body.id}`);
+    const withdrawnBeforeActivation = await one.agent
+      .post(`/api/v1/customers/${customer.body.id}/consents`)
+      .set('x-csrf-token', one.csrf)
+      .send({ channel: 'whatsapp', decision: 'withdrawn' });
+    expect(withdrawnBeforeActivation.status).toBe(201);
+    const blockedActivation = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/transition`)
+      .set('x-csrf-token', one.csrf)
+      .set('If-Match', activeDetail.headers.etag)
+      .send({ version: 3, to: 'active' });
+    expect(blockedActivation.status).toBe(409);
+    const grantedAgain = await one.agent
+      .post(`/api/v1/customers/${customer.body.id}/consents`)
+      .set('x-csrf-token', one.csrf)
+      .send({ channel: 'whatsapp', decision: 'granted' });
+    expect(grantedAgain.status).toBe(201);
+    const active = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/transition`)
+      .set('x-csrf-token', one.csrf)
+      .set('If-Match', activeDetail.headers.etag)
+      .send({ version: 3, to: 'active' });
+    expect(active.status).toBe(200);
+    const recipients = await one.agent.get(
+      `/api/v1/campaigns/${created.body.id}/recipients?limit=10`,
+    );
+    CampaignRecipientListResponseSchema.parse(recipients.body);
+    const recipient = recipients.body.items[0];
+    const withdrawnAfterActivation = await one.agent
+      .post(`/api/v1/customers/${customer.body.id}/consents`)
+      .set('x-csrf-token', one.csrf)
+      .send({ channel: 'whatsapp', decision: 'withdrawn' });
+    expect(withdrawnAfterActivation.status).toBe(201);
+    expect(
+      (
+        await one.agent.get(
+          `/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/whatsapp-link`,
+        )
+      ).status,
+    ).toBe(409);
+    const blockedSent = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/outcome`)
+      .set('x-csrf-token', one.csrf)
+      .set('idempotency-key', 'blocked-outcome-1')
+      .send({ outcome: 'sent' });
+    expect(blockedSent.status).toBe(409);
+    await one.agent
+      .post(`/api/v1/customers/${customer.body.id}/consents`)
+      .set('x-csrf-token', one.csrf)
+      .send({ channel: 'whatsapp', decision: 'granted' })
+      .expect(201);
+    const link = await one.agent.get(
+      `/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/whatsapp-link`,
+    );
+    expect(link.status).toBe(200);
+    expect(link.body.href).toContain('wa.me/15550003001');
+    const [sent, concurrentRetry] = await Promise.all([
+      one.agent
+        .post(`/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/outcome`)
+        .set('x-csrf-token', one.csrf)
+        .set('idempotency-key', 'campaign-outcome-1')
+        .send({ outcome: 'sent' }),
+      one.agent
+        .post(`/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/outcome`)
+        .set('x-csrf-token', one.csrf)
+        .set('idempotency-key', 'campaign-outcome-1')
+        .send({ outcome: 'sent' }),
+    ]);
+    expect([sent.status, concurrentRetry.status]).toEqual([200, 200]);
+    CampaignOutcomeResponseSchema.parse(sent.body);
+    CampaignOutcomeResponseSchema.parse(concurrentRetry.body);
+    expect([sent.body.idempotent, concurrentRetry.body.idempotent].sort()).toEqual([false, true]);
+    const sentRetry = await one.agent
+      .post(`/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/outcome`)
+      .set('x-csrf-token', one.csrf)
+      .set('idempotency-key', 'campaign-outcome-1')
+      .send({ outcome: 'sent' });
+    expect(sentRetry.status).toBe(200);
+    expect(sentRetry.body.idempotent).toBe(true);
+    const audit = await one.agent.get(`/api/v1/campaigns/${created.body.id}/audit`);
+    expect(audit.status).toBe(200);
+    CampaignAuditResponseSchema.parse(audit.body);
+    expect(
+      audit.body.items.some((item: { type: string }) => item.type === 'campaign.message_sent'),
+    ).toBe(true);
+    const revisions = await CampaignRevision.find({
+      workspaceId: one.workspaceId,
+      campaignId: created.body.id,
+    })
+      .sort({ version: 1 })
+      .lean();
+    expect(revisions.map((revision) => revision.version)).toEqual([1, 2, 3, 4]);
+    expect(revisions[0]?.template).toBe(created.body.template);
+    const second = await authenticatedAgent('campaign-two@example.com', 'Campaign Two');
+    expect((await second.agent.get(`/api/v1/campaigns/${created.body.id}`)).status).toBe(404);
+    expect((await second.agent.get('/api/v1/campaigns')).body.items).toHaveLength(0);
+    expect(
+      (
+        await second.agent
+          .post(`/api/v1/campaigns/${created.body.id}/recipients/${recipient.id}/outcome`)
+          .set('x-csrf-token', second.csrf)
+          .set('idempotency-key', 'cross-workspace-outcome')
+          .send({ outcome: 'sent' })
+      ).status,
+    ).toBe(404);
+    CampaignListResponseSchema.parse((await one.agent.get('/api/v1/campaigns')).body);
   }, 120_000);
 });

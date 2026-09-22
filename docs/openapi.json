@@ -1898,6 +1898,1658 @@
         }
       }
     },
+    "/api/v1/campaigns": {
+      "get": {
+        "operationId": "listCampaigns",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "name": { "type": "string" },
+                          "status": {
+                            "type": "string",
+                            "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "channel": { "type": "string", "enum": ["whatsapp"] },
+                          "template": { "type": "string" },
+                          "audience": {
+                            "type": "object",
+                            "properties": {
+                              "consentChannel": {
+                                "default": "whatsapp",
+                                "type": "string",
+                                "enum": ["whatsapp"]
+                              },
+                              "lifecycle": {
+                                "type": "string",
+                                "enum": [
+                                  "enquiry",
+                                  "contacted",
+                                  "replied",
+                                  "booked",
+                                  "completed",
+                                  "lost"
+                                ]
+                              },
+                              "service": { "type": "string", "maxLength": 120 },
+                              "source": { "type": "string", "maxLength": 80 }
+                            },
+                            "required": ["consentChannel"],
+                            "additionalProperties": false
+                          },
+                          "recipientCount": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "createdAt": { "type": "string" },
+                          "updatedAt": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "status",
+                          "version",
+                          "channel",
+                          "template",
+                          "audience",
+                          "recipientCount",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": { "nullable": true, "type": "string" }
+                  },
+                  "required": ["items", "nextCursor"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCampaign",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "status": {
+                      "type": "string",
+                      "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "channel": { "type": "string", "enum": ["whatsapp"] },
+                    "template": { "type": "string" },
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "consentChannel": {
+                          "default": "whatsapp",
+                          "type": "string",
+                          "enum": ["whatsapp"]
+                        },
+                        "lifecycle": {
+                          "type": "string",
+                          "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                        },
+                        "service": { "type": "string", "maxLength": 120 },
+                        "source": { "type": "string", "maxLength": 80 }
+                      },
+                      "required": ["consentChannel"],
+                      "additionalProperties": false
+                    },
+                    "recipientCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "version",
+                    "channel",
+                    "template",
+                    "audience",
+                    "recipientCount",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "channel": { "type": "string", "enum": ["whatsapp"] },
+                  "template": { "type": "string", "minLength": 1, "maxLength": 2000 },
+                  "audience": {
+                    "type": "object",
+                    "properties": {
+                      "consentChannel": {
+                        "default": "whatsapp",
+                        "type": "string",
+                        "enum": ["whatsapp"]
+                      },
+                      "lifecycle": {
+                        "type": "string",
+                        "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                      },
+                      "service": { "type": "string", "maxLength": 120 },
+                      "source": { "type": "string", "maxLength": 80 }
+                    },
+                    "required": ["consentChannel"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["name", "channel", "template", "audience"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}": {
+      "get": {
+        "operationId": "getCampaign",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "status": {
+                      "type": "string",
+                      "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "channel": { "type": "string", "enum": ["whatsapp"] },
+                    "template": { "type": "string" },
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "consentChannel": {
+                          "default": "whatsapp",
+                          "type": "string",
+                          "enum": ["whatsapp"]
+                        },
+                        "lifecycle": {
+                          "type": "string",
+                          "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                        },
+                        "service": { "type": "string", "maxLength": 120 },
+                        "source": { "type": "string", "maxLength": 80 }
+                      },
+                      "required": ["consentChannel"],
+                      "additionalProperties": false
+                    },
+                    "recipientCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "version",
+                    "channel",
+                    "template",
+                    "audience",
+                    "recipientCount",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCampaign",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "status": {
+                      "type": "string",
+                      "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "channel": { "type": "string", "enum": ["whatsapp"] },
+                    "template": { "type": "string" },
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "consentChannel": {
+                          "default": "whatsapp",
+                          "type": "string",
+                          "enum": ["whatsapp"]
+                        },
+                        "lifecycle": {
+                          "type": "string",
+                          "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                        },
+                        "service": { "type": "string", "maxLength": 120 },
+                        "source": { "type": "string", "maxLength": 80 }
+                      },
+                      "required": ["consentChannel"],
+                      "additionalProperties": false
+                    },
+                    "recipientCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "version",
+                    "channel",
+                    "template",
+                    "audience",
+                    "recipientCount",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  },
+                  "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "template": { "type": "string", "minLength": 1, "maxLength": 2000 },
+                  "audience": {
+                    "type": "object",
+                    "properties": {
+                      "consentChannel": {
+                        "default": "whatsapp",
+                        "type": "string",
+                        "enum": ["whatsapp"]
+                      },
+                      "lifecycle": {
+                        "type": "string",
+                        "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                      },
+                      "service": { "type": "string", "maxLength": 120 },
+                      "source": { "type": "string", "maxLength": 80 }
+                    },
+                    "required": ["consentChannel"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["version"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/audit": {
+      "get": {
+        "operationId": "getCampaignAudit",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "type": { "type": "string" },
+                          "occurredAt": { "type": "string" },
+                          "payload": { "type": "object", "additionalProperties": {} }
+                        },
+                        "required": ["id", "type", "occurredAt", "payload"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": ["items"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/transition": {
+      "post": {
+        "operationId": "transitionCampaign",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "status": {
+                      "type": "string",
+                      "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "channel": { "type": "string", "enum": ["whatsapp"] },
+                    "template": { "type": "string" },
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "consentChannel": {
+                          "default": "whatsapp",
+                          "type": "string",
+                          "enum": ["whatsapp"]
+                        },
+                        "lifecycle": {
+                          "type": "string",
+                          "enum": ["enquiry", "contacted", "replied", "booked", "completed", "lost"]
+                        },
+                        "service": { "type": "string", "maxLength": 120 },
+                        "source": { "type": "string", "maxLength": 80 }
+                      },
+                      "required": ["consentChannel"],
+                      "additionalProperties": false
+                    },
+                    "recipientCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "version",
+                    "channel",
+                    "template",
+                    "audience",
+                    "recipientCount",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  },
+                  "to": {
+                    "type": "string",
+                    "enum": ["draft", "ready", "active", "completed", "cancelled"]
+                  }
+                },
+                "required": ["version", "to"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients/refresh": {
+      "post": {
+        "operationId": "refreshCampaignRecipients",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "campaignId": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "nullable": true, "type": "string" },
+                          "eligibility": {
+                            "type": "string",
+                            "enum": [
+                              "eligible",
+                              "removed",
+                              "withdrawn",
+                              "booked",
+                              "invalid_contact",
+                              "no_consent",
+                              "cancelled"
+                            ]
+                          },
+                          "reason": { "nullable": true, "type": "string" },
+                          "consentRecordId": { "nullable": true, "type": "string" },
+                          "eligibilityCheckedAt": { "type": "string" },
+                          "removed": { "type": "boolean" },
+                          "outcome": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": ["sent", "skipped", "replied", "booked"]
+                          },
+                          "personalizedPreview": { "type": "string" },
+                          "whatsappHref": { "nullable": true, "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "campaignId",
+                          "customerId",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "eligibility",
+                          "reason",
+                          "consentRecordId",
+                          "eligibilityCheckedAt",
+                          "removed",
+                          "outcome",
+                          "personalizedPreview",
+                          "whatsappHref"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": { "nullable": true, "type": "string" }
+                  },
+                  "required": ["items", "nextCursor"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": ["version"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients": {
+      "get": {
+        "operationId": "listCampaignRecipients",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "campaignId": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "nullable": true, "type": "string" },
+                          "eligibility": {
+                            "type": "string",
+                            "enum": [
+                              "eligible",
+                              "removed",
+                              "withdrawn",
+                              "booked",
+                              "invalid_contact",
+                              "no_consent",
+                              "cancelled"
+                            ]
+                          },
+                          "reason": { "nullable": true, "type": "string" },
+                          "consentRecordId": { "nullable": true, "type": "string" },
+                          "eligibilityCheckedAt": { "type": "string" },
+                          "removed": { "type": "boolean" },
+                          "outcome": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": ["sent", "skipped", "replied", "booked"]
+                          },
+                          "personalizedPreview": { "type": "string" },
+                          "whatsappHref": { "nullable": true, "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "campaignId",
+                          "customerId",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "eligibility",
+                          "reason",
+                          "consentRecordId",
+                          "eligibilityCheckedAt",
+                          "removed",
+                          "outcome",
+                          "personalizedPreview",
+                          "whatsappHref"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": { "nullable": true, "type": "string" }
+                  },
+                  "required": ["items", "nextCursor"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients/{recipientId}/remove": {
+      "post": {
+        "operationId": "removeCampaignRecipient",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "campaignId": { "type": "string" },
+                    "customerId": { "type": "string" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "phone": { "nullable": true, "type": "string" },
+                    "eligibility": {
+                      "type": "string",
+                      "enum": [
+                        "eligible",
+                        "removed",
+                        "withdrawn",
+                        "booked",
+                        "invalid_contact",
+                        "no_consent",
+                        "cancelled"
+                      ]
+                    },
+                    "reason": { "nullable": true, "type": "string" },
+                    "consentRecordId": { "nullable": true, "type": "string" },
+                    "eligibilityCheckedAt": { "type": "string" },
+                    "removed": { "type": "boolean" },
+                    "outcome": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": ["sent", "skipped", "replied", "booked"]
+                    },
+                    "personalizedPreview": { "type": "string" },
+                    "whatsappHref": { "nullable": true, "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "campaignId",
+                    "customerId",
+                    "firstName",
+                    "lastName",
+                    "phone",
+                    "eligibility",
+                    "reason",
+                    "consentRecordId",
+                    "eligibilityCheckedAt",
+                    "removed",
+                    "outcome",
+                    "personalizedPreview",
+                    "whatsappHref"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "campaignVersion": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": ["campaignVersion"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients/{recipientId}/outcome": {
+      "post": {
+        "operationId": "recordCampaignOutcome",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "recipient": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "campaignId": { "type": "string" },
+                        "customerId": { "type": "string" },
+                        "firstName": { "type": "string" },
+                        "lastName": { "type": "string" },
+                        "phone": { "nullable": true, "type": "string" },
+                        "eligibility": {
+                          "type": "string",
+                          "enum": [
+                            "eligible",
+                            "removed",
+                            "withdrawn",
+                            "booked",
+                            "invalid_contact",
+                            "no_consent",
+                            "cancelled"
+                          ]
+                        },
+                        "reason": { "nullable": true, "type": "string" },
+                        "consentRecordId": { "nullable": true, "type": "string" },
+                        "eligibilityCheckedAt": { "type": "string" },
+                        "removed": { "type": "boolean" },
+                        "outcome": {
+                          "nullable": true,
+                          "type": "string",
+                          "enum": ["sent", "skipped", "replied", "booked"]
+                        },
+                        "personalizedPreview": { "type": "string" },
+                        "whatsappHref": { "nullable": true, "type": "string" }
+                      },
+                      "required": [
+                        "id",
+                        "campaignId",
+                        "customerId",
+                        "firstName",
+                        "lastName",
+                        "phone",
+                        "eligibility",
+                        "reason",
+                        "consentRecordId",
+                        "eligibilityCheckedAt",
+                        "removed",
+                        "outcome",
+                        "personalizedPreview",
+                        "whatsappHref"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "idempotent": { "type": "boolean" }
+                  },
+                  "required": ["recipient", "idempotent"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": { "outcome": { "type": "string", "enum": ["sent"] } },
+                    "required": ["outcome"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "outcome": { "type": "string", "enum": ["skipped"] } },
+                    "required": ["outcome"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "outcome": { "type": "string", "enum": ["replied"] } },
+                    "required": ["outcome"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "outcome": { "type": "string", "enum": ["booked"] },
+                      "bookingId": { "type": "string", "pattern": "^[a-f0-9-]{8,64}$" }
+                    },
+                    "required": ["outcome", "bookingId"],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients/{recipientId}/whatsapp-link": {
+      "get": {
+        "operationId": "getCampaignWhatsAppLink",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "href": { "type": "string", "format": "uri" },
+                    "deliveryClaim": { "type": "string", "enum": ["prepared_link_only"] }
+                  },
+                  "required": ["href", "deliveryClaim"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaignId}/recipients.csv": {
+      "get": {
+        "operationId": "exportCampaignRecipients",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": { "application/json": { "schema": { "type": "string" } } }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/today": {
       "get": {
         "operationId": "getToday",
@@ -2304,6 +3956,26 @@
                       },
                       "required": ["currency", "minorUnits"],
                       "additionalProperties": false
+                    },
+                    "followUpsPrepared": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "followUpsSent": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "campaignReplies": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "campaignConversions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
@@ -2312,7 +3984,11 @@
                     "bookingsRecorded",
                     "bookingDefinition",
                     "recordedValueDefinition",
-                    "recordedBookingValue"
+                    "recordedBookingValue",
+                    "followUpsPrepared",
+                    "followUpsSent",
+                    "campaignReplies",
+                    "campaignConversions"
                   ],
                   "additionalProperties": false
                 }

@@ -22,6 +22,20 @@ import {
   TodayResponseSchema,
   CsrfResponseSchema,
   WorkspaceResponseSchema,
+  CampaignListResponseSchema,
+  CampaignListQuerySchema,
+  CampaignResponseSchema,
+  CreateCampaignRequestSchema,
+  UpdateCampaignRequestSchema,
+  CampaignTransitionRequestSchema,
+  CampaignRecipientListResponseSchema,
+  CampaignRecipientResponseSchema,
+  CampaignRecipientListQuerySchema,
+  CampaignRecipientRemoveRequestSchema,
+  CampaignOutcomeRequestSchema,
+  CampaignOutcomeResponseSchema,
+  WhatsAppLinkResponseSchema,
+  CampaignAuditResponseSchema,
 } from './schemas.js';
 
 export type RouteDefinition = Readonly<{
@@ -32,6 +46,7 @@ export type RouteDefinition = Readonly<{
     | 'workspace'
     | 'customers'
     | 'customerImports'
+    | 'campaigns'
     | 'today'
     | 'bookings'
     | 'results'
@@ -40,6 +55,7 @@ export type RouteDefinition = Readonly<{
   path: string;
   auth: 'public' | 'session' | 'csrf';
   request?: z.ZodType;
+  query?: z.ZodType;
   responses: Readonly<Record<number, z.ZodType>>;
 }>;
 
@@ -216,6 +232,118 @@ export const routeRegistry = [
     auth: 'csrf',
     request: CustomerImportCommitRequestSchema,
     responses: { 200: CustomerImportCommitResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'listCampaigns',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns',
+    auth: 'session',
+    query: CampaignListQuerySchema,
+    responses: { 200: CampaignListResponseSchema, 401: ErrorResponseSchema },
+  },
+  {
+    operationId: 'createCampaign',
+    module: 'campaigns',
+    method: 'post',
+    path: '/api/v1/campaigns',
+    auth: 'csrf',
+    request: CreateCampaignRequestSchema,
+    responses: { 201: CampaignResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'getCampaign',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns/{campaignId}',
+    auth: 'session',
+    responses: { 200: CampaignResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'getCampaignAudit',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns/{campaignId}/audit',
+    auth: 'session',
+    responses: { 200: CampaignAuditResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'updateCampaign',
+    module: 'campaigns',
+    method: 'patch',
+    path: '/api/v1/campaigns/{campaignId}',
+    auth: 'csrf',
+    request: UpdateCampaignRequestSchema,
+    responses: { 200: CampaignResponseSchema, 409: ErrorResponseSchema, 412: ErrorResponseSchema },
+  },
+  {
+    operationId: 'transitionCampaign',
+    module: 'campaigns',
+    method: 'post',
+    path: '/api/v1/campaigns/{campaignId}/transition',
+    auth: 'csrf',
+    request: CampaignTransitionRequestSchema,
+    responses: { 200: CampaignResponseSchema, 409: ErrorResponseSchema, 412: ErrorResponseSchema },
+  },
+  {
+    operationId: 'refreshCampaignRecipients',
+    module: 'campaigns',
+    method: 'post',
+    path: '/api/v1/campaigns/{campaignId}/recipients/refresh',
+    auth: 'csrf',
+    request: z.object({ version: z.number().int().positive() }),
+    responses: {
+      200: CampaignRecipientListResponseSchema,
+      409: ErrorResponseSchema,
+      412: ErrorResponseSchema,
+    },
+  },
+  {
+    operationId: 'listCampaignRecipients',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns/{campaignId}/recipients',
+    auth: 'session',
+    query: CampaignRecipientListQuerySchema,
+    responses: { 200: CampaignRecipientListResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'removeCampaignRecipient',
+    module: 'campaigns',
+    method: 'post',
+    path: '/api/v1/campaigns/{campaignId}/recipients/{recipientId}/remove',
+    auth: 'csrf',
+    request: CampaignRecipientRemoveRequestSchema,
+    responses: {
+      200: CampaignRecipientResponseSchema,
+      409: ErrorResponseSchema,
+      412: ErrorResponseSchema,
+    },
+  },
+  {
+    operationId: 'recordCampaignOutcome',
+    module: 'campaigns',
+    method: 'post',
+    path: '/api/v1/campaigns/{campaignId}/recipients/{recipientId}/outcome',
+    auth: 'csrf',
+    request: CampaignOutcomeRequestSchema,
+    responses: { 200: CampaignOutcomeResponseSchema, 409: ErrorResponseSchema },
+  },
+  {
+    operationId: 'getCampaignWhatsAppLink',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns/{campaignId}/recipients/{recipientId}/whatsapp-link',
+    auth: 'session',
+    responses: { 200: WhatsAppLinkResponseSchema, 409: ErrorResponseSchema },
+  },
+  {
+    operationId: 'exportCampaignRecipients',
+    module: 'campaigns',
+    method: 'get',
+    path: '/api/v1/campaigns/{campaignId}/recipients.csv',
+    auth: 'session',
+    responses: { 200: z.string(), 404: ErrorResponseSchema },
   },
   {
     operationId: 'getToday',

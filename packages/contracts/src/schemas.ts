@@ -238,6 +238,126 @@ export const ResultsResponseSchema = z.object({
   bookingDefinition: z.string(),
   recordedValueDefinition: z.string(),
   recordedBookingValue: z.object({ currency: z.string(), minorUnits: z.number().int() }),
+  followUpsPrepared: z.number().int(),
+  followUpsSent: z.number().int(),
+  campaignReplies: z.number().int(),
+  campaignConversions: z.number().int(),
+});
+
+export const CampaignAudienceSchema = z.object({
+  consentChannel: z.literal('whatsapp').default('whatsapp'),
+  lifecycle: z.enum(['enquiry', 'contacted', 'replied', 'booked', 'completed', 'lost']).optional(),
+  service: z.string().trim().max(120).optional(),
+  source: z.string().trim().max(80).optional(),
+});
+
+export const CampaignTemplateSchema = z.string().trim().min(1).max(2000);
+export const CreateCampaignRequestSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  channel: z.literal('whatsapp'),
+  template: CampaignTemplateSchema,
+  audience: CampaignAudienceSchema,
+});
+export const UpdateCampaignRequestSchema = z.object({
+  version: z.number().int().positive(),
+  name: z.string().trim().min(1).max(120).optional(),
+  template: CampaignTemplateSchema.optional(),
+  audience: CampaignAudienceSchema.optional(),
+});
+export const CampaignResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  status: z.enum(['draft', 'ready', 'active', 'completed', 'cancelled']),
+  version: z.number().int(),
+  channel: z.literal('whatsapp'),
+  template: z.string(),
+  audience: CampaignAudienceSchema,
+  recipientCount: z.number().int(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export const CampaignListQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  cursor: z.coerce.number().int().min(0).max(1000000).default(0),
+  status: z.enum(['draft', 'ready', 'active', 'completed', 'cancelled']).optional(),
+});
+export const CampaignListResponseSchema = z.object({
+  items: z.array(CampaignResponseSchema),
+  nextCursor: z.string().nullable(),
+});
+export const CampaignTransitionRequestSchema = z.object({
+  version: z.number().int().positive(),
+  to: z.enum(['draft', 'ready', 'active', 'completed', 'cancelled']),
+});
+export const CampaignRecipientResponseSchema = z.object({
+  id: z.string(),
+  campaignId: z.string(),
+  customerId: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  phone: z.string().nullable(),
+  eligibility: z.enum([
+    'eligible',
+    'removed',
+    'withdrawn',
+    'booked',
+    'invalid_contact',
+    'no_consent',
+    'cancelled',
+  ]),
+  reason: z.string().nullable(),
+  consentRecordId: z.string().nullable(),
+  eligibilityCheckedAt: z.string(),
+  removed: z.boolean(),
+  outcome: z.enum(['sent', 'skipped', 'replied', 'booked']).nullable(),
+  personalizedPreview: z.string(),
+  whatsappHref: z.string().nullable(),
+});
+export const CampaignRecipientListQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  cursor: z.coerce.number().int().min(0).max(1000000).default(0),
+  eligibility: z
+    .enum([
+      'eligible',
+      'removed',
+      'withdrawn',
+      'booked',
+      'invalid_contact',
+      'no_consent',
+      'cancelled',
+    ])
+    .optional(),
+});
+export const CampaignRecipientListResponseSchema = z.object({
+  items: z.array(CampaignRecipientResponseSchema),
+  nextCursor: z.string().nullable(),
+});
+export const CampaignRecipientRemoveRequestSchema = z.object({
+  campaignVersion: z.number().int().positive(),
+});
+export const CampaignOutcomeRequestSchema = z.discriminatedUnion('outcome', [
+  z.object({ outcome: z.literal('sent') }),
+  z.object({ outcome: z.literal('skipped') }),
+  z.object({ outcome: z.literal('replied') }),
+  z.object({ outcome: z.literal('booked'), bookingId: z.string().regex(/^[a-f0-9-]{8,64}$/i) }),
+]);
+export const CampaignOutcomeResponseSchema = z.object({
+  recipient: CampaignRecipientResponseSchema,
+  idempotent: z.boolean(),
+});
+export const WhatsAppLinkResponseSchema = z.object({
+  href: z.string().url(),
+  deliveryClaim: z.literal('prepared_link_only'),
+});
+export const CampaignAuditResponseSchema = z.object({
+  items: z.array(
+    z.object({
+      id: z.string(),
+      type: z.string(),
+      occurredAt: z.string(),
+      payload: z.record(z.string(), z.unknown()),
+    }),
+  ),
 });
 
 export type RegisterRequest = z.infer<typeof RegisterRequestSchema>;
@@ -248,3 +368,7 @@ export type UpdateCustomerRequest = z.infer<typeof UpdateCustomerRequestSchema>;
 export type CreateInteractionRequest = z.infer<typeof CreateInteractionRequestSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;
 export type WorkspaceResponse = z.infer<typeof WorkspaceResponseSchema>;
+export type CreateCampaignRequest = z.infer<typeof CreateCampaignRequestSchema>;
+export type UpdateCampaignRequest = z.infer<typeof UpdateCampaignRequestSchema>;
+export type CampaignAudience = z.infer<typeof CampaignAudienceSchema>;
+export type CampaignOutcomeRequest = z.infer<typeof CampaignOutcomeRequestSchema>;

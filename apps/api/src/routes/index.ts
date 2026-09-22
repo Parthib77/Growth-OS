@@ -5,6 +5,7 @@ import { registerAuthRoutes } from './auth.js';
 import { registerBookingRoutes } from './bookings.js';
 import { registerCustomerRoutes } from './customers.js';
 import { registerCustomerImportRoutes } from './customer-imports.js';
+import { registerCampaignRoutes } from './campaigns.js';
 import { registerHealthRoutes } from './health.js';
 import { registerOpenApiRoute } from './openapi.js';
 import { registerResultsRoutes } from './results.js';
@@ -17,6 +18,7 @@ const registrations = {
   workspace: registerWorkspaceRoutes,
   customers: registerCustomerRoutes,
   customerImports: registerCustomerImportRoutes,
+  campaigns: registerCampaignRoutes,
   today: registerTodayRoutes,
   bookings: registerBookingRoutes,
   results: registerResultsRoutes,

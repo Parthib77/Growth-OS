@@ -1,6 +1,6 @@
 # Growth OS
 
-Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, booking capture, and stored Results.
+Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, consent-aware campaigns, booking capture, and stored Results.
 
 ## Start the supported stack
 
@@ -64,6 +64,6 @@ npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --p
 
 ## Current scope
 
-The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, idempotent booking capture, Results, and an operational event ledger.
+The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, Results, immutable campaign revisions, and an operational event ledger.
 
-Campaign execution, review requests, broader reporting and export, settings, account deletion, legal pages, demo mode, and the final release-quality visual and performance pass remain to be built.
+Review requests, broader reporting and export, settings, account deletion, legal pages, demo mode, and the final release-quality visual and performance pass remain to be built.

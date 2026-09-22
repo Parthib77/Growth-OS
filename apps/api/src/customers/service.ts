@@ -184,6 +184,8 @@ export async function updateCustomer(
     );
   const changedFields = Object.keys(input);
   Object.assign(customer, update);
+  if ('phone' in input)
+    customer.campaignEligibilityLock = (customer.campaignEligibilityLock ?? 0) + 1;
   await customer.save();
   const actorUserId = commandActorUserId(context);
   await appendEvent({
@@ -265,34 +267,57 @@ export async function recordConsent(
   customerId: string,
   input: ConsentInput,
 ) {
-  const customer = await Customer.findOne({ _id: customerId, workspaceId: context.workspaceId });
-  if (!customer) throw new AppError('RESOURCE_NOT_FOUND', 'Customer not found.', 404);
   const id = newId();
   const capturedAt = new Date();
-  await Consent.create({
-    _id: id,
-    workspaceId: context.workspaceId,
-    customerId,
-    channel: input.channel,
-    decision: input.decision,
-    capturedAt,
-  });
-  await appendEvent({
-    workspaceId: context.workspaceId,
-    userId: commandActorUserId(context),
-    requestId: String(context.requestId),
-    commandId: String(context.commandId),
-    subjectKind: 'customer',
-    subjectId: customerId,
-    ordinal: 0,
-    payload: {
-      type: 'consent.recorded',
-      customerId: customerIdValue(customerId),
-      channel: input.channel,
-      decision: input.decision,
-      consentRecordId: consentRecordIdValue(id),
-    },
-  });
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      const customer = await Customer.findOne({
+        _id: customerId,
+        workspaceId: context.workspaceId,
+      }).session(session);
+      if (!customer) throw new AppError('RESOURCE_NOT_FOUND', 'Customer not found.', 404);
+      await Consent.create(
+        [
+          {
+            _id: id,
+            workspaceId: context.workspaceId,
+            customerId,
+            channel: input.channel,
+            decision: input.decision,
+            capturedAt,
+          },
+        ],
+        { session },
+      );
+      await Customer.updateOne(
+        { _id: customerId, workspaceId: context.workspaceId },
+        { $inc: { campaignEligibilityLock: 1 } },
+        { session },
+      );
+      await appendEvent(
+        {
+          workspaceId: context.workspaceId,
+          userId: commandActorUserId(context),
+          requestId: String(context.requestId),
+          commandId: String(context.commandId),
+          subjectKind: 'customer',
+          subjectId: customerId,
+          ordinal: 0,
+          payload: {
+            type: 'consent.recorded',
+            customerId: customerIdValue(customerId),
+            channel: input.channel,
+            decision: input.decision,
+            consentRecordId: consentRecordIdValue(id),
+          },
+        },
+        session,
+      );
+    });
+  } finally {
+    await session.endSession();
+  }
   return {
     id,
     channel: input.channel,

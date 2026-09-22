@@ -50,6 +50,7 @@ const CustomerSchema = new mongoose.Schema(
     lastInteractionAt: { type: Date, required: true },
     serviceInterests: { type: [String], default: [] },
     internalNotes: { type: String, default: '' },
+    campaignEligibilityLock: { type: Number, required: true, default: 0 },
   },
   base,
 );
@@ -99,6 +100,102 @@ const ImportBatchSchema = new mongoose.Schema(
 );
 ImportBatchSchema.index({ workspaceId: 1, createdAt: -1, _id: -1 });
 ImportBatchSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+const CampaignSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    name: { type: String, required: true },
+    channel: { type: String, required: true, enum: ['whatsapp'] },
+    template: { type: String, required: true },
+    audience: { type: mongoose.Schema.Types.Mixed, required: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['draft', 'ready', 'active', 'completed', 'cancelled'],
+      default: 'draft',
+    },
+    version: { type: Number, required: true, default: 1 },
+    reviewedVersion: { type: Number, default: 0 },
+    removedCustomerIds: { type: [String], default: [] },
+  },
+  base,
+);
+CampaignSchema.index({ workspaceId: 1, status: 1, updatedAt: -1, _id: -1 });
+const CampaignRevisionSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    campaignId: { type: String, required: true },
+    version: { type: Number, required: true },
+    name: { type: String, required: true },
+    channel: { type: String, required: true, enum: ['whatsapp'] },
+    template: { type: String, required: true },
+    audience: { type: mongoose.Schema.Types.Mixed, required: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['draft', 'ready', 'active', 'completed', 'cancelled'],
+    },
+    reviewedVersion: { type: Number, required: true },
+    recordedAt: { type: Date, required: true },
+  },
+  { versionKey: false, timestamps: false },
+);
+CampaignRevisionSchema.index({ workspaceId: 1, campaignId: 1, version: 1 }, { unique: true });
+const CampaignRecipientSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    campaignId: { type: String, required: true },
+    campaignVersion: { type: Number, required: true },
+    customerId: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, default: '' },
+    phone: { type: String, default: null },
+    service: { type: String, required: true },
+    eligibility: {
+      type: String,
+      required: true,
+      enum: [
+        'eligible',
+        'removed',
+        'withdrawn',
+        'booked',
+        'invalid_contact',
+        'no_consent',
+        'cancelled',
+      ],
+    },
+    reason: { type: String, default: null },
+    consentRecordId: { type: String, default: null },
+    eligibilityCheckedAt: { type: Date, required: true },
+    personalizedPreview: { type: String, required: true },
+    removed: { type: Boolean, required: true, default: false },
+    outcome: { type: String, enum: ['sent', 'skipped', 'replied', 'booked'], default: null },
+    bookingId: { type: String, default: null },
+    outcomeAt: { type: Date, default: null },
+  },
+  base,
+);
+CampaignRecipientSchema.index(
+  { workspaceId: 1, campaignId: 1, campaignVersion: 1, customerId: 1 },
+  { unique: true },
+);
+CampaignRecipientSchema.index({
+  workspaceId: 1,
+  campaignId: 1,
+  campaignVersion: 1,
+  eligibility: 1,
+  removed: 1,
+  _id: 1,
+});
+CampaignRecipientSchema.index({
+  workspaceId: 1,
+  customerId: 1,
+  outcome: 1,
+  outcomeAt: -1,
+  _id: -1,
+});
 const BookingSchema = new mongoose.Schema(
   {
     ...stringIdentity,
@@ -110,11 +207,13 @@ const BookingSchema = new mongoose.Schema(
     currency: { type: String, required: true },
     notes: { type: String, default: '' },
     state: { type: String, required: true, default: 'confirmed' },
+    sourceCampaignRecipientId: { type: String, default: null },
   },
   base,
 );
 BookingSchema.index({ workspaceId: 1, appointmentAt: -1, _id: -1 });
 BookingSchema.index({ workspaceId: 1, customerId: 1, createdAt: -1, _id: -1 });
+BookingSchema.index({ workspaceId: 1, sourceCampaignRecipientId: 1, createdAt: -1, _id: -1 });
 const SessionSchema = new mongoose.Schema(
   {
     tokenHash: { type: String, required: true, unique: true },
@@ -190,6 +289,11 @@ export type CustomerDoc = InferSchemaType<typeof CustomerSchema> & { _id: string
 export type ConsentDoc = InferSchemaType<typeof ConsentSchema> & { _id: string };
 export type InteractionDoc = InferSchemaType<typeof InteractionSchema> & { _id: string };
 export type ImportBatchDoc = InferSchemaType<typeof ImportBatchSchema> & { _id: string };
+export type CampaignDoc = InferSchemaType<typeof CampaignSchema> & { _id: string };
+export type CampaignRevisionDoc = InferSchemaType<typeof CampaignRevisionSchema> & { _id: string };
+export type CampaignRecipientDoc = InferSchemaType<typeof CampaignRecipientSchema> & {
+  _id: string;
+};
 export type BookingDoc = InferSchemaType<typeof BookingSchema> & { _id: string };
 export type SessionDoc = InferSchemaType<typeof SessionSchema> & { _id: mongoose.Types.ObjectId };
 export type OperationalEventDoc = InferSchemaType<typeof EventSchema> & { _id: string };
@@ -206,6 +310,12 @@ export const Interaction: Model<InteractionDoc> =
   mongoose.models.Interaction ?? mongoose.model('Interaction', InteractionSchema);
 export const ImportBatch: Model<ImportBatchDoc> =
   mongoose.models.ImportBatch ?? mongoose.model('ImportBatch', ImportBatchSchema);
+export const Campaign: Model<CampaignDoc> =
+  mongoose.models.Campaign ?? mongoose.model('Campaign', CampaignSchema);
+export const CampaignRevision: Model<CampaignRevisionDoc> =
+  mongoose.models.CampaignRevision ?? mongoose.model('CampaignRevision', CampaignRevisionSchema);
+export const CampaignRecipient: Model<CampaignRecipientDoc> =
+  mongoose.models.CampaignRecipient ?? mongoose.model('CampaignRecipient', CampaignRecipientSchema);
 export const Booking: Model<BookingDoc> =
   mongoose.models.Booking ?? mongoose.model('Booking', BookingSchema);
 export const Session: Model<SessionDoc> =
@@ -223,6 +333,9 @@ export async function ensureIndexes(): Promise<void> {
     Consent.syncIndexes(),
     Interaction.syncIndexes(),
     ImportBatch.syncIndexes(),
+    Campaign.syncIndexes(),
+    CampaignRevision.syncIndexes(),
+    CampaignRecipient.syncIndexes(),
     Booking.syncIndexes(),
     Session.syncIndexes(),
     OperationalEvent.syncIndexes(),
@@ -243,10 +356,19 @@ export async function verifyIndexes(): Promise<void> {
     Consent: ['workspaceId_1', 'workspaceId_1_customerId_1_channel_1_capturedAt_-1__id_-1'],
     Interaction: ['workspaceId_1', 'workspaceId_1_customerId_1_occurredAt_-1__id_-1'],
     ImportBatch: ['workspaceId_1', 'workspaceId_1_createdAt_-1__id_-1', 'expiresAt_1'],
+    Campaign: ['workspaceId_1', 'workspaceId_1_status_1_updatedAt_-1__id_-1'],
+    CampaignRevision: ['workspaceId_1', 'workspaceId_1_campaignId_1_version_1'],
+    CampaignRecipient: [
+      'workspaceId_1',
+      'workspaceId_1_campaignId_1_campaignVersion_1_customerId_1',
+      'workspaceId_1_campaignId_1_campaignVersion_1_eligibility_1_removed_1__id_1',
+      'workspaceId_1_customerId_1_outcome_1_outcomeAt_-1__id_-1',
+    ],
     Booking: [
       'workspaceId_1',
       'workspaceId_1_appointmentAt_-1__id_-1',
       'workspaceId_1_customerId_1_createdAt_-1__id_-1',
+      'workspaceId_1_sourceCampaignRecipientId_1_createdAt_-1__id_-1',
     ],
     Session: ['tokenHash_1', 'expiresAt_1'],
     OperationalEvent: [
@@ -269,6 +391,8 @@ export async function verifyIndexes(): Promise<void> {
     Consent,
     Interaction,
     ImportBatch,
+    Campaign,
+    CampaignRecipient,
     Booking,
     Session,
     OperationalEvent,

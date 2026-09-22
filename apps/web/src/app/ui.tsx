@@ -1,3 +1,5 @@
+import type { ChangeEvent } from 'react';
+
 export function Field({
   label,
   name,
@@ -6,6 +8,8 @@ export function Field({
   required = true,
   inputMode,
   autoComplete,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
@@ -14,7 +18,11 @@ export function Field({
   required?: boolean;
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
   autoComplete?: string;
+  value?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const controlProps = value === undefined ? { defaultValue } : { value, onChange };
+
   return (
     <label className="field">
       <span>{label}</span>
@@ -23,8 +31,8 @@ export function Field({
         type={type}
         inputMode={inputMode}
         autoComplete={autoComplete}
-        defaultValue={defaultValue}
         required={required}
+        {...controlProps}
       />
     </label>
   );
