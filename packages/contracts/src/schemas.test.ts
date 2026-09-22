@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { OnboardingRequestSchema } from './schemas.js';
+import { OnboardingRequestSchema, WorkspaceSettingsPatchSchema } from './schemas.js';
 
 describe('workspace settings contracts', () => {
   it('rejects invalid IANA timezones at the input boundary', () => {
@@ -13,5 +13,9 @@ describe('workspace settings contracts', () => {
       followUpDays: 3,
     });
     expect(result.success).toBe(false);
+  });
+
+  it('rejects an empty partial settings patch', () => {
+    expect(WorkspaceSettingsPatchSchema.safeParse({}).success).toBe(false);
   });
 });

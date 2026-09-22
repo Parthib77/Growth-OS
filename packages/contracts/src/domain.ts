@@ -14,6 +14,8 @@ export type InteractionId = Brand<string, 'InteractionId'>;
 export type ImportBatchId = Brand<string, 'ImportBatchId'>;
 export type CampaignId = Brand<string, 'CampaignId'>;
 export type CampaignRecipientId = Brand<string, 'CampaignRecipientId'>;
+export type ReviewId = Brand<string, 'ReviewId'>;
+export type ReviewImportBatchId = Brand<string, 'ReviewImportBatchId'>;
 export type Version = Brand<number, 'Version'>;
 export type UtcInstant = Brand<string, 'UtcInstant'>;
 export type IanaTimezone = Brand<string, 'IanaTimezone'>;
@@ -75,6 +77,9 @@ export const importBatchId = (value: string): ImportBatchId => brandedId(value, 
 export const campaignId = (value: string): CampaignId => brandedId(value, 'CampaignId');
 export const campaignRecipientId = (value: string): CampaignRecipientId =>
   brandedId(value, 'CampaignRecipientId');
+export const reviewId = (value: string): ReviewId => brandedId(value, 'ReviewId');
+export const reviewImportBatchId = (value: string): ReviewImportBatchId =>
+  brandedId(value, 'ReviewImportBatchId');
 
 export function utcInstant(value: string): UtcInstant {
   const date = new Date(value);
@@ -227,6 +232,50 @@ export function addMoney(left: Money, right: Money): Money {
   return { currency: left.currency, minorUnits: minorUnits(left.minorUnits + right.minorUnits) };
 }
 
+export type ReviewOriginal = Readonly<{
+  reviewerName: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  text: string;
+  source: string;
+  receivedAt: UtcInstant;
+}>;
+export type ReviewResponseState =
+  | Readonly<{ kind: 'unanswered' }>
+  | Readonly<{ kind: 'drafted'; text: string; revisedAt: UtcInstant }>
+  | Readonly<{ kind: 'posted_manually'; text: string; postedAt: UtcInstant }>;
+export type ChangeReviewResponse =
+  | Readonly<{ action: 'save_draft'; text: string }>
+  | Readonly<{ action: 'mark_posted_manually' }>
+  | Readonly<{ action: 'reopen_draft'; text: string }>;
+
+export function changeReviewResponse(
+  current: ReviewResponseState,
+  change: ChangeReviewResponse,
+  now: UtcInstant,
+): ReviewResponseState {
+  switch (change.action) {
+    case 'save_draft':
+      if (current.kind === 'posted_manually')
+        throw new DomainError(
+          'INVALID_TRANSITION',
+          'Reopen a manually posted review before saving a new draft',
+        );
+      return { kind: 'drafted', text: change.text, revisedAt: now };
+    case 'reopen_draft':
+      if (current.kind !== 'posted_manually')
+        throw new DomainError('INVALID_TRANSITION', 'Only manually posted reviews can be reopened');
+      return { kind: 'drafted', text: change.text, revisedAt: now };
+    case 'mark_posted_manually':
+      if (current.kind !== 'drafted')
+        throw new DomainError('INVALID_TRANSITION', 'A draft is required before marking posted');
+      return { kind: 'posted_manually', text: current.text, postedAt: now };
+    default: {
+      const exhaustive: never = change;
+      return exhaustive;
+    }
+  }
+}
+
 export type OperationalEventPayload =
   | { type: 'enquiry.created'; customerId: CustomerId; source: string; quotedMinorUnits?: number }
   | {
@@ -297,7 +346,20 @@ export type OperationalEventPayload =
       currency: CurrencyCode;
     }
   | { type: 'account.registered'; userId: UserId; workspaceId: WorkspaceId }
-  | { type: 'workspace.settings_changed'; changedFields: readonly string[] };
+  | { type: 'workspace.settings_changed'; changedFields: readonly string[] }
+  | {
+      type: 'review.created';
+      reviewId: ReviewId;
+      rating: 1 | 2 | 3 | 4 | 5;
+      source: string;
+    }
+  | {
+      type: 'review.response_changed';
+      reviewId: ReviewId;
+      from: 'unanswered' | 'drafted' | 'posted_manually';
+      to: 'unanswered' | 'drafted' | 'posted_manually';
+    }
+  | { type: 'review.imported'; reviewId: ReviewId; reviewImportBatchId: ReviewImportBatchId };
 
 export type OperationalEvent = Readonly<{
   eventId: EventId;
@@ -442,11 +504,189 @@ export const operationalEventPayloadSchemas = {
     type: z.literal('workspace.settings_changed'),
     changedFields: z.array(z.string()),
   }),
+  'review.created': z.object({
+    type: z.literal('review.created'),
+    reviewId: z.string(),
+    rating: z.number().int().min(1).max(5),
+    source: z.string(),
+  }),
+  'review.response_changed': z.object({
+    type: z.literal('review.response_changed'),
+    reviewId: z.string(),
+    from: z.enum(['unanswered', 'drafted', 'posted_manually']),
+    to: z.enum(['unanswered', 'drafted', 'posted_manually']),
+  }),
+  'review.imported': z.object({
+    type: z.literal('review.imported'),
+    reviewId: z.string(),
+    reviewImportBatchId: z.string(),
+  }),
 } as const;
 
 export const operationalEventSchemaByType: ReadonlyMap<string, z.ZodType> = new Map(
   Object.entries(operationalEventPayloadSchemas),
 );
+
+export function reviewRating(value: number): 1 | 2 | 3 | 4 | 5 {
+  if (value === 1 || value === 2 || value === 3 || value === 4 || value === 5) return value;
+  throw new Error('Invalid review rating');
+}
+
+function eventTypeOf(value: unknown): string {
+  if (!value || typeof value !== 'object' || !('type' in value) || typeof value.type !== 'string')
+    throw new Error('Operational event payload must contain a type');
+  return value.type;
+}
+
+export function parseOperationalEventPayload(value: unknown): OperationalEventPayload {
+  switch (eventTypeOf(value)) {
+    case 'enquiry.created': {
+      const parsed = operationalEventPayloadSchemas['enquiry.created'].parse(value);
+      return { ...parsed, customerId: customerId(parsed.customerId) };
+    }
+    case 'consent.recorded': {
+      const parsed = operationalEventPayloadSchemas['consent.recorded'].parse(value);
+      return {
+        ...parsed,
+        customerId: customerId(parsed.customerId),
+        consentRecordId: consentRecordId(parsed.consentRecordId),
+      };
+    }
+    case 'customer.updated': {
+      const parsed = operationalEventPayloadSchemas['customer.updated'].parse(value);
+      return { ...parsed, customerId: customerId(parsed.customerId) };
+    }
+    case 'customer.lifecycle_changed': {
+      const parsed = operationalEventPayloadSchemas['customer.lifecycle_changed'].parse(value);
+      return {
+        ...parsed,
+        customerId: customerId(parsed.customerId),
+        from: customerLifecycleKind(parsed.from),
+        to: customerLifecycleKind(parsed.to),
+      };
+    }
+    case 'interaction.recorded': {
+      const parsed = operationalEventPayloadSchemas['interaction.recorded'].parse(value);
+      return {
+        ...parsed,
+        customerId: customerId(parsed.customerId),
+        interactionId: interactionId(parsed.interactionId),
+      };
+    }
+    case 'customer.imported': {
+      const parsed = operationalEventPayloadSchemas['customer.imported'].parse(value);
+      return {
+        ...parsed,
+        customerId: customerId(parsed.customerId),
+        importBatchId: importBatchId(parsed.importBatchId),
+      };
+    }
+    case 'campaign.created': {
+      const parsed = operationalEventPayloadSchemas['campaign.created'].parse(value);
+      return { ...parsed, campaignId: campaignId(parsed.campaignId) };
+    }
+    case 'campaign.updated': {
+      const parsed = operationalEventPayloadSchemas['campaign.updated'].parse(value);
+      return { ...parsed, campaignId: campaignId(parsed.campaignId) };
+    }
+    case 'campaign.status_changed': {
+      const parsed = operationalEventPayloadSchemas['campaign.status_changed'].parse(value);
+      return { ...parsed, campaignId: campaignId(parsed.campaignId) };
+    }
+    case 'campaign.recipient_removed': {
+      const parsed = operationalEventPayloadSchemas['campaign.recipient_removed'].parse(value);
+      return {
+        ...parsed,
+        campaignId: campaignId(parsed.campaignId),
+        recipientId: campaignRecipientId(parsed.recipientId),
+      };
+    }
+    case 'campaign.outcome_recorded': {
+      const parsed = operationalEventPayloadSchemas['campaign.outcome_recorded'].parse(value);
+      const { bookingId: rawBookingId, ...rest } = parsed;
+      return {
+        ...rest,
+        campaignId: campaignId(rest.campaignId),
+        recipientId: campaignRecipientId(rest.recipientId),
+        ...(rawBookingId ? { bookingId: bookingId(rawBookingId) } : {}),
+      };
+    }
+    case 'campaign.message_prepared': {
+      const parsed = operationalEventPayloadSchemas['campaign.message_prepared'].parse(value);
+      return {
+        ...parsed,
+        campaignId: campaignId(parsed.campaignId),
+        recipientId: campaignRecipientId(parsed.recipientId),
+      };
+    }
+    case 'campaign.message_sent': {
+      const parsed = operationalEventPayloadSchemas['campaign.message_sent'].parse(value);
+      return {
+        ...parsed,
+        campaignId: campaignId(parsed.campaignId),
+        recipientId: campaignRecipientId(parsed.recipientId),
+      };
+    }
+    case 'campaign.reply_recorded': {
+      const parsed = operationalEventPayloadSchemas['campaign.reply_recorded'].parse(value);
+      return {
+        ...parsed,
+        campaignId: campaignId(parsed.campaignId),
+        recipientId: campaignRecipientId(parsed.recipientId),
+      };
+    }
+    case 'campaign.booking_attributed': {
+      const parsed = operationalEventPayloadSchemas['campaign.booking_attributed'].parse(value);
+      return {
+        ...parsed,
+        campaignId: campaignId(parsed.campaignId),
+        recipientId: campaignRecipientId(parsed.recipientId),
+        bookingId: bookingId(parsed.bookingId),
+      };
+    }
+    case 'booking.recorded': {
+      const parsed = operationalEventPayloadSchemas['booking.recorded'].parse(value);
+      return {
+        ...parsed,
+        bookingId: bookingId(parsed.bookingId),
+        customerId: customerId(parsed.customerId),
+        currency: currencyCode(parsed.currency),
+      };
+    }
+    case 'account.registered': {
+      const parsed = operationalEventPayloadSchemas['account.registered'].parse(value);
+      return {
+        ...parsed,
+        userId: userId(parsed.userId),
+        workspaceId: workspaceId(parsed.workspaceId),
+      };
+    }
+    case 'workspace.settings_changed':
+      return operationalEventPayloadSchemas['workspace.settings_changed'].parse(value);
+    case 'review.created': {
+      const parsed = operationalEventPayloadSchemas['review.created'].parse(value);
+      return {
+        ...parsed,
+        reviewId: reviewId(parsed.reviewId),
+        rating: reviewRating(parsed.rating),
+      };
+    }
+    case 'review.response_changed': {
+      const parsed = operationalEventPayloadSchemas['review.response_changed'].parse(value);
+      return { ...parsed, reviewId: reviewId(parsed.reviewId) };
+    }
+    case 'review.imported': {
+      const parsed = operationalEventPayloadSchemas['review.imported'].parse(value);
+      return {
+        ...parsed,
+        reviewId: reviewId(parsed.reviewId),
+        reviewImportBatchId: reviewImportBatchId(parsed.reviewImportBatchId),
+      };
+    }
+    default:
+      throw new Error(`Unknown operational event type: ${eventTypeOf(value)}`);
+  }
+}
 
 export const eventRedactors: {
   [K in OperationalEventPayload['type']]: (
@@ -471,6 +711,9 @@ export const eventRedactors: {
   'booking.recorded': (payload) => ({ ...payload }),
   'account.registered': (payload) => ({ ...payload }),
   'workspace.settings_changed': (payload) => ({ ...payload }),
+  'review.created': (payload) => ({ ...payload }),
+  'review.response_changed': (payload) => ({ ...payload }),
+  'review.imported': (payload) => ({ ...payload }),
 };
 
 export function redactEventPayload(payload: OperationalEventPayload): Record<string, unknown> {
@@ -511,6 +754,12 @@ export function redactEventPayload(payload: OperationalEventPayload): Record<str
       return eventRedactors['account.registered'](payload);
     case 'workspace.settings_changed':
       return eventRedactors['workspace.settings_changed'](payload);
+    case 'review.created':
+      return eventRedactors['review.created'](payload);
+    case 'review.response_changed':
+      return eventRedactors['review.response_changed'](payload);
+    case 'review.imported':
+      return eventRedactors['review.imported'](payload);
     default: {
       const exhaustive: never = payload;
       return exhaustive;

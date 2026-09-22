@@ -65,7 +65,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -156,7 +158,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -249,7 +253,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -325,7 +331,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -395,7 +403,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -442,7 +452,8 @@
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
                     },
-                    "onboardingComplete": { "type": "boolean" }
+                    "onboardingComplete": { "type": "boolean" },
+                    "reviewResponseTemplate": { "type": "string" }
                   },
                   "required": [
                     "id",
@@ -453,7 +464,8 @@
                     "defaultCountryCode",
                     "bookingLink",
                     "followUpDays",
-                    "onboardingComplete"
+                    "onboardingComplete",
+                    "reviewResponseTemplate"
                   ],
                   "additionalProperties": false
                 }
@@ -486,7 +498,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -531,7 +545,8 @@
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
                     },
-                    "onboardingComplete": { "type": "boolean" }
+                    "onboardingComplete": { "type": "boolean" },
+                    "reviewResponseTemplate": { "type": "string" }
                   },
                   "required": [
                     "id",
@@ -542,7 +557,8 @@
                     "defaultCountryCode",
                     "bookingLink",
                     "followUpDays",
-                    "onboardingComplete"
+                    "onboardingComplete",
+                    "reviewResponseTemplate"
                   ],
                   "additionalProperties": false
                 }
@@ -575,7 +591,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -605,26 +623,30 @@
                 "type": "object",
                 "properties": {
                   "businessName": { "type": "string", "minLength": 2, "maxLength": 120 },
-                  "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+                  "category": {
+                    "nullable": true,
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 80
+                  },
                   "timezone": { "type": "string", "minLength": 1, "maxLength": 100 },
                   "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
                   "defaultCountryCode": { "type": "string", "pattern": "^\\+[1-9][0-9]{0,3}$" },
                   "bookingLink": {
                     "anyOf": [
-                      { "type": "string", "maxLength": 500, "format": "uri" },
-                      { "type": "string", "enum": [""] }
+                      {
+                        "anyOf": [
+                          { "type": "string", "maxLength": 500, "format": "uri" },
+                          { "type": "string", "enum": [""] }
+                        ]
+                      },
+                      { "type": "string", "nullable": true, "enum": [null] }
                     ]
                   },
-                  "followUpDays": { "type": "integer", "minimum": 1, "maximum": 90 }
+                  "followUpDays": { "type": "integer", "minimum": 1, "maximum": 90 },
+                  "reviewResponseTemplate": { "type": "string", "maxLength": 2000 },
+                  "onboardingComplete": { "type": "boolean" }
                 },
-                "required": [
-                  "businessName",
-                  "category",
-                  "timezone",
-                  "currency",
-                  "defaultCountryCode",
-                  "followUpDays"
-                ],
                 "additionalProperties": false
               }
             }
@@ -738,7 +760,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -855,7 +879,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1029,7 +1055,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1146,7 +1174,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1193,7 +1223,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1394,7 +1426,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1467,7 +1501,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1561,7 +1597,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1703,7 +1741,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -1856,7 +1896,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2009,7 +2051,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2124,7 +2168,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2276,7 +2322,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2391,7 +2439,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2438,7 +2488,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2560,7 +2612,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2677,7 +2731,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2724,7 +2780,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2871,7 +2929,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -2918,7 +2978,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3061,7 +3123,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3173,7 +3237,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3220,7 +3286,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3360,7 +3428,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3468,7 +3538,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3526,7 +3598,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3660,7 +3734,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3753,7 +3829,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3885,7 +3963,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -3927,10 +4007,27 @@
                         "to": { "type": "string" },
                         "fromLocal": { "type": "string" },
                         "toLocal": { "type": "string" },
+                        "throughLocal": { "type": "string" },
                         "timezone": { "type": "string" }
                       },
-                      "required": ["from", "to", "fromLocal", "toLocal", "timezone"],
+                      "required": [
+                        "from",
+                        "to",
+                        "fromLocal",
+                        "toLocal",
+                        "throughLocal",
+                        "timezone"
+                      ],
                       "additionalProperties": false
+                    },
+                    "throughLocal": { "type": "string" },
+                    "generatedAt": { "type": "string" },
+                    "includedBookingStatuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": ["tentative", "confirmed", "completed", "no_show"]
+                      }
                     },
                     "newEnquiries": {
                       "type": "integer",
@@ -3980,6 +4077,9 @@
                   },
                   "required": [
                     "range",
+                    "throughLocal",
+                    "generatedAt",
+                    "includedBookingStatuses",
                     "newEnquiries",
                     "bookingsRecorded",
                     "bookingDefinition",
@@ -4021,7 +4121,9 @@
                             "DUPLICATE_CUSTOMER",
                             "DUPLICATE_REVIEW_REQUIRED",
                             "CONSENT_REQUIRED",
-                            "CAMPAIGN_VERSION_CONFLICT"
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
                           ]
                         },
                         "message": { "type": "string" },
@@ -4039,6 +4141,1386 @@
                   "required": ["error"],
                   "additionalProperties": false
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/results.csv": {
+      "get": {
+        "operationId": "exportResultsCsv",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": { "application/json": { "schema": { "type": "string" } } }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reviews": {
+      "get": {
+        "operationId": "listReviews",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "reviewerName": { "type": "string" },
+                          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                          "text": { "type": "string" },
+                          "source": { "type": "string" },
+                          "receivedAt": { "type": "string" },
+                          "response": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["unanswered"] }
+                                },
+                                "required": ["kind"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["drafted"] },
+                                  "text": { "type": "string" },
+                                  "revisedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "revisedAt"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["posted_manually"] },
+                                  "text": { "type": "string" },
+                                  "postedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "postedAt"],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reviewerName",
+                          "rating",
+                          "text",
+                          "source",
+                          "receivedAt",
+                          "response"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": { "nullable": true, "type": "string" }
+                  },
+                  "required": ["items", "nextCursor"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createReview",
+        "responses": {
+          "201": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "reviewerName": { "type": "string" },
+                    "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                    "text": { "type": "string" },
+                    "source": { "type": "string" },
+                    "receivedAt": { "type": "string" },
+                    "response": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": { "kind": { "type": "string", "enum": ["unanswered"] } },
+                          "required": ["kind"],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": { "type": "string", "enum": ["drafted"] },
+                            "text": { "type": "string" },
+                            "revisedAt": { "type": "string" }
+                          },
+                          "required": ["kind", "text", "revisedAt"],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": { "type": "string", "enum": ["posted_manually"] },
+                            "text": { "type": "string" },
+                            "postedAt": { "type": "string" }
+                          },
+                          "required": ["kind", "text", "postedAt"],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "reviewerName",
+                    "rating",
+                    "text",
+                    "source",
+                    "receivedAt",
+                    "response"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reviewerName": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "rating": {
+                    "anyOf": [
+                      { "type": "number", "enum": [1] },
+                      { "type": "number", "enum": [2] },
+                      { "type": "number", "enum": [3] },
+                      { "type": "number", "enum": [4] },
+                      { "type": "number", "enum": [5] }
+                    ]
+                  },
+                  "text": { "type": "string", "minLength": 1, "maxLength": 5000 },
+                  "source": { "type": "string", "minLength": 1, "maxLength": 80 },
+                  "receivedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  }
+                },
+                "required": ["reviewerName", "rating", "text", "source"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reviews/{reviewId}/response": {
+      "patch": {
+        "operationId": "changeReviewResponse",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "reviewerName": { "type": "string" },
+                    "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                    "text": { "type": "string" },
+                    "source": { "type": "string" },
+                    "receivedAt": { "type": "string" },
+                    "response": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": { "kind": { "type": "string", "enum": ["unanswered"] } },
+                          "required": ["kind"],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": { "type": "string", "enum": ["drafted"] },
+                            "text": { "type": "string" },
+                            "revisedAt": { "type": "string" }
+                          },
+                          "required": ["kind", "text", "revisedAt"],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": { "type": "string", "enum": ["posted_manually"] },
+                            "text": { "type": "string" },
+                            "postedAt": { "type": "string" }
+                          },
+                          "required": ["kind", "text", "postedAt"],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "reviewerName",
+                    "rating",
+                    "text",
+                    "source",
+                    "receivedAt",
+                    "response"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": { "type": "string", "enum": ["save_draft"] },
+                      "text": { "type": "string", "minLength": 1, "maxLength": 2000 }
+                    },
+                    "required": ["action", "text"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": { "type": "string", "enum": ["mark_posted_manually"] }
+                    },
+                    "required": ["action"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": { "type": "string", "enum": ["reopen_draft"] },
+                      "text": { "type": "string", "minLength": 1, "maxLength": 2000 }
+                    },
+                    "required": ["action", "text"],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review-imports/preview": {
+      "post": {
+        "operationId": "previewReviewImport",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "importId": { "type": "string" },
+                    "headers": { "type": "array", "items": { "type": "string" } },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rowNumber": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "values": {
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
+                          },
+                          "errors": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "required": ["rowNumber", "values", "errors"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "limits": {
+                      "type": "object",
+                      "properties": {
+                        "maxRows": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "maxBytes": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["maxRows", "maxBytes"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["importId", "headers", "rows", "limits"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "csv": { "type": "string", "minLength": 1, "maxLength": 1000000 } },
+                "required": ["csv"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review-imports/{importId}/commit": {
+      "post": {
+        "operationId": "commitReviewImport",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "created": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "reviewerName": { "type": "string" },
+                          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                          "text": { "type": "string" },
+                          "source": { "type": "string" },
+                          "receivedAt": { "type": "string" },
+                          "response": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["unanswered"] }
+                                },
+                                "required": ["kind"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["drafted"] },
+                                  "text": { "type": "string" },
+                                  "revisedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "revisedAt"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["posted_manually"] },
+                                  "text": { "type": "string" },
+                                  "postedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "postedAt"],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reviewerName",
+                          "rating",
+                          "text",
+                          "source",
+                          "receivedAt",
+                          "response"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "skippedRows": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    }
+                  },
+                  "required": ["created", "skippedRows"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resolutions": {
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": { "type": "string", "enum": ["create", "skip"] }
+                  }
+                },
+                "required": ["resolutions"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspace/export": {
+      "get": {
+        "operationId": "exportWorkspace",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "schemaVersion": { "type": "number", "enum": [1] },
+                    "exportedAt": { "type": "string" },
+                    "account": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                        }
+                      },
+                      "required": ["email"],
+                      "additionalProperties": false
+                    },
+                    "workspace": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "businessName": { "type": "string" },
+                        "category": { "nullable": true, "type": "string" },
+                        "timezone": { "type": "string" },
+                        "currency": { "type": "string" },
+                        "defaultCountryCode": { "type": "string" },
+                        "bookingLink": { "nullable": true, "type": "string" },
+                        "followUpDays": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "onboardingComplete": { "type": "boolean" },
+                        "reviewResponseTemplate": { "type": "string" }
+                      },
+                      "required": [
+                        "id",
+                        "businessName",
+                        "category",
+                        "timezone",
+                        "currency",
+                        "defaultCountryCode",
+                        "bookingLink",
+                        "followUpDays",
+                        "onboardingComplete",
+                        "reviewResponseTemplate"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "customers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "type": "string" },
+                          "email": { "nullable": true, "type": "string" },
+                          "source": { "type": "string" },
+                          "service": { "type": "string" },
+                          "quotedMinorUnits": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "lifecycle": { "type": "string" },
+                          "lastInteractionAt": { "type": "string" },
+                          "serviceInterests": { "type": "array", "items": { "type": "string" } },
+                          "internalNotes": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "email",
+                          "source",
+                          "service",
+                          "quotedMinorUnits",
+                          "lifecycle",
+                          "lastInteractionAt",
+                          "serviceInterests",
+                          "internalNotes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "consents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "channel": { "type": "string" },
+                          "decision": { "type": "string" },
+                          "capturedAt": { "type": "string" }
+                        },
+                        "required": ["id", "customerId", "channel", "decision", "capturedAt"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "interactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "actorUserId": { "type": "string" },
+                          "kind": { "type": "string" },
+                          "body": { "type": "string" },
+                          "serviceInterest": { "nullable": true, "type": "string" },
+                          "occurredAt": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "customerId",
+                          "actorUserId",
+                          "kind",
+                          "body",
+                          "serviceInterest",
+                          "occurredAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "campaigns": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "name": { "type": "string" },
+                          "channel": { "type": "string" },
+                          "template": { "type": "string" },
+                          "audience": { "type": "object", "additionalProperties": {} },
+                          "status": { "type": "string" },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "reviewedVersion": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "channel",
+                          "template",
+                          "audience",
+                          "status",
+                          "version",
+                          "reviewedVersion"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "campaignRevisions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "campaignId": { "type": "string" },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "name": { "type": "string" },
+                          "channel": { "type": "string" },
+                          "template": { "type": "string" },
+                          "audience": { "type": "object", "additionalProperties": {} },
+                          "status": { "type": "string" },
+                          "reviewedVersion": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "recordedAt": { "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "campaignId",
+                          "version",
+                          "name",
+                          "channel",
+                          "template",
+                          "audience",
+                          "status",
+                          "reviewedVersion",
+                          "recordedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "campaignRecipients": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "campaignId": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "phone": { "nullable": true, "type": "string" },
+                          "service": { "type": "string" },
+                          "eligibility": { "type": "string" },
+                          "reason": { "nullable": true, "type": "string" },
+                          "consentRecordId": { "nullable": true, "type": "string" },
+                          "eligibilityCheckedAt": { "type": "string" },
+                          "personalizedPreview": { "type": "string" },
+                          "removed": { "type": "boolean" },
+                          "outcome": { "nullable": true, "type": "string" },
+                          "bookingId": { "nullable": true, "type": "string" },
+                          "outcomeAt": { "nullable": true, "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "campaignId",
+                          "customerId",
+                          "firstName",
+                          "lastName",
+                          "phone",
+                          "service",
+                          "eligibility",
+                          "reason",
+                          "consentRecordId",
+                          "eligibilityCheckedAt",
+                          "personalizedPreview",
+                          "removed",
+                          "outcome",
+                          "bookingId",
+                          "outcomeAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "bookings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "customerId": { "type": "string" },
+                          "service": { "type": "string" },
+                          "appointmentAt": { "type": "string" },
+                          "agreedMinorUnits": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "currency": { "type": "string" },
+                          "notes": { "type": "string" },
+                          "state": { "type": "string" },
+                          "sourceCampaignRecipientId": { "nullable": true, "type": "string" }
+                        },
+                        "required": [
+                          "id",
+                          "customerId",
+                          "service",
+                          "appointmentAt",
+                          "agreedMinorUnits",
+                          "currency",
+                          "notes",
+                          "state",
+                          "sourceCampaignRecipientId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "reviews": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "reviewerName": { "type": "string" },
+                          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                          "text": { "type": "string" },
+                          "source": { "type": "string" },
+                          "receivedAt": { "type": "string" },
+                          "response": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["unanswered"] }
+                                },
+                                "required": ["kind"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["drafted"] },
+                                  "text": { "type": "string" },
+                                  "revisedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "revisedAt"],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": { "type": "string", "enum": ["posted_manually"] },
+                                  "text": { "type": "string" },
+                                  "postedAt": { "type": "string" }
+                                },
+                                "required": ["kind", "text", "postedAt"],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reviewerName",
+                          "rating",
+                          "text",
+                          "source",
+                          "receivedAt",
+                          "response"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "operationalEvents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventId": { "type": "string" },
+                          "requestId": { "type": "string" },
+                          "commandId": { "type": "string" },
+                          "ordinal": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "occurredAt": { "type": "string" },
+                          "subject": {
+                            "type": "object",
+                            "properties": {
+                              "kind": { "type": "string" },
+                              "id": { "type": "string" }
+                            },
+                            "required": ["kind", "id"],
+                            "additionalProperties": false
+                          },
+                          "payload": { "type": "object", "additionalProperties": {} }
+                        },
+                        "required": [
+                          "eventId",
+                          "requestId",
+                          "commandId",
+                          "ordinal",
+                          "occurredAt",
+                          "subject",
+                          "payload"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "schemaVersion",
+                    "exportedAt",
+                    "account",
+                    "workspace",
+                    "customers",
+                    "consents",
+                    "interactions",
+                    "campaigns",
+                    "campaignRevisions",
+                    "campaignRecipients",
+                    "bookings",
+                    "reviews",
+                    "operationalEvents"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspace/account": {
+      "delete": {
+        "operationId": "deleteWorkspaceAccount",
+        "responses": {
+          "204": { "description": "No content" },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": { "type": "string", "minLength": 1, "maxLength": 128 },
+                  "businessNameConfirmation": { "type": "string", "minLength": 2, "maxLength": 120 }
+                },
+                "required": ["password", "businessNameConfirmation"],
+                "additionalProperties": false
               }
             }
           }

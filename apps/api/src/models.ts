@@ -29,6 +29,7 @@ const WorkspaceSchema = new mongoose.Schema(
     defaultCountryCode: { type: String, default: '+1' },
     bookingLink: { type: String, default: '' },
     followUpDays: { type: Number, default: 3 },
+    reviewResponseTemplate: { type: String, default: '' },
     onboardingComplete: { type: Boolean, default: false },
   },
   base,
@@ -142,6 +143,45 @@ const CampaignRevisionSchema = new mongoose.Schema(
   { versionKey: false, timestamps: false },
 );
 CampaignRevisionSchema.index({ workspaceId: 1, campaignId: 1, version: 1 }, { unique: true });
+const ReviewSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    reviewerName: { type: String, required: true, immutable: true },
+    rating: { type: Number, required: true, min: 1, max: 5, immutable: true },
+    text: { type: String, required: true, immutable: true },
+    source: { type: String, required: true, immutable: true },
+    receivedAt: { type: Date, required: true, immutable: true },
+    responseState: {
+      type: String,
+      required: true,
+      enum: ['unanswered', 'drafted', 'posted_manually'],
+      default: 'unanswered',
+    },
+    responseText: { type: String, default: null },
+    responseRevisedAt: { type: Date, default: null },
+    responsePostedAt: { type: Date, default: null },
+  },
+  base,
+);
+ReviewSchema.index({ workspaceId: 1, responseState: 1, receivedAt: -1, _id: -1 });
+ReviewSchema.index({ workspaceId: 1, receivedAt: -1, _id: -1 });
+const ReviewImportBatchSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    workspaceId: { type: String, required: true, index: true },
+    createdBy: { type: String, required: true },
+    headers: { type: [String], required: true },
+    rows: { type: mongoose.Schema.Types.Mixed, required: true },
+    committedAt: Date,
+    commitResponse: mongoose.Schema.Types.Mixed,
+    createdAt: { type: Date, required: true },
+    expiresAt: { type: Date, required: true },
+  },
+  { versionKey: false, timestamps: false },
+);
+ReviewImportBatchSchema.index({ workspaceId: 1, createdAt: -1, _id: -1 });
+ReviewImportBatchSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 const CampaignRecipientSchema = new mongoose.Schema(
   {
     ...stringIdentity,
@@ -282,6 +322,17 @@ const CommandReceiptSchema = new mongoose.Schema(
 );
 CommandReceiptSchema.index({ workspaceId: 1, operation: 1, keyHash: 1 }, { unique: true });
 CommandReceiptSchema.index({ workspaceId: 1, operation: 1, createdAt: -1 });
+const AccountDeletionReceiptSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    requestId: { type: String, required: true, index: true },
+    occurredAt: { type: Date, required: true },
+    schemaVersion: { type: Number, required: true, enum: [1] },
+    subjectHmac: { type: String, required: true },
+  },
+  { versionKey: false, timestamps: false },
+);
+AccountDeletionReceiptSchema.index({ occurredAt: -1 });
 
 export type UserDoc = InferSchemaType<typeof UserSchema> & { _id: string };
 export type WorkspaceDoc = InferSchemaType<typeof WorkspaceSchema> & { _id: string };
@@ -291,6 +342,10 @@ export type InteractionDoc = InferSchemaType<typeof InteractionSchema> & { _id: 
 export type ImportBatchDoc = InferSchemaType<typeof ImportBatchSchema> & { _id: string };
 export type CampaignDoc = InferSchemaType<typeof CampaignSchema> & { _id: string };
 export type CampaignRevisionDoc = InferSchemaType<typeof CampaignRevisionSchema> & { _id: string };
+export type ReviewDoc = InferSchemaType<typeof ReviewSchema> & { _id: string };
+export type ReviewImportBatchDoc = InferSchemaType<typeof ReviewImportBatchSchema> & {
+  _id: string;
+};
 export type CampaignRecipientDoc = InferSchemaType<typeof CampaignRecipientSchema> & {
   _id: string;
 };
@@ -298,6 +353,9 @@ export type BookingDoc = InferSchemaType<typeof BookingSchema> & { _id: string }
 export type SessionDoc = InferSchemaType<typeof SessionSchema> & { _id: mongoose.Types.ObjectId };
 export type OperationalEventDoc = InferSchemaType<typeof EventSchema> & { _id: string };
 export type CommandReceiptDoc = InferSchemaType<typeof CommandReceiptSchema> & { _id: string };
+export type AccountDeletionReceiptDoc = InferSchemaType<typeof AccountDeletionReceiptSchema> & {
+  _id: string;
+};
 
 export const User: Model<UserDoc> = mongoose.models.User ?? mongoose.model('User', UserSchema);
 export const Workspace: Model<WorkspaceDoc> =
@@ -314,6 +372,10 @@ export const Campaign: Model<CampaignDoc> =
   mongoose.models.Campaign ?? mongoose.model('Campaign', CampaignSchema);
 export const CampaignRevision: Model<CampaignRevisionDoc> =
   mongoose.models.CampaignRevision ?? mongoose.model('CampaignRevision', CampaignRevisionSchema);
+export const Review: Model<ReviewDoc> =
+  mongoose.models.Review ?? mongoose.model('Review', ReviewSchema);
+export const ReviewImportBatch: Model<ReviewImportBatchDoc> =
+  mongoose.models.ReviewImportBatch ?? mongoose.model('ReviewImportBatch', ReviewImportBatchSchema);
 export const CampaignRecipient: Model<CampaignRecipientDoc> =
   mongoose.models.CampaignRecipient ?? mongoose.model('CampaignRecipient', CampaignRecipientSchema);
 export const Booking: Model<BookingDoc> =
@@ -324,6 +386,9 @@ export const OperationalEvent =
   mongoose.models.OperationalEvent ?? mongoose.model('OperationalEvent', EventSchema);
 export const CommandReceipt: Model<CommandReceiptDoc> =
   mongoose.models.CommandReceipt ?? mongoose.model('CommandReceipt', CommandReceiptSchema);
+export const AccountDeletionReceipt: Model<AccountDeletionReceiptDoc> =
+  mongoose.models.AccountDeletionReceipt ??
+  mongoose.model('AccountDeletionReceipt', AccountDeletionReceiptSchema);
 
 export async function ensureIndexes(): Promise<void> {
   await Promise.all([
@@ -335,11 +400,14 @@ export async function ensureIndexes(): Promise<void> {
     ImportBatch.syncIndexes(),
     Campaign.syncIndexes(),
     CampaignRevision.syncIndexes(),
+    Review.syncIndexes(),
+    ReviewImportBatch.syncIndexes(),
     CampaignRecipient.syncIndexes(),
     Booking.syncIndexes(),
     Session.syncIndexes(),
     OperationalEvent.syncIndexes(),
     CommandReceipt.syncIndexes(),
+    AccountDeletionReceipt.syncIndexes(),
   ]);
 }
 
@@ -358,6 +426,12 @@ export async function verifyIndexes(): Promise<void> {
     ImportBatch: ['workspaceId_1', 'workspaceId_1_createdAt_-1__id_-1', 'expiresAt_1'],
     Campaign: ['workspaceId_1', 'workspaceId_1_status_1_updatedAt_-1__id_-1'],
     CampaignRevision: ['workspaceId_1', 'workspaceId_1_campaignId_1_version_1'],
+    Review: [
+      'workspaceId_1',
+      'workspaceId_1_responseState_1_receivedAt_-1__id_-1',
+      'workspaceId_1_receivedAt_-1__id_-1',
+    ],
+    ReviewImportBatch: ['workspaceId_1', 'workspaceId_1_createdAt_-1__id_-1', 'expiresAt_1'],
     CampaignRecipient: [
       'workspaceId_1',
       'workspaceId_1_campaignId_1_campaignVersion_1_customerId_1',
@@ -383,6 +457,7 @@ export async function verifyIndexes(): Promise<void> {
       'workspaceId_1_operation_1_keyHash_1',
       'workspaceId_1_operation_1_createdAt_-1',
     ],
+    AccountDeletionReceipt: ['requestId_1', 'occurredAt_-1'],
   };
   const models = [
     User,
@@ -392,11 +467,15 @@ export async function verifyIndexes(): Promise<void> {
     Interaction,
     ImportBatch,
     Campaign,
+    CampaignRevision,
+    Review,
+    ReviewImportBatch,
     CampaignRecipient,
     Booking,
     Session,
     OperationalEvent,
     CommandReceipt,
+    AccountDeletionReceipt,
   ];
   for (const model of models) {
     const indexes = await model.listIndexes();

@@ -9,6 +9,7 @@ import { registerCampaignRoutes } from './campaigns.js';
 import { registerHealthRoutes } from './health.js';
 import { registerOpenApiRoute } from './openapi.js';
 import { registerResultsRoutes } from './results.js';
+import { registerReviewRoutes } from './reviews.js';
 import { registerTodayRoutes } from './today.js';
 import { registerWorkspaceRoutes } from './workspace.js';
 
@@ -22,6 +23,7 @@ const registrations = {
   today: registerTodayRoutes,
   bookings: registerBookingRoutes,
   results: registerResultsRoutes,
+  reviews: registerReviewRoutes,
   openapi: (router: Router, _config: AppConfig) => registerOpenApiRoute(router),
 } satisfies Record<
   (typeof routeRegistry)[number]['module'],

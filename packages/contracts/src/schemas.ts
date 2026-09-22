@@ -15,6 +15,8 @@ export const ErrorCodeSchema = z.enum([
   'DUPLICATE_REVIEW_REQUIRED',
   'CONSENT_REQUIRED',
   'CAMPAIGN_VERSION_CONFLICT',
+  'CURRENCY_LOCKED',
+  'ACCOUNT_DELETION_REQUIRES_CONFIRMATION',
 ]);
 
 export const ErrorResponseSchema = z.object({
@@ -48,6 +50,7 @@ export const WorkspaceResponseSchema = z.object({
   bookingLink: z.string().nullable(),
   followUpDays: z.number().int(),
   onboardingComplete: z.boolean(),
+  reviewResponseTemplate: z.string(),
 });
 
 export const OnboardingRequestSchema = z.object({
@@ -71,6 +74,26 @@ export const OnboardingRequestSchema = z.object({
   bookingLink: z.string().url().max(500).optional().or(z.literal('')),
   followUpDays: z.number().int().min(1).max(90),
 });
+
+export const WorkspaceSettingsPatchSchema = z
+  .object({
+    businessName: z.string().trim().min(2).max(120).optional(),
+    category: z.string().trim().min(2).max(80).nullable().optional(),
+    timezone: OnboardingRequestSchema.shape.timezone.optional(),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/)
+      .optional(),
+    defaultCountryCode: z
+      .string()
+      .regex(/^\+[1-9][0-9]{0,3}$/)
+      .optional(),
+    bookingLink: z.string().url().max(500).optional().or(z.literal('')).or(z.null()),
+    followUpDays: z.number().int().min(1).max(90).optional(),
+    reviewResponseTemplate: z.string().trim().max(2000).optional(),
+    onboardingComplete: z.boolean().optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, 'At least one setting is required.');
 
 export const CreateCustomerRequestSchema = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -231,8 +254,12 @@ export const ResultsResponseSchema = z.object({
     to: z.string(),
     fromLocal: z.string(),
     toLocal: z.string(),
+    throughLocal: z.string(),
     timezone: z.string(),
   }),
+  throughLocal: z.string(),
+  generatedAt: z.string(),
+  includedBookingStatuses: z.array(z.enum(['tentative', 'confirmed', 'completed', 'no_show'])),
   newEnquiries: z.number().int(),
   bookingsRecorded: z.number().int(),
   bookingDefinition: z.string(),
@@ -243,6 +270,208 @@ export const ResultsResponseSchema = z.object({
   campaignReplies: z.number().int(),
   campaignConversions: z.number().int(),
 });
+
+export const ResultsQuerySchema = z.object({
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  through: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+});
+
+export const ReviewResponseStateSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('unanswered') }),
+  z.object({ kind: z.literal('drafted'), text: z.string(), revisedAt: z.string() }),
+  z.object({ kind: z.literal('posted_manually'), text: z.string(), postedAt: z.string() }),
+]);
+export const ReviewResponseActionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('save_draft'), text: z.string().trim().min(1).max(2000) }),
+  z.object({ action: z.literal('mark_posted_manually') }),
+  z.object({ action: z.literal('reopen_draft'), text: z.string().trim().min(1).max(2000) }),
+]);
+export const ReviewResponseSchema = z.object({
+  id: z.string(),
+  reviewerName: z.string(),
+  rating: z.number().int().min(1).max(5),
+  text: z.string(),
+  source: z.string(),
+  receivedAt: z.string(),
+  response: ReviewResponseStateSchema,
+});
+export const ReviewListQuerySchema = z.object({
+  responseState: z.enum(['unanswered', 'drafted', 'posted_manually']).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  cursor: z.coerce.number().int().min(0).max(1_000_000).default(0),
+});
+export const ReviewListResponseSchema = z.object({
+  items: z.array(ReviewResponseSchema),
+  nextCursor: z.string().nullable(),
+});
+export const CreateReviewRequestSchema = z.object({
+  reviewerName: z.string().trim().min(1).max(120),
+  rating: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+  text: z.string().trim().min(1).max(5000),
+  source: z.string().trim().min(1).max(80),
+  receivedAt: z.string().datetime({ offset: true }).optional(),
+});
+export const ReviewImportPreviewRequestSchema = z.object({
+  csv: z.string().min(1).max(1_000_000),
+});
+export const ReviewImportPreviewResponseSchema = z.object({
+  importId: z.string(),
+  headers: z.array(z.string()),
+  rows: z.array(
+    z.object({
+      rowNumber: z.number().int(),
+      values: z.record(z.string(), z.string()),
+      errors: z.array(z.string()),
+    }),
+  ),
+  limits: z.object({ maxRows: z.number().int(), maxBytes: z.number().int() }),
+});
+export const ReviewImportCommitRequestSchema = z.object({
+  resolutions: z.record(z.string(), z.enum(['create', 'skip'])).default({}),
+});
+export const ReviewImportCommitResponseSchema = z.object({
+  created: z.array(ReviewResponseSchema),
+  skippedRows: z.array(z.number().int()),
+});
+
+export const WorkspaceExportCustomerSchema = z
+  .object({
+    id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    phone: z.string(),
+    email: z.string().nullable(),
+    source: z.string(),
+    service: z.string(),
+    quotedMinorUnits: z.number().int().nullable(),
+    lifecycle: z.string(),
+    lastInteractionAt: z.string(),
+    serviceInterests: z.array(z.string()),
+    internalNotes: z.string(),
+  })
+  .strict();
+export const WorkspaceExportConsentSchema = z
+  .object({
+    id: z.string(),
+    customerId: z.string(),
+    channel: z.string(),
+    decision: z.string(),
+    capturedAt: z.string(),
+  })
+  .strict();
+export const WorkspaceExportInteractionSchema = z
+  .object({
+    id: z.string(),
+    customerId: z.string(),
+    actorUserId: z.string(),
+    kind: z.string(),
+    body: z.string(),
+    serviceInterest: z.string().nullable(),
+    occurredAt: z.string(),
+  })
+  .strict();
+export const WorkspaceExportCampaignSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    channel: z.string(),
+    template: z.string(),
+    audience: z.record(z.string(), z.unknown()),
+    status: z.string(),
+    version: z.number().int(),
+    reviewedVersion: z.number().int(),
+  })
+  .strict();
+export const WorkspaceExportCampaignRevisionSchema = z
+  .object({
+    id: z.string(),
+    campaignId: z.string(),
+    version: z.number().int(),
+    name: z.string(),
+    channel: z.string(),
+    template: z.string(),
+    audience: z.record(z.string(), z.unknown()),
+    status: z.string(),
+    reviewedVersion: z.number().int(),
+    recordedAt: z.string(),
+  })
+  .strict();
+export const WorkspaceExportCampaignRecipientSchema = z
+  .object({
+    id: z.string(),
+    campaignId: z.string(),
+    customerId: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    phone: z.string().nullable(),
+    service: z.string(),
+    eligibility: z.string(),
+    reason: z.string().nullable(),
+    consentRecordId: z.string().nullable(),
+    eligibilityCheckedAt: z.string(),
+    personalizedPreview: z.string(),
+    removed: z.boolean(),
+    outcome: z.string().nullable(),
+    bookingId: z.string().nullable(),
+    outcomeAt: z.string().nullable(),
+  })
+  .strict();
+export const WorkspaceExportBookingSchema = z
+  .object({
+    id: z.string(),
+    customerId: z.string(),
+    service: z.string(),
+    appointmentAt: z.string(),
+    agreedMinorUnits: z.number().int(),
+    currency: z.string(),
+    notes: z.string(),
+    state: z.string(),
+    sourceCampaignRecipientId: z.string().nullable(),
+  })
+  .strict();
+export const WorkspaceExportOperationalEventSchema = z
+  .object({
+    eventId: z.string(),
+    requestId: z.string(),
+    commandId: z.string(),
+    ordinal: z.number().int(),
+    occurredAt: z.string(),
+    subject: z.object({ kind: z.string(), id: z.string() }).strict(),
+    payload: z.record(z.string(), z.unknown()),
+  })
+  .strict();
+export const WorkspaceExportSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    exportedAt: z.string(),
+    account: z.object({ email: z.string().email() }),
+    workspace: WorkspaceResponseSchema,
+    customers: z.array(WorkspaceExportCustomerSchema),
+    consents: z.array(WorkspaceExportConsentSchema),
+    interactions: z.array(WorkspaceExportInteractionSchema),
+    campaigns: z.array(WorkspaceExportCampaignSchema),
+    campaignRevisions: z.array(WorkspaceExportCampaignRevisionSchema),
+    campaignRecipients: z.array(WorkspaceExportCampaignRecipientSchema),
+    bookings: z.array(WorkspaceExportBookingSchema),
+    reviews: z.array(ReviewResponseSchema),
+    operationalEvents: z.array(WorkspaceExportOperationalEventSchema),
+  })
+  .strict();
+export const DeleteAccountRequestSchema = z.object({
+  password: z.string().min(1).max(128),
+  businessNameConfirmation: z.string().min(2).max(120),
+});
+export type WorkspaceExportDocument = z.infer<typeof WorkspaceExportSchema>;
 
 export const CampaignAudienceSchema = z.object({
   consentChannel: z.literal('whatsapp').default('whatsapp'),
@@ -372,3 +601,10 @@ export type CreateCampaignRequest = z.infer<typeof CreateCampaignRequestSchema>;
 export type UpdateCampaignRequest = z.infer<typeof UpdateCampaignRequestSchema>;
 export type CampaignAudience = z.infer<typeof CampaignAudienceSchema>;
 export type CampaignOutcomeRequest = z.infer<typeof CampaignOutcomeRequestSchema>;
+export type WorkspaceSettingsPatch = z.infer<typeof WorkspaceSettingsPatchSchema>;
+export type ResultsQuery = z.infer<typeof ResultsQuerySchema>;
+export type ReviewResponseContractState = z.infer<typeof ReviewResponseStateSchema>;
+export type ReviewResponseAction = z.infer<typeof ReviewResponseActionSchema>;
+export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
+export type CreateReviewRequest = z.infer<typeof CreateReviewRequestSchema>;
+export type DeleteAccountRequest = z.infer<typeof DeleteAccountRequestSchema>;

@@ -1,75 +1,30 @@
 import type { Router } from 'express';
+import { ResultsQuerySchema } from '@growthos/contracts';
 import type { AppConfig } from '../config.js';
-import { AppError } from '../errors.js';
 import { requireSession } from '../auth.js';
 import { queryContext } from '../context.js';
-import { Booking, OperationalEvent, Workspace } from '../models.js';
-import { resultsBounds } from '../timezone.js';
+import { readResults, resultsCsv } from '../results/service.js';
 
 export function registerResultsRoutes(router: Router, config: AppConfig): void {
   router.get('/results', requireSession(config), async (req, res, next) => {
     try {
+      const input = ResultsQuerySchema.parse(req.query);
       const query = queryContext(req);
-      const workspace = await Workspace.findById(query.workspaceId);
-      if (!workspace) throw new AppError('RESOURCE_NOT_FOUND', 'Workspace not found.', 404);
-      const bounds = resultsBounds(
-        {
-          from: typeof req.query.from === 'string' ? req.query.from : undefined,
-          to: typeof req.query.to === 'string' ? req.query.to : undefined,
-        },
-        workspace.timezone,
-      );
-      const eventFilter = {
-        workspaceId: query.workspaceId,
-        occurredAt: { $gte: bounds.from, $lt: bounds.to },
-      };
-      const [
-        newEnquiries,
-        bookings,
-        followUpsPrepared,
-        followUpsSent,
-        campaignReplies,
-        campaignConversions,
-      ] = await Promise.all([
-        OperationalEvent.countDocuments({ ...eventFilter, type: 'enquiry.created' }),
-        Booking.find({
-          workspaceId: query.workspaceId,
-          createdAt: { $gte: bounds.from, $lt: bounds.to },
-          state: { $in: ['tentative', 'confirmed', 'completed', 'no_show'] },
-        }).lean(),
-        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.message_prepared' }),
-        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.message_sent' }),
-        OperationalEvent.countDocuments({ ...eventFilter, type: 'campaign.reply_recorded' }),
-        Booking.countDocuments({
-          workspaceId: query.workspaceId,
-          createdAt: { $gte: bounds.from, $lt: bounds.to },
-          sourceCampaignRecipientId: { $exists: true, $ne: null },
-          state: { $in: ['tentative', 'confirmed', 'completed', 'no_show'] },
-        }),
-      ]);
-      res.json({
-        range: {
-          from: bounds.from.toISOString(),
-          to: bounds.to.toISOString(),
-          fromLocal: bounds.fromLocal,
-          toLocal: bounds.toLocal,
-          timezone: workspace.timezone,
-        },
-        newEnquiries,
-        bookingsRecorded: bookings.length,
-        bookingDefinition:
-          'Bookings created in this workspace-local range; includes tentative, confirmed, completed, and no-show records.',
-        recordedValueDefinition:
-          'Sum of agreed booking value for those records, not collected revenue.',
-        recordedBookingValue: {
-          currency: workspace.currency,
-          minorUnits: bookings.reduce((sum, item) => sum + item.agreedMinorUnits, 0),
-        },
-        followUpsPrepared,
-        followUpsSent,
-        campaignReplies,
-        campaignConversions,
-      });
+      res.json(await readResults({ workspaceId: String(query.workspaceId), ...input }));
+    } catch (error: unknown) {
+      next(error);
+    }
+  });
+
+  router.get('/results.csv', requireSession(config), async (req, res, next) => {
+    try {
+      const input = ResultsQuerySchema.parse(req.query);
+      const query = queryContext(req);
+      const result = await readResults({ workspaceId: String(query.workspaceId), ...input });
+      res
+        .type('text/csv')
+        .setHeader('content-disposition', 'attachment; filename="results.csv"')
+        .send(resultsCsv(result));
     } catch (error: unknown) {
       next(error);
     }

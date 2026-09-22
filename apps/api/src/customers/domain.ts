@@ -13,6 +13,7 @@ export const CUSTOMER_IMPORT_LIMITS = Object.freeze({
 
 export type CsvIssue = Readonly<{ rowNumber: number; code: string; message: string }>;
 export type ParsedCsv = Readonly<{ headers: string[]; rows: string[][] }>;
+type CsvLimits = { maxBytes: number; maxRows: number; maxColumns: number; maxCellLength: number };
 
 function formulaLike(value: string): boolean {
   const trimmed = value.trim();
@@ -20,10 +21,10 @@ function formulaLike(value: string): boolean {
   return (trimmed.startsWith('+') || trimmed.startsWith('-')) && /[A-Za-z=]/.test(trimmed[1] ?? '');
 }
 
-export function parseCustomerCsv(input: string): ParsedCsv {
+export function parseCustomerCsv(input: string, overrides: Partial<CsvLimits> = {}): ParsedCsv {
+  const limits = { ...CUSTOMER_IMPORT_LIMITS, ...overrides };
   const byteLength = Buffer.byteLength(input, 'utf8');
-  if (byteLength > CUSTOMER_IMPORT_LIMITS.maxBytes)
-    throw new Error(`CSV exceeds ${CUSTOMER_IMPORT_LIMITS.maxBytes} bytes`);
+  if (byteLength > limits.maxBytes) throw new Error(`CSV exceeds ${limits.maxBytes} bytes`);
   const rows: string[][] = [];
   let row: string[] = [];
   let cell = '';
@@ -63,8 +64,8 @@ export function parseCustomerCsv(input: string): ParsedCsv {
     } else {
       cell += character;
     }
-    if (cell.length > CUSTOMER_IMPORT_LIMITS.maxCellLength)
-      throw new Error(`CSV cell exceeds ${CUSTOMER_IMPORT_LIMITS.maxCellLength} characters`);
+    if (cell.length > limits.maxCellLength)
+      throw new Error(`CSV cell exceeds ${limits.maxCellLength} characters`);
   }
   if (quoted) throw new Error('CSV has an unterminated quoted cell');
   if (cell.length > 0 || row.length > 0 || justClosedQuote) {
@@ -73,10 +74,9 @@ export function parseCustomerCsv(input: string): ParsedCsv {
   }
   if (rows.length < 2) throw new Error('CSV must include a header and at least one row');
   const [headerRow, ...dataRows] = rows;
-  if (headerRow.length > CUSTOMER_IMPORT_LIMITS.maxColumns)
-    throw new Error(`CSV has more than ${CUSTOMER_IMPORT_LIMITS.maxColumns} columns`);
-  if (dataRows.length > CUSTOMER_IMPORT_LIMITS.maxRows)
-    throw new Error(`CSV has more than ${CUSTOMER_IMPORT_LIMITS.maxRows} rows`);
+  if (headerRow.length > limits.maxColumns)
+    throw new Error(`CSV has more than ${limits.maxColumns} columns`);
+  if (dataRows.length > limits.maxRows) throw new Error(`CSV has more than ${limits.maxRows} rows`);
   const headers = headerRow.map((header) => header.trim());
   if (
     headers.some((header) => header.length === 0) ||
@@ -88,7 +88,7 @@ export function parseCustomerCsv(input: string): ParsedCsv {
     if (dataRow.length > headers.length)
       throw new Error(`CSV row ${rowIndex + 2} has too many columns`);
     for (const value of dataRow) {
-      if (value.length > CUSTOMER_IMPORT_LIMITS.maxCellLength)
+      if (value.length > limits.maxCellLength)
         throw new Error(`CSV row ${rowIndex + 2} has an oversized cell`);
       if (formulaLike(value))
         throw new Error(`CSV row ${rowIndex + 2} contains a formula-like value`);

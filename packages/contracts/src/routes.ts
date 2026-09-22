@@ -14,7 +14,6 @@ import {
   RecordConsentRequestSchema,
   UpdateCustomerRequestSchema,
   ErrorResponseSchema,
-  OnboardingRequestSchema,
   RegisterRequestSchema,
   RegisterResponseSchema,
   ResultsResponseSchema,
@@ -22,6 +21,19 @@ import {
   TodayResponseSchema,
   CsrfResponseSchema,
   WorkspaceResponseSchema,
+  WorkspaceSettingsPatchSchema,
+  ReviewListQuerySchema,
+  ReviewListResponseSchema,
+  CreateReviewRequestSchema,
+  ReviewResponseSchema,
+  ReviewResponseActionSchema,
+  ReviewImportPreviewRequestSchema,
+  ReviewImportPreviewResponseSchema,
+  ReviewImportCommitRequestSchema,
+  ReviewImportCommitResponseSchema,
+  ResultsQuerySchema,
+  WorkspaceExportSchema,
+  DeleteAccountRequestSchema,
   CampaignListResponseSchema,
   CampaignListQuerySchema,
   CampaignResponseSchema,
@@ -50,8 +62,9 @@ export type RouteDefinition = Readonly<{
     | 'today'
     | 'bookings'
     | 'results'
+    | 'reviews'
     | 'openapi';
-  method: 'get' | 'post' | 'patch';
+  method: 'get' | 'post' | 'patch' | 'delete';
   path: string;
   auth: 'public' | 'session' | 'csrf';
   request?: z.ZodType;
@@ -141,7 +154,7 @@ export const routeRegistry = [
     method: 'patch',
     path: '/api/v1/workspace',
     auth: 'csrf',
-    request: OnboardingRequestSchema,
+    request: WorkspaceSettingsPatchSchema,
     responses: { 200: WorkspaceResponseSchema, 400: ErrorResponseSchema },
   },
   {
@@ -379,7 +392,79 @@ export const routeRegistry = [
     method: 'get',
     path: '/api/v1/results',
     auth: 'session',
+    query: ResultsQuerySchema,
     responses: { 200: ResultsResponseSchema, 401: ErrorResponseSchema },
+  },
+  {
+    operationId: 'exportResultsCsv',
+    module: 'results',
+    method: 'get',
+    path: '/api/v1/results.csv',
+    auth: 'session',
+    query: ResultsQuerySchema,
+    responses: { 200: z.string(), 401: ErrorResponseSchema },
+  },
+  {
+    operationId: 'listReviews',
+    module: 'reviews',
+    method: 'get',
+    path: '/api/v1/reviews',
+    auth: 'session',
+    query: ReviewListQuerySchema,
+    responses: { 200: ReviewListResponseSchema, 401: ErrorResponseSchema },
+  },
+  {
+    operationId: 'createReview',
+    module: 'reviews',
+    method: 'post',
+    path: '/api/v1/reviews',
+    auth: 'csrf',
+    request: CreateReviewRequestSchema,
+    responses: { 201: ReviewResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'changeReviewResponse',
+    module: 'reviews',
+    method: 'patch',
+    path: '/api/v1/reviews/{reviewId}/response',
+    auth: 'csrf',
+    request: ReviewResponseActionSchema,
+    responses: { 200: ReviewResponseSchema, 400: ErrorResponseSchema, 404: ErrorResponseSchema },
+  },
+  {
+    operationId: 'previewReviewImport',
+    module: 'reviews',
+    method: 'post',
+    path: '/api/v1/review-imports/preview',
+    auth: 'csrf',
+    request: ReviewImportPreviewRequestSchema,
+    responses: { 200: ReviewImportPreviewResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'commitReviewImport',
+    module: 'reviews',
+    method: 'post',
+    path: '/api/v1/review-imports/{importId}/commit',
+    auth: 'csrf',
+    request: ReviewImportCommitRequestSchema,
+    responses: { 200: ReviewImportCommitResponseSchema, 400: ErrorResponseSchema },
+  },
+  {
+    operationId: 'exportWorkspace',
+    module: 'workspace',
+    method: 'get',
+    path: '/api/v1/workspace/export',
+    auth: 'session',
+    responses: { 200: WorkspaceExportSchema, 401: ErrorResponseSchema },
+  },
+  {
+    operationId: 'deleteWorkspaceAccount',
+    module: 'workspace',
+    method: 'delete',
+    path: '/api/v1/workspace/account',
+    auth: 'csrf',
+    request: DeleteAccountRequestSchema,
+    responses: { 204: z.null(), 400: ErrorResponseSchema, 401: ErrorResponseSchema },
   },
   {
     operationId: 'openapi',

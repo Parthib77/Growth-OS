@@ -57,7 +57,7 @@ export function monthStartLocal(date: string): string {
 }
 
 export function resultsBounds(
-  input: { from?: string; to?: string },
+  input: { from?: string; through?: string; to?: string },
   timezone: string,
   now = new Date(),
 ): {
@@ -68,7 +68,9 @@ export function resultsBounds(
 } {
   const today = localDateFor(now, timezone);
   const fromLocal = input.from ?? monthStartLocal(today);
-  const toLocal = input.to ?? addLocalDays(today, 1);
+  const toLocal = input.through
+    ? addLocalDays(input.through, 1)
+    : (input.to ?? addLocalDays(today, 1));
   const from = localDateToUtc(fromLocal, timezone);
   const to = localDateToUtc(toLocal, timezone);
   if (from >= to) throw new AppError('VALIDATION_FAILED', 'Results range must be ordered.', 400);
