@@ -1,50 +1,51 @@
 # Verification record
 
-## Foundation gate
+## Environment
 
-Environment: Windows, Node.js 24.21.0, npm 11.19.0, Git 2.53.0. The repository is `C:\Users\Parthib\code\growthos`.
+Measured on 2026-09-21 in `C:\Users\Parthib\code\growthos`:
 
-Measured commands and results on 2026-09-21:
+- Windows with Node.js 24.21.0, npm 11.19.0, and Git 2.53.0.
+- Docker Desktop 4.92.0, Docker Engine 29.8.0, and Docker Compose 5.5.1.
+- MongoDB 8.0.6 for disposable integration/browser tests and `mongo:8.3.11-noble` for the production-like Compose stack.
 
-- `MONGOMS_DISABLE_POSTINSTALL=1 MONGOMS_RUNTIME_DOWNLOAD=0 npm ci` completed successfully from the committed lockfile. The environment variables prevent an unbounded test-binary download during dependency installation.
-- `npm run format` completed successfully.
-- `npm run typecheck` completed successfully with `tsc -b packages/contracts apps/api apps/web`.
-- `npm test` completed successfully with 8 files and 17 tests passing, including CSV parsing, duplicate review, lifecycle transitions, and formula-safe cells.
-- `npm run generate:openapi` completed successfully.
-- `npm run build` completed successfully. The Next.js production build generated the `/` route.
-- `MONGOMS_VERSION=8.0.6 MONGOMS_RUNTIME_DOWNLOAD=0 npm run test:integration` passed the real single-node replica-set workflow: registration, onboarding, enquiry, consent, event metadata, idempotent booking retry, Results, customer lookup, two-workspace isolation, duplicate review, import preview/commit, interaction history, lifecycle transitions, and consent withdrawal.
-- `MONGOMS_VERSION=8.0.6 MONGOMS_RUNTIME_DOWNLOAD=0 npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone` passed all six browser checks (Chromium and iPhone 13/WebKit): axe registration surface, registration-to-booking-to-Results, and add/search/detail/history/consent-withdrawal customer workflows. Playwright starts an isolated MongoMemoryReplSet-backed API automatically; MongoDB binary downloads remain disabled unless `GROWTHOS_ALLOW_MONGODB_DOWNLOAD=1` is set.
-- `npm audit` reports 4 advisories from the resolved dependency graph. They are not yet triaged and therefore the security completion gate is not passed.
+## Automated checks
 
-Foundation result: `VERIFIED` for the direct MongoDB transaction/readiness and full browser workflow gates. The release completion gate remains `NOT VERIFIED` because container startup, restart persistence, and audit triage are still outstanding.
+- `MONGOMS_DISABLE_POSTINSTALL=1 MONGOMS_RUNTIME_DOWNLOAD=0 npm ci` completed from the committed lockfile without an installation-time MongoDB download.
+- `npm run format` and `npm run typecheck` completed successfully.
+- `npm test` passed 8 files and 18 tests. Coverage includes configuration, CSV limits and parsing, duplicate review, lifecycle transitions, formula-safe cells, and customer import retry behavior.
+- `MONGOMS_VERSION=8.0.6 MONGOMS_RUNTIME_DOWNLOAD=0 npm run test:integration` passed 2 integration tests against a real single-node replica set. They cover registration, onboarding, event metadata, idempotent booking retries, Results, customer lookup, two-workspace isolation, import preview and commit, retry-safe import commit, interaction history, lifecycle transitions, and consent withdrawal.
+- `npm run generate:openapi`, `npm run check:openapi`, `npm run build`, and `npm run check:rewrite` completed successfully.
+- The self-contained Playwright run passed all 6 checks in desktop Chromium and iPhone 13/WebKit: the axe registration surface, registration through stored booking and Results, and the customer add/search/detail/history/consent-withdrawal workflow.
+- `npm audit --audit-level=high` reports 0 vulnerabilities after upgrading `concurrently` and `express-rate-limit`.
 
-## Vertical slice gate
+## Production-container evidence
 
-Implemented behavior:
+- Clean production images built from the API and web Dockerfiles. The build context is approximately 1 MB after adding `.dockerignore`.
+- `docker compose up -d --build` initialized the authenticated MongoDB replica set, ran the index migration to completion, and brought `mongo`, `api`, and `web` to `healthy` state. `mongo-init` and `mongo-migrate` exited successfully.
+- The external-stack Playwright run against `http://localhost:3000` passed all 6 Chromium and iPhone 13/WebKit checks.
+- A record created through the production web origin remained available after sequentially restarting `mongo`, `api`, and `web`. Sign-in returned the same workspace and the saved customer retained both its name and internal notes.
+- The production HTTP topology was checked with a non-secure local cookie name; secure deployments use the `__Host-` cookie prefix only when `COOKIE_SECURE=true`.
 
-- Registration creates a user and workspace and rotates the anonymous session.
+Foundation result: `VERIFIED` for locked installation, compilation, database transactions, workspace isolation, browser workflow, dependency audit, production images, container health, index migration, and restart persistence.
+
+## Implemented vertical slice
+
+- Registration atomically creates a user and workspace and rotates the anonymous session.
 - Onboarding persists business category, timezone, currency, country code, booking link, and follow-up interval.
-- Customer creation persists the enquiry, consent record, and safe operational events in the workspace.
-- Customer register supports workspace-scoped search, lifecycle filters, cursor pagination, detail records, service interests, internal notes, interaction history, complete consent history, server-validated lifecycle transitions, and consent withdrawal contact suppression.
-- CSV import enforces byte/row/column/cell limits, rejects formula-like cells, suggests column mappings, stores a short-lived preview, surfaces normalized phone/email duplicate matches, and requires an explicit create-separately or skip decision before commit.
-- Today reads the stored enquiry and visibly explains the reason and next action.
-- Booking creation requires an idempotency key, updates customer lifecycle, persists a booking event, and returns the same booking for a retry with the same body and key.
-- Results counts stored enquiry events and stored booking value.
-- Business queries require the session-derived workspace ID.
-- The web UI exposes registration, onboarding, Today, add enquiry, booking entry, results summary, sign-out, sign-in, pending states, success states, recoverable errors, focus-visible controls, and reduced-motion CSS.
+- Customer records are workspace-scoped and support search, lifecycle filters, cursor pagination, service interests, internal notes, interaction history, full consent history, validated lifecycle transitions, and contact suppression after consent withdrawal.
+- CSV import enforces byte, row, column, and cell limits; rejects formula-like cells; previews mappings; surfaces normalized phone/email duplicates; and requires an explicit skip or create-separately decision. Replaying a committed import returns the original response instead of creating more customers.
+- Today reads stored enquiry facts and explains each recommended action.
+- Booking creation requires an idempotency key, updates customer lifecycle, records an operational event, and returns the original booking for a matching retry.
+- Results derives enquiry and booking metrics from stored facts in the workspace timezone.
+- Sessions provide idle and absolute expiry, CSRF protection, origin checks in production, and workspace identity derived on the server.
+- The web interface exposes pending, success, empty, and recoverable-error states, focus-visible controls, and reduced-motion behavior.
 
-Direct persistence/browser test status:
+Vertical-slice result: `VERIFIED` across direct API/database tests, desktop and phone browser tests, production containers, and restart persistence.
 
-- `npm run test:integration` is prepared in `apps/api/src/vertical-slice.integration.test.ts` and uses `mongodb-memory-server` with a single-node replica set. With the restored 8.0.6 archive, this direct API/database gate passed.
-- The first run was attempted, but the MongoDB binary download initially created `C:\Users\Parthib\.cache\mongodb-binaries\mongodb-windows-x86_64-8.2.6.zip.downloading` at 0 bytes and stalled.
-- A bounded retry with `MONGOMS_VERSION=8.0.6 npm run test:integration` created a second zero-byte download and was stopped.
-- Reusing the partial 8.2.6 archive reached the checksum step, then failed with `Md5CheckFailedError`; disabling the checksum confirmed the archive is truncated with `End of central directory record signature not found`.
-- The restored `MONGOMS_VERSION=8.0.6 npm run test:integration` run now passes the direct replica-set workflow.
-- The self-contained Playwright harness starts a fresh replica-set API and passes the same workflow in both desktop Chromium and iPhone 13/WebKit projects.
-- Docker Compose was not run. `docker version` reports a Docker 29.8.0 client but cannot connect to `dockerDesktopLinuxEngine`.
+## Earlier environment failures
 
-Vertical slice result: `NOT VERIFIED`. Direct API/database and browser workflow gates pass, but the completion predicate still requires restart persistence and production/container evidence. The WSL kernel is missing on this host, so Docker Desktop cannot start its Linux engine; the older 8.2.6 MongoDB cache remains truncated (8.0.6 is usable).
+The first MongoDB 8.2.6 test-binary download stalled and left a truncated archive. Verification stayed fail-closed until a valid 8.0.6 archive was restored. Docker Desktop initially lacked a usable WSL kernel; after the engine became available, the full production-container gate was rerun and passed. The corrupt 8.2.6 cache is not used by the current test commands.
 
-## Known limits
+## Remaining release gates
 
-Campaigns, reviews, exports, account deletion, and legal pages remain later delivery phases. Customer CSV import is now implemented; export remains later. Docker health, production image startup, Lighthouse, and a persisted Playwright workflow require a working Docker runtime.
+The complete product result remains `NOT VERIFIED`. Campaign execution, review requests, expanded reporting and export, settings, account deletion, privacy and terms pages, demo mode, Lighthouse budgets, container scanning, and the final visual/accessibility review remain open. No release-complete claim should be made until those features and their evidence are present.
