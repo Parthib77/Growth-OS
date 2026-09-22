@@ -20,6 +20,9 @@ body {
   margin: 0;
   min-width: 320px;
 }
+a {
+  color: var(--ink-2);
+}
 button,
 input,
 select,
@@ -158,6 +161,44 @@ dt {
 .app-shell {
   min-height: 100vh;
   padding: 2rem clamp(1rem, 5vw, 6rem) 5rem;
+}
+.legal-shell {
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 5vw, 6rem) 5rem;
+}
+.legal-nav {
+  width: min(100%, 760px);
+  margin: 0 auto 3rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.legal-document {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: clamp(1.25rem, 5vw, 4rem);
+}
+.legal-document h1 {
+  color: var(--ink);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  margin: 0.7rem 0 2rem;
+}
+.legal-document h2 {
+  color: var(--ink);
+  margin: 2.2rem 0 0.5rem;
+}
+.legal-document p {
+  line-height: 1.65;
+}
+.legal-warning,
+.legal-placeholder {
+  border-left: 3px solid var(--ochre);
+  background: #f5e8d5;
+  padding: 1rem;
 }
 .topbar,
 .toolbar {
