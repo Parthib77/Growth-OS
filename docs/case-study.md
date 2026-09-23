@@ -100,7 +100,7 @@ Evidence was captured on September 23, 2026, on Windows 10 with an AMD Ryzen 5 5
 - API integration tests: 4 files and 9 tests passed against MongoDB replica sets.
 - Source browser suite: 19 passed and 1 intentional project skip across Chromium and the iPhone 13 profile.
 - Production-container browser suite: 17 passed and 3 intentional skips. Password-reset completion is skipped only when the external delivery webhook is absent; its provider contract and single-use behavior are covered in integration and source-browser tests.
-- Responsive checks covered 390 px phone behavior plus 768 × 1024, 1366 × 768, and 1920 × 1080 viewports.
+- Responsive checks covered 390 px phone behavior plus 768 × 1024, 912 × 900, 1366 × 768, and 1920 × 1080 viewports.
 - Automated accessibility checks found no serious or critical axe violations on the six authenticated primary screens.
 - The production stack survived a MongoDB, API, and web restart; the seeded active campaign remained visible afterward.
 - `npm audit --audit-level=high` reported zero vulnerabilities.

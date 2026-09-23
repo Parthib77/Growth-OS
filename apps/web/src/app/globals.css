@@ -348,7 +348,7 @@ dt {
   font-size: 0.78rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .booking-record {
     grid-template-columns: 1fr 1fr;
   }

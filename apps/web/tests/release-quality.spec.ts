@@ -57,6 +57,7 @@ test('main screens remain accessible and responsive from tablet through wide des
 
   for (const viewport of [
     { width: 768, height: 1024 },
+    { width: 912, height: 900 },
     { width: 1366, height: 768 },
     { width: 1920, height: 1080 },
   ]) {

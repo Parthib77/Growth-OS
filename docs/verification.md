@@ -42,7 +42,7 @@ The browser suite exercises registration, onboarding, enquiry capture, Today, cu
 
 - Chromium and the iPhone 13 profile completed the full daily workflow.
 - The six primary authenticated screens passed axe scans with no serious or critical violations.
-- Responsive overflow checks passed at 768 × 1024, 1366 × 768, and 1920 × 1080. The phone project covers the 390 px workflow.
+- Responsive overflow checks passed at 768 × 1024, 912 × 900, 1366 × 768, and 1920 × 1080. The phone project covers the 390 px workflow.
 - Today dialogs trap focus, cycle Tab and Shift+Tab, close with Escape, and restore the trigger.
 - Reduced-motion emulation reduced transition duration to at most 1 ms.
 - The authenticated quality flow produced no unexpected console errors and no failed API responses.
@@ -81,8 +81,8 @@ docker scout cves local://growthos-api:latest --only-severity critical,high --on
 
 The first image scan exposed inherited Debian and bundled npm findings. The runtime images were rebuilt on a smaller digest-pinned Alpine base and npm was removed. The repeated final scans reported:
 
-- Web image `96a52abaf9c1`: 0 critical, 0 high, 94 indexed packages, 74 MB Scout size.
-- API image `09bc92a1f2b7`: 0 critical, 0 high, 301 indexed packages, 161 MB Scout size.
+- Web image `66f650df3c03`: 0 critical, 0 high, 94 indexed packages, 74 MB Scout size.
+- API image `00cb02e511fe`: 0 critical, 0 high, 301 indexed packages, 161 MB Scout size.
 - npm dependency audit: 0 vulnerabilities.
 
 No unresolved high-severity finding remains in the checked dependency tree or final application images. The concise threat analysis and control mapping are in [threat-model.md](threat-model.md).
