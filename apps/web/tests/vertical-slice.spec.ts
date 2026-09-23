@@ -10,6 +10,29 @@ test('real app exposes an accessible registration surface', async ({ page }) => 
   ).toBe(0);
 });
 
+test('an offline registration preserves input and recovers after reconnection', async ({
+  page,
+  context,
+}, testInfo) => {
+  const email = `offline-${testInfo.project.name}-${Date.now()}@example.com`;
+  await page.goto('/');
+  await page.getByLabel('Business name').fill('Offline Salon');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill('correct horse battery staple');
+
+  await context.setOffline(true);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(
+    page.getByText('Connection lost. Check your internet connection and try again.'),
+  ).toBeVisible();
+  await expect(page.getByLabel('Business name')).toHaveValue('Offline Salon');
+  await expect(page.getByLabel('Email')).toHaveValue(email);
+
+  await context.setOffline(false);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+});
+
 test('seeded demo signs in to the real database and stays clearly labeled', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Already have an account? Sign in.' }).click();

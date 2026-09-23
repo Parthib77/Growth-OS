@@ -17,11 +17,20 @@ export async function request<T>(
   schema: z.ZodType<T>,
   init: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch(path, {
-    credentials: 'include',
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
-  });
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      credentials: 'include',
+      ...init,
+      headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
+    });
+  } catch {
+    throw new ApiError(
+      'Connection lost. Check your internet connection and try again.',
+      'NETWORK_ERROR',
+      0,
+    );
+  }
   if (response.status === 204) return schema.parse(null);
   const data: unknown = await response.json();
   if (!response.ok) {
@@ -34,7 +43,16 @@ export async function request<T>(
 }
 
 export async function download(path: string, fallbackName: string): Promise<void> {
-  const response = await fetch(path, { credentials: 'include' });
+  let response: Response;
+  try {
+    response = await fetch(path, { credentials: 'include' });
+  } catch {
+    throw new ApiError(
+      'Connection lost. Check your internet connection and try again.',
+      'NETWORK_ERROR',
+      0,
+    );
+  }
   if (!response.ok) {
     const data: unknown = await response.json().catch(() => null);
     const parsed = ErrorResponseSchema.safeParse(data);

@@ -40,3 +40,18 @@ test('capture the completed review workspace', async ({ page }, testInfo) => {
   const filename = testInfo.project.name === 'phone' ? 'mobile.png' : 'desktop.png';
   await page.screenshot({ path: path.join(reviewDir, filename), fullPage: true });
 });
+
+test('capture the daily workspace with stored bookings', async ({ page }, testInfo) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Already have an account? Sign in.' }).click();
+  await page.getByLabel('Email').fill('demo@growthos.local');
+  await page.getByLabel('Password').fill('DemoWorkspace!2026');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByText('Cut and finish')).toBeVisible();
+
+  const reviewDir = path.resolve('.impeccable/review');
+  await mkdir(reviewDir, { recursive: true });
+  const filename = testInfo.project.name === 'phone' ? 'today-mobile.png' : 'today-desktop.png';
+  await page.screenshot({ path: path.join(reviewDir, filename), fullPage: true });
+});

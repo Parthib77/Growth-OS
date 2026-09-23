@@ -41,7 +41,7 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 .auth-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
   gap: 7vw;
@@ -165,7 +165,7 @@ dt {
   border-color: var(--ink-2);
 }
 .app-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 2rem clamp(1rem, 5vw, 6rem) 5rem;
 }
 .app-nav-shell {
@@ -255,7 +255,7 @@ dt {
   margin: 0;
 }
 .legal-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 2rem clamp(1rem, 5vw, 6rem) 5rem;
 }
 .legal-nav {
@@ -343,7 +343,7 @@ dt {
   min-height: 1px;
 }
 .booking-actions .button {
-  min-height: 38px;
+  min-height: 44px;
   padding: 0.45rem 0.65rem;
   font-size: 0.78rem;
 }

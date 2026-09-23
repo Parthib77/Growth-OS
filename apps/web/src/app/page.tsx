@@ -96,6 +96,18 @@ function bookingStateLabel(state: Booking['state']): string {
   return state === 'no_show' ? 'No-show' : `${state[0]?.toUpperCase()}${state.slice(1)}`;
 }
 
+function formatAppointmentTime(value: string, timezone: string): string {
+  return new Intl.DateTimeFormat(undefined, {
+    timeZone: timezone,
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  }).format(new Date(value));
+}
+
 type Screen = 'auth' | 'onboarding' | AppScreen;
 type AuthMode = 'register' | 'sign-in' | 'request-reset' | 'complete-reset';
 
@@ -109,6 +121,7 @@ export default function Home() {
   const [today, setToday] = useState<Customer[]>([]);
   const [results, setResults] = useState<Results | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [todayLoading, setTodayLoading] = useState(true);
   const [selected, setSelected] = useState<Customer | null>(null);
   const [showCustomer, setShowCustomer] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
@@ -125,14 +138,19 @@ export default function Home() {
     setScreen(current.onboardingComplete ? 'today' : 'onboarding');
   }
   async function refreshToday() {
-    const [queue, report, bookingList] = await Promise.all([
-      request('/api/v1/today', TodayResponseSchema),
-      request('/api/v1/results', ResultsResponseSchema),
-      request('/api/v1/bookings', BookingListResponseSchema),
-    ]);
-    setToday(queue.items);
-    setResults(report);
-    setBookings(bookingList.items);
+    setTodayLoading(true);
+    try {
+      const [queue, report, bookingList] = await Promise.all([
+        request('/api/v1/today', TodayResponseSchema),
+        request('/api/v1/results', ResultsResponseSchema),
+        request('/api/v1/bookings', BookingListResponseSchema),
+      ]);
+      setToday(queue.items);
+      setResults(report);
+      setBookings(bookingList.items);
+    } finally {
+      setTodayLoading(false);
+    }
   }
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get('reset_token');
@@ -366,6 +384,8 @@ export default function Home() {
       setWorkspace(null);
       setToday([]);
       setResults(null);
+      setBookings([]);
+      setTodayLoading(true);
       await refreshCsrf();
       setStatus({ kind: 'success', message: 'Signed out.' });
     } catch (error) {
@@ -382,6 +402,7 @@ export default function Home() {
     setToday([]);
     setResults(null);
     setBookings([]);
+    setTodayLoading(true);
     setStatus({ kind: 'success', message: 'Account and workspace deleted.' });
     void refreshCsrf();
   }
@@ -606,18 +627,20 @@ export default function Home() {
       <section className="summary-row">
         <div>
           <span>New enquiries</span>
-          <strong>{results?.newEnquiries ?? 0}</strong>
+          <strong>{results?.newEnquiries ?? (todayLoading ? 'Loading' : 'Unavailable')}</strong>
         </div>
         <div>
           <span>Bookings recorded</span>
-          <strong>{results?.bookingsRecorded ?? 0}</strong>
+          <strong>{results?.bookingsRecorded ?? (todayLoading ? 'Loading' : 'Unavailable')}</strong>
         </div>
         <div>
           <span>Recorded value</span>
           <strong>
             {results
               ? `${results.recordedBookingValue.currency} ${(results.recordedBookingValue.minorUnits / 100).toFixed(2)}`
-              : '—'}
+              : todayLoading
+                ? 'Loading'
+                : 'Unavailable'}
           </strong>
         </div>
       </section>
@@ -631,29 +654,41 @@ export default function Home() {
         <div className="summary-row campaign-results" aria-label="Campaign results">
           <div>
             <span>Follow-ups prepared</span>
-            <strong>{results?.followUpsPrepared ?? 0}</strong>
+            <strong>
+              {results?.followUpsPrepared ?? (todayLoading ? 'Loading' : 'Unavailable')}
+            </strong>
           </div>
           <div>
             <span>Marked sent</span>
-            <strong>{results?.followUpsSent ?? 0}</strong>
+            <strong>{results?.followUpsSent ?? (todayLoading ? 'Loading' : 'Unavailable')}</strong>
           </div>
           <div>
             <span>Replies recorded</span>
-            <strong>{results?.campaignReplies ?? 0}</strong>
+            <strong>
+              {results?.campaignReplies ?? (todayLoading ? 'Loading' : 'Unavailable')}
+            </strong>
           </div>
           <div>
             <span>Attributed bookings</span>
-            <strong>{results?.campaignConversions ?? 0}</strong>
+            <strong>
+              {results?.campaignConversions ?? (todayLoading ? 'Loading' : 'Unavailable')}
+            </strong>
           </div>
         </div>
-        {bookings.length === 0 ? (
+        {todayLoading ? (
+          <p className="muted" role="status">
+            Loading bookings and results…
+          </p>
+        ) : bookings.length === 0 ? (
           <p className="muted">No bookings recorded in this workspace yet.</p>
         ) : (
           <div className="booking-register">
             {bookings.map((booking) => (
               <div className="booking-record" key={booking.id}>
                 <strong>{booking.service}</strong>
-                <span>{new Date(booking.appointmentAt).toLocaleString()}</span>
+                <span>
+                  {formatAppointmentTime(booking.appointmentAt, workspace?.timezone ?? 'UTC')}
+                </span>
                 <span>
                   {booking.agreedMoney.currency} {(booking.agreedMoney.minorUnits / 100).toFixed(2)}
                 </span>

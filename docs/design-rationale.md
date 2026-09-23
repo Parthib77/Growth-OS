@@ -135,3 +135,7 @@ The interface does not call rules artificial intelligence. It shows stable reaso
 ## Design verification
 
 Phase 7 must inspect every required screen at phone, tablet, laptop, and wide desktop sizes. It must test light and dark only if both are implemented. The current direction is one locked light theme with ink navigation, as the brief does not require dark mode. Automated checks do not replace keyboard, zoom, screen-reader spot checks, or browser screenshots.
+
+## Complete-product refinement
+
+The final desktop and phone review preserved the Working Register rather than introducing a new visual language. It replaced Today’s transient zero-state with explicit loading copy, raised compact booking actions to the 44px touch floor, rendered appointments in the workspace timezone, and turned browser network failures into recoverable connection guidance. The motion review kept the existing short button press and dialog entrance because the daily navigation and registers are high-frequency controls that should remain immediate.
