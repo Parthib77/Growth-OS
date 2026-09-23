@@ -50,7 +50,6 @@ export function TodayDialogs({
             <button className="close" onClick={onCloseCustomer} aria-label="Close customer details">
               Close
             </button>
-            <p className="eyebrow">Enquiry detail</p>
             <h2 id="customer-title">
               {selected.firstName} {selected.lastName}
             </h2>

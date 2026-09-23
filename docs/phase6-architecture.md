@@ -5,7 +5,7 @@
 - Ground: complete. The current request, session, workspace, event, Results, and browser flows were traced.
 - Sketch: complete. Two designs were compared against the original brief and current architecture.
 - Agree: complete. Candidate A is the base, with the selected additions below.
-- Implement: pending.
+- Implement: backend, authenticated web workspace, legal drafts, export, and account deletion complete. The guarded demo seed/reset remains pending.
 - Scrap: use only if implementation needs repeated casts, partial-state fields, or caller-managed transactions.
 
 ## Caller usage
@@ -144,7 +144,7 @@ Unit tests cover review transitions, immutable original fields, CSV bounds, temp
 
 Replica-set integration tests cover tenant isolation, review import retry, response events without text, original-text immutability, Results and CSV agreement, settings persistence, export inclusion and secret exclusion, deletion refusal, atomic deletion, session revocation, and the deletion receipt.
 
-Playwright covers review drafting and manual posting, date-filtered Results, both downloads, settings reload, deletion cancellation and completion, legal pages, and the labeled database-backed demo. Responsive projects include phone, tablet, laptop, and wide desktop.
+Playwright covers review drafting and manual posting, date-filtered Results, both downloads, settings reload, deletion cancellation and completion, and legal pages on desktop Chromium and iPhone/WebKit. The latest gate passed 10 tests; the two deterministic visual-capture tests are skipped by default and passed separately against a production build. The database-backed demo remains pending and is not included in that evidence.
 
 ## Synthesis record
 

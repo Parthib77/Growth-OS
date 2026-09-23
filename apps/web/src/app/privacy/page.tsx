@@ -14,7 +14,6 @@ export default function PrivacyPage() {
         <Link href="/terms">Terms draft</Link>
       </nav>
       <article className="legal-document">
-        <p className="eyebrow">Privacy / draft</p>
         <h1>How the current product handles data</h1>
         <div className="legal-warning" role="note">
           <strong>Draft for legal review.</strong> This page describes the current Growth OS

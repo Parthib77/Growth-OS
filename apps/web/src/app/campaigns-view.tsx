@@ -9,10 +9,12 @@ import {
   CampaignRecipientResponseSchema,
   CampaignResponseSchema,
   CreateCampaignRequestSchema,
+  ErrorResponseSchema,
   UpdateCampaignRequestSchema,
   WhatsAppLinkResponseSchema,
 } from '@growthos/contracts';
 import { request } from './api-client';
+import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
 
 type Campaign = ReturnType<typeof CampaignResponseSchema.parse>;
@@ -21,9 +23,11 @@ type AuditItem = ReturnType<typeof CampaignAuditResponseSchema.parse>['items'][n
 
 type Props = {
   csrf: string;
+  businessName: string;
   status: Status;
   setStatus: (status: Status) => void;
-  onBack: () => void;
+  onNavigate: (screen: AppScreen) => void;
+  onSignOut: () => void;
 };
 
 async function campaignRequest<T>(
@@ -37,14 +41,21 @@ async function campaignRequest<T>(
     headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
   });
   const data: unknown = response.status === 204 ? null : await response.json();
-  if (!response.ok)
-    throw new Error(
-      (data as { error?: { message?: string } })?.error?.message ?? 'Campaign request failed.',
-    );
+  if (!response.ok) {
+    const parsed = ErrorResponseSchema.safeParse(data);
+    throw new Error(parsed.success ? parsed.data.error.message : 'Campaign request failed.');
+  }
   return { data: schema.parse(data), etag: response.headers.get('etag') ?? '' };
 }
 
-export function CampaignsView({ csrf, status, setStatus, onBack }: Props) {
+export function CampaignsView({
+  csrf,
+  businessName,
+  status,
+  setStatus,
+  onNavigate,
+  onSignOut,
+}: Props) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selected, setSelected] = useState<Campaign | null>(null);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
@@ -285,18 +296,22 @@ export function CampaignsView({ csrf, status, setStatus, onBack }: Props) {
 
   return (
     <main className="app-shell">
+      <AppNav
+        active="campaigns"
+        businessName={businessName}
+        onNavigate={onNavigate}
+        onSignOut={onSignOut}
+        signOutPending={status.kind === 'pending'}
+      />
       <header className="topbar">
         <div>
-          <p className="eyebrow">Growth OS / campaigns</p>
-          <h1>Permission-aware follow-up</h1>
+          <h1 id="screen-title" tabIndex={-1}>
+            Permission-aware follow-up
+          </h1>
         </div>
-        <button className="button quiet" onClick={onBack}>
-          Back to Today
-        </button>
       </header>
       <div className="campaign-layout">
         <section className="panel campaign-composer" aria-labelledby="campaign-composer-title">
-          <p className="eyebrow">WhatsApp preparation</p>
           <h2 id="campaign-composer-title">Create a campaign draft</h2>
           <form onSubmit={create}>
             <Field
@@ -391,7 +406,7 @@ export function CampaignsView({ csrf, status, setStatus, onBack }: Props) {
         <section className="panel recipient-panel" aria-labelledby="recipient-title">
           <div className="toolbar">
             <div>
-              <p className="eyebrow">Review / version {selected.version}</p>
+              <p className="muted">Version {selected.version}</p>
               <h2 id="recipient-title">{selected.name}</h2>
               <p className="muted">
                 Only the latest WhatsApp grant, valid current phone, and no active booking qualify.

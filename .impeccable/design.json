@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T02:41:47.4037477Z",
+  "title": "Design System: Growth OS",
+  "extensions": {
+    "colorMeta": {
+      "mineral": {
+        "role": "neutral",
+        "displayName": "Mineral Desk",
+        "canonical": "#e9e6df",
+        "tonalRamp": [
+          "color-mix(in oklch, #e9e6df 25%, black)",
+          "color-mix(in oklch, #e9e6df 45%, black)",
+          "color-mix(in oklch, #e9e6df 65%, black)",
+          "#e9e6df",
+          "color-mix(in oklch, #e9e6df 80%, white)",
+          "color-mix(in oklch, #e9e6df 60%, white)",
+          "color-mix(in oklch, #e9e6df 35%, white)",
+          "color-mix(in oklch, #e9e6df 15%, white)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper Sheet",
+        "canonical": "#f3f1eb",
+        "tonalRamp": [
+          "color-mix(in oklch, #f3f1eb 25%, black)",
+          "color-mix(in oklch, #f3f1eb 45%, black)",
+          "color-mix(in oklch, #f3f1eb 65%, black)",
+          "#f3f1eb",
+          "color-mix(in oklch, #f3f1eb 80%, white)",
+          "color-mix(in oklch, #f3f1eb 60%, white)",
+          "color-mix(in oklch, #f3f1eb 35%, white)",
+          "color-mix(in oklch, #f3f1eb 15%, white)"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Deep Register Ink",
+        "canonical": "#153b3b",
+        "tonalRamp": [
+          "color-mix(in oklch, #153b3b 25%, black)",
+          "color-mix(in oklch, #153b3b 45%, black)",
+          "color-mix(in oklch, #153b3b 65%, black)",
+          "#153b3b",
+          "color-mix(in oklch, #153b3b 80%, white)",
+          "color-mix(in oklch, #153b3b 60%, white)",
+          "color-mix(in oklch, #153b3b 35%, white)",
+          "color-mix(in oklch, #153b3b 15%, white)"
+        ]
+      },
+      "ink-2": {
+        "role": "primary",
+        "displayName": "Working Teal",
+        "canonical": "#235050",
+        "tonalRamp": [
+          "color-mix(in oklch, #235050 25%, black)",
+          "color-mix(in oklch, #235050 45%, black)",
+          "color-mix(in oklch, #235050 65%, black)",
+          "#235050",
+          "color-mix(in oklch, #235050 80%, white)",
+          "color-mix(in oklch, #235050 60%, white)",
+          "color-mix(in oklch, #235050 35%, white)",
+          "color-mix(in oklch, #235050 15%, white)"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "Focus Ochre",
+        "canonical": "#b87932",
+        "tonalRamp": [
+          "color-mix(in oklch, #b87932 25%, black)",
+          "color-mix(in oklch, #b87932 45%, black)",
+          "color-mix(in oklch, #b87932 65%, black)",
+          "#b87932",
+          "color-mix(in oklch, #b87932 80%, white)",
+          "color-mix(in oklch, #b87932 60%, white)",
+          "color-mix(in oklch, #b87932 35%, white)",
+          "color-mix(in oklch, #b87932 15%, white)"
+        ]
+      },
+      "clay": {
+        "role": "secondary",
+        "displayName": "Action Clay",
+        "canonical": "#a24c3a",
+        "tonalRamp": [
+          "color-mix(in oklch, #a24c3a 25%, black)",
+          "color-mix(in oklch, #a24c3a 45%, black)",
+          "color-mix(in oklch, #a24c3a 65%, black)",
+          "#a24c3a",
+          "color-mix(in oklch, #a24c3a 80%, white)",
+          "color-mix(in oklch, #a24c3a 60%, white)",
+          "color-mix(in oklch, #a24c3a 35%, white)",
+          "color-mix(in oklch, #a24c3a 15%, white)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Ledger Rule",
+        "canonical": "#c9c5bb",
+        "tonalRamp": [
+          "color-mix(in oklch, #c9c5bb 25%, black)",
+          "color-mix(in oklch, #c9c5bb 45%, black)",
+          "color-mix(in oklch, #c9c5bb 65%, black)",
+          "#c9c5bb",
+          "color-mix(in oklch, #c9c5bb 80%, white)",
+          "color-mix(in oklch, #c9c5bb 60%, white)",
+          "color-mix(in oklch, #c9c5bb 35%, white)",
+          "color-mix(in oklch, #c9c5bb 15%, white)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Reading Ink",
+        "canonical": "#1e2b2b",
+        "tonalRamp": [
+          "color-mix(in oklch, #1e2b2b 25%, black)",
+          "color-mix(in oklch, #1e2b2b 45%, black)",
+          "color-mix(in oklch, #1e2b2b 65%, black)",
+          "#1e2b2b",
+          "color-mix(in oklch, #1e2b2b 80%, white)",
+          "color-mix(in oklch, #1e2b2b 60%, white)",
+          "color-mix(in oklch, #1e2b2b 35%, white)",
+          "color-mix(in oklch, #1e2b2b 15%, white)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Auth and legal-page statements only."
+      },
+      "headline": {
+        "displayName": "Screen headline",
+        "purpose": "The single title at the top of an operational screen."
+      },
+      "title": {
+        "displayName": "Section title",
+        "purpose": "Panels, ledgers, and response sections."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Forms, records, explanations, and response copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field names, definition terms, and compact controls."
+      },
+      "numeric": {
+        "displayName": "Numeric result",
+        "purpose": "Counts and monetary results with tabular figures."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "control-press",
+        "value": "transform 0.08s ease",
+        "purpose": "Moves a pressed button down by one pixel."
+      },
+      {
+        "name": "control-fill",
+        "value": "background 0.15s ease",
+        "purpose": "Changes button and navigation fills without a long fade."
+      },
+      {
+        "name": "dialog-enter",
+        "value": "0.16s ease-out",
+        "purpose": "Moves the right-side dialog 12px into place while opacity reaches full strength."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Replaces all animation and transition durations when the user prefers reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-register",
+        "value": "700px"
+      },
+      {
+        "name": "phone",
+        "value": "760px"
+      },
+      {
+        "name": "split-workspace",
+        "value": "800px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The next user-reviewed action in a workflow.",
+      "html": "<button class=\"ds-btn-primary\">Save draft</button>",
+      "css": ".ds-btn-primary { min-height: 44px; border: 1px solid var(--ink); border-radius: 2px; padding: 0.7rem 1rem; background: var(--ink); color: var(--paper); font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; transition: transform 0.08s ease, background 0.15s ease; cursor: pointer; } .ds-btn-primary:hover { background: var(--ink); } .ds-btn-primary:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "An alternate, export, reopen, or supporting action.",
+      "html": "<button class=\"ds-btn-secondary\">Copy response</button>",
+      "css": ".ds-btn-secondary { min-height: 44px; border: 1px solid var(--ink); border-radius: 2px; padding: 0.7rem 1rem; background: transparent; color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; transition: transform 0.08s ease, background 0.15s ease; cursor: pointer; } .ds-btn-secondary:hover { background: transparent; } .ds-btn-secondary:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-btn-secondary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "description": "A lower-priority status or utility action.",
+      "html": "<button class=\"ds-btn-quiet\">Mark posted manually</button>",
+      "css": ".ds-btn-quiet { min-height: 44px; border: 1px solid var(--line); border-radius: 2px; padding: 0.7rem 1rem; background: transparent; color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; transition: transform 0.08s ease, background 0.15s ease; cursor: pointer; } .ds-btn-quiet:hover { background: transparent; } .ds-btn-quiet:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-btn-quiet:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "A destructive action used only after explicit confirmation.",
+      "html": "<button class=\"ds-btn-danger\">Delete account permanently</button>",
+      "css": ".ds-btn-danger { min-height: 44px; border: 1px solid #74372a; border-radius: 2px; padding: 0.7rem 1rem; background: var(--clay); color: #fff8f3; font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; transition: transform 0.08s ease, background 0.15s ease; cursor: pointer; } .ds-btn-danger:hover { background: #8e402f; } .ds-btn-danger:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-btn-danger:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "A labeled operational field with an external focus outline.",
+      "html": "<label class=\"ds-field\"><span>Response text</span><textarea rows=\"4\">Thank you, Mina. We appreciate you taking the time to share this.</textarea></label>",
+      "css": ".ds-field { display: grid; gap: 0.4rem; color: var(--text); font-family: 'IBM Plex Sans', sans-serif; } .ds-field span { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; } .ds-field textarea { width: 100%; border: 1px solid #9b998f; border-radius: 2px; padding: 0.75rem; background: #faf9f5; color: var(--text); font: inherit; resize: vertical; } .ds-field textarea:hover { border-color: #9b998f; } .ds-field textarea:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }"
+    },
+    {
+      "name": "Paper Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "A bounded form, filter, or work area on the mineral canvas.",
+      "html": "<section class=\"ds-panel\"><h2>Reporting period</h2><p>Both dates are included in the report.</p></section>",
+      "css": ".ds-panel { border: 1px solid var(--line); border-radius: 0; padding: clamp(1.25rem, 4vw, 2.5rem); background: var(--paper); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; } .ds-panel h2 { margin: 0 0 0.45rem; color: var(--ink); } .ds-panel p { margin: 0; color: #536565; line-height: 1.5; }"
+    },
+    {
+      "name": "Workspace Navigation",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "The dark workspace bar with a complete six-destination phone grid.",
+      "html": "<div class=\"ds-nav-shell\"><div class=\"ds-nav-identity\"><span>Growth OS</span><strong>Northline Studio</strong></div><nav class=\"ds-nav\" aria-label=\"Workspace\"><button>Today</button><button>Customers</button><button>Campaigns</button><button aria-current=\"page\">Reviews</button><button>Results</button><button>Settings</button></nav><button class=\"ds-nav-signout\">Sign out</button></div>",
+      "css": ".ds-nav-shell { display: grid; grid-template-columns: minmax(10rem, auto) 1fr auto; align-items: stretch; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font-family: 'IBM Plex Sans', sans-serif; } .ds-nav-identity { display: grid; align-content: center; gap: 0.15rem; padding: 0.8rem 1rem; border-right: 1px solid rgb(243 241 235 / 0.25); } .ds-nav-identity span { color: #c8d8d2; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; } .ds-nav { display: flex; min-width: 0; overflow-x: auto; } .ds-nav button, .ds-nav-signout { min-height: 54px; border: 0; border-right: 1px solid rgb(243 241 235 / 0.18); padding: 0.7rem 0.9rem; background: transparent; color: #dce7e2; font: inherit; font-weight: 700; white-space: nowrap; cursor: pointer; } .ds-nav button[aria-current='page'] { background: var(--paper); color: var(--ink); } .ds-nav button:not([aria-current='page']):hover, .ds-nav-signout:hover { background: var(--ink-soft); } .ds-nav button:focus-visible, .ds-nav-signout:focus-visible { outline: 3px solid #e6ad69; outline-offset: -4px; } .ds-nav-signout { border-right: 0; border-left: 1px solid rgb(243 241 235 / 0.25); } @media (max-width: 760px) { .ds-nav-shell { grid-template-columns: 1fr auto; } .ds-nav-identity { border-right: 0; } .ds-nav { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; border-top: 1px solid rgb(243 241 235 / 0.25); } .ds-nav-signout { grid-column: 2; grid-row: 1; } .ds-nav button { white-space: normal; } }"
+    },
+    {
+      "name": "State Label",
+      "kind": "chip",
+      "description": "A compact text label for review and workflow state.",
+      "html": "<span class=\"ds-state-label\">Draft saved</span>",
+      "css": ".ds-state-label { display: inline-block; border: 1px solid var(--line); border-radius: 0; padding: 0.25rem 0.45rem; color: var(--ink-soft); font-family: 'IBM Plex Sans', sans-serif; font-size: 0.76rem; font-weight: 700; }"
+    },
+    {
+      "name": "Register Row",
+      "kind": "custom",
+      "description": "A divider-led operational record with aligned facts and value.",
+      "html": "<button class=\"ds-register-row\"><span class=\"ds-register-main\"><strong>Mina Chen</strong><span>Consultation · Referral</span></span><span class=\"ds-register-reason\">Follow-up due</span><span>Prepare message</span><span class=\"ds-register-value\">USD 120.00</span></button>",
+      "css": ".ds-register-row { width: 100%; display: grid; grid-template-columns: 1.2fr 1.5fr 1.5fr 0.7fr; gap: 1rem; align-items: center; border: 0; border-bottom: 1px solid var(--line); padding: 1.1rem 0.6rem; background: transparent; color: var(--text); font-family: 'IBM Plex Sans', sans-serif; text-align: left; cursor: pointer; } .ds-register-row:hover { background: #dedbd4; } .ds-register-row:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-register-main { display: grid; gap: 0.3rem; } .ds-register-main strong { color: var(--ink); font-size: 1.05rem; } .ds-register-main span, .ds-register-reason, .ds-register-value { font-size: 0.86rem; } .ds-register-reason { color: var(--clay); font-weight: 700; } .ds-register-value { text-align: right; font-variant-numeric: tabular-nums; } @media (max-width: 760px) { .ds-register-row { grid-template-columns: 1fr; gap: 0.25rem; padding: 1rem 0.4rem; } .ds-register-value { text-align: left; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Working Register",
+    "overview": "Growth OS uses the visual language of a well-kept appointment register: warm mineral-gray work surfaces, blue-green structure, clear rules, and compact records. The system is built for Operate mode. It favors scan speed, task order, and visible state over decorative display.\n\nThe interface stays flat and editorial. Strong headings establish hierarchy, horizontal rules organize evidence, and a small set of semantic colors marks focus, warning, success, and destructive action. It does not use shadows, gradients, glass effects, neon accents, floating card grids, or decorative icon sets.",
+    "keyCharacteristics": [
+      "Warm mineral-gray page and paper layers.",
+      "Deep blue-green navigation, headings, links, and primary actions.",
+      "Dense registers and ledgers separated by visible rules.",
+      "Nearly square controls with explicit focus and state treatments.",
+      "A complete two-row phone navigation that keeps every destination visible."
+    ],
+    "rules": [
+      {
+        "name": "The Accent Restraint Rule",
+        "body": "Ochre and clay must explain focus, warning, validation, priority, or danger. They do not decorate neutral content.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meaning Before Decoration Rule",
+        "body": "Keep large areas mineral, paper, or blue-green. State colors remain local to the message or action they qualify.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Use IBM Plex Sans for every interface role. Hierarchy comes from size, weight, tracking, and placement.",
+        "section": "typography"
+      },
+      {
+        "name": "The Editorial Scale Rule",
+        "body": "Each screen gets one large heading. Dense task content then steps down to section titles, labels, body copy, and muted metadata.",
+        "section": "typography"
+      },
+      {
+        "name": "The Register Before Cards Rule",
+        "body": "Use open rows and dividers for repeated operational records. Use a bordered paper panel only when the content needs a bounded editing or filtering context.",
+        "section": "layout"
+      },
+      {
+        "name": "The Phone Task Order Rule",
+        "body": "When a desktop split collapses, place the current work and its result before secondary creation or import tools.",
+        "section": "layout"
+      },
+      {
+        "name": "The Divider Depth Rule",
+        "body": "Use color fields and rules to separate layers. Do not add shadows, blur, glass, or gradients.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Near-Square Rule",
+        "body": "Default to square corners or the 2px control radius. Do not introduce pills, oversized rounding, or floating capsules.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Explicit State Rule",
+        "body": "Every selected, active, pending, success, warning, and destructive state needs a visible label, copy change, border, or fill change.",
+        "section": "components"
+      },
+      {
+        "name": "The Manual Action Rule",
+        "body": "Primary buttons identify the next user-reviewed action. Secondary and quiet buttons hold alternate, export, reopen, or status-marking actions.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep screen titles large and singular, then use dense section-level hierarchy below them.",
+      "Do use strong horizontal dividers to organize records, metrics, history, and response work.",
+      "Do preserve all six destinations in the phone navigation's two-row grid.",
+      "Do keep the 44px minimum action height, visible ochre focus outline, and reduced-motion override.",
+      "Do use stored-state language and semantic color together so meaning survives without color."
+    ],
+    "donts": [
+      "Don't add shadows, gradients, glass effects, neon accents, or blurred layers.",
+      "Don't turn repeated records into a floating rounded card grid.",
+      "Don't add decorative icon libraries where text labels or native disclosure markers already explain the action.",
+      "Don't use ochre or clay as broad brand fills without a focus, warning, validation, priority, or danger meaning.",
+      "Don't hide phone destinations behind a menu when the complete two-row navigation fits."
+    ]
+  }
+}

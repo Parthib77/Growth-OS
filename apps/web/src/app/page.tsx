@@ -21,6 +21,10 @@ import { Field, StatusLine, type Status } from './ui';
 import { TodayDialogs } from './dialogs';
 import { CustomersView } from './customers-view';
 import { CampaignsView } from './campaigns-view';
+import { AppNav, type AppScreen } from './app-nav';
+import { ReviewsView } from './reviews-view';
+import { ResultsView } from './results-view';
+import { SettingsView } from './settings-view';
 
 type Customer = {
   id: string;
@@ -37,13 +41,16 @@ type Customer = {
   nextAction?: string;
 };
 type Workspace = {
+  id: string;
   businessName: string;
   category: string | null;
   timezone: string;
   currency: string;
   defaultCountryCode: string;
+  bookingLink: string | null;
   followUpDays: number;
   onboardingComplete: boolean;
+  reviewResponseTemplate: string;
 };
 type Results = {
   newEnquiries: number;
@@ -63,12 +70,12 @@ type Booking = {
   state: string;
 };
 
+type Screen = 'auth' | 'onboarding' | AppScreen;
+
 export default function Home() {
   const [csrf, setCsrf] = useState('');
   const [authMode, setAuthMode] = useState<'register' | 'sign-in'>('register');
-  const [screen, setScreen] = useState<'auth' | 'onboarding' | 'today' | 'customers' | 'campaigns'>(
-    'auth',
-  );
+  const [screen, setScreen] = useState<Screen>('auth');
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [today, setToday] = useState<Customer[]>([]);
@@ -110,20 +117,29 @@ export default function Home() {
     if (screen === 'today')
       void refreshToday().catch((error) => setStatus({ kind: 'error', message: error.message }));
   }, [screen]);
+  useEffect(() => {
+    if (screen === 'auth' || screen === 'onboarding') return;
+    requestAnimationFrame(() => document.getElementById('screen-title')?.focus());
+  }, [screen]);
+
+  function navigate(destination: AppScreen) {
+    setStatus({ kind: 'idle' });
+    setScreen(destination);
+  }
 
   async function submitAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus({ kind: 'pending', message: 'Signing you in…' });
-    const form = new FormData(event.currentTarget);
+    const values = formValues(event.currentTarget);
     try {
-      const token = csrf || (await refreshCsrf());
+      const token = await refreshCsrf();
       const result = await request(
         `/api/v1/auth/${authMode === 'register' ? 'register' : 'sign-in'}`,
         authMode === 'register' ? RegisterResponseSchema : SignInResponseSchema,
         {
           method: 'POST',
           headers: { 'X-CSRF-Token': token },
-          body: JSON.stringify(formValues(event.currentTarget)),
+          body: JSON.stringify(values),
         },
       );
       setCsrf(result.csrfToken);
@@ -245,11 +261,20 @@ export default function Home() {
     }
   }
 
+  function finishDeletion() {
+    setScreen('auth');
+    setWorkspace(null);
+    setToday([]);
+    setResults(null);
+    setBookings([]);
+    setStatus({ kind: 'success', message: 'Account and workspace deleted.' });
+    void refreshCsrf();
+  }
+
   if (screen === 'auth')
     return (
       <main className="auth-shell">
         <section className="auth-context">
-          <p className="eyebrow">Growth OS / daily operations</p>
           <h1>Turn enquiries into booked appointments with a clear next action.</h1>
           <p>
             Capture the original context, respect contact permission, and keep recorded outcomes
@@ -257,7 +282,6 @@ export default function Home() {
           </p>
         </section>
         <section className="panel auth-panel">
-          <p className="eyebrow">{authMode === 'register' ? 'Create workspace' : 'Welcome back'}</p>
           <h2>
             {authMode === 'register' ? 'Start with one reliable register.' : 'Sign in to Today.'}
           </h2>
@@ -290,7 +314,6 @@ export default function Home() {
       <main className="app-shell">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Growth OS / setup</p>
             <h1>Make the workspace useful today.</h1>
           </div>
         </header>
@@ -332,37 +355,74 @@ export default function Home() {
     return (
       <CustomersView
         csrf={csrf}
+        businessName={workspace?.businessName ?? 'Growth OS'}
         status={status}
         setStatus={setStatus}
-        onBack={() => setScreen('today')}
+        onNavigate={navigate}
+        onSignOut={signOut}
       />
     );
   if (screen === 'campaigns')
     return (
       <CampaignsView
         csrf={csrf}
+        businessName={workspace?.businessName ?? 'Growth OS'}
         status={status}
         setStatus={setStatus}
-        onBack={() => setScreen('today')}
+        onNavigate={navigate}
+        onSignOut={signOut}
+      />
+    );
+  if (screen === 'reviews' && workspace)
+    return (
+      <ReviewsView
+        csrf={csrf}
+        businessName={workspace.businessName}
+        responseTemplate={workspace.reviewResponseTemplate}
+        status={status}
+        setStatus={setStatus}
+        onNavigate={navigate}
+        onSignOut={signOut}
+      />
+    );
+  if (screen === 'results' && workspace)
+    return (
+      <ResultsView
+        businessName={workspace.businessName}
+        timezone={workspace.timezone}
+        status={status}
+        setStatus={setStatus}
+        onNavigate={navigate}
+        onSignOut={signOut}
+      />
+    );
+  if (screen === 'settings' && workspace)
+    return (
+      <SettingsView
+        csrf={csrf}
+        workspace={workspace}
+        status={status}
+        setStatus={setStatus}
+        onNavigate={navigate}
+        onSignOut={signOut}
+        onWorkspaceUpdated={setWorkspace}
+        onDeleted={finishDeletion}
       />
     );
   return (
     <main className="app-shell">
+      <AppNav
+        active="today"
+        businessName={workspace?.businessName ?? 'Growth OS'}
+        onNavigate={navigate}
+        onSignOut={signOut}
+        signOutPending={status.kind === 'pending'}
+      />
       <header className="topbar">
         <div>
-          <p className="eyebrow">{workspace?.businessName || 'Growth OS'} / Today</p>
-          <h1>Who needs attention?</h1>
-        </div>
-        <div>
-          <button className="button secondary" onClick={() => setScreen('customers')}>
-            Customers
-          </button>{' '}
-          <button className="button secondary" onClick={() => setScreen('campaigns')}>
-            Campaigns
-          </button>{' '}
-          <button className="button quiet" onClick={signOut}>
-            Sign out
-          </button>
+          <h1 id="screen-title" tabIndex={-1}>
+            Who needs attention?
+          </h1>
         </div>
       </header>
       <section className="summary-row">

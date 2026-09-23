@@ -15,6 +15,7 @@ import {
   UpdateCustomerRequestSchema,
 } from '@growthos/contracts';
 import { formValues, request } from './api-client';
+import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
 
 type Customer = ReturnType<typeof CustomerResponseSchema.parse>;
@@ -23,14 +24,18 @@ type Preview = ReturnType<typeof CustomerImportPreviewResponseSchema.parse>;
 
 export function CustomersView({
   csrf,
+  businessName,
   status,
   setStatus,
-  onBack,
+  onNavigate,
+  onSignOut,
 }: {
   csrf: string;
+  businessName: string;
   status: Status;
   setStatus: (status: Status) => void;
-  onBack: () => void;
+  onNavigate: (screen: AppScreen) => void;
+  onSignOut: () => void;
 }) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
@@ -238,14 +243,19 @@ export function CustomersView({
 
   return (
     <main className="app-shell">
+      <AppNav
+        active="customers"
+        businessName={businessName}
+        onNavigate={onNavigate}
+        onSignOut={onSignOut}
+        signOutPending={status.kind === 'pending'}
+      />
       <header className="topbar">
         <div>
-          <p className="eyebrow">Growth OS / customer register</p>
-          <h1>Customers</h1>
+          <h1 id="screen-title" tabIndex={-1}>
+            Customers
+          </h1>
         </div>
-        <button className="button quiet" onClick={onBack}>
-          Today
-        </button>
       </header>
       <div className="toolbar">
         <div className="customer-filters">
@@ -460,7 +470,6 @@ export function CustomersView({
           <section className="panel customer-detail">
             <div className="toolbar compact">
               <div>
-                <p className="eyebrow">Customer record</p>
                 <h2>
                   {selected.firstName} {selected.lastName}
                 </h2>

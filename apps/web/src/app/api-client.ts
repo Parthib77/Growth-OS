@@ -33,6 +33,33 @@ export async function request<T>(
   return schema.parse(data);
 }
 
+export async function download(path: string, fallbackName: string): Promise<void> {
+  const response = await fetch(path, { credentials: 'include' });
+  if (!response.ok) {
+    const data: unknown = await response.json().catch(() => null);
+    const parsed = ErrorResponseSchema.safeParse(data);
+    if (parsed.success)
+      throw new ApiError(parsed.data.error.message, parsed.data.error.code, response.status);
+    throw new ApiError(
+      'The download could not be prepared. Try again.',
+      'DOWNLOAD_FAILED',
+      response.status,
+    );
+  }
+  const blob = await response.blob();
+  const disposition = response.headers.get('content-disposition') ?? '';
+  const match = /filename="?([^";]+)"?/i.exec(disposition);
+  const name = match?.[1] ?? fallbackName;
+  const href = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = href;
+  anchor.download = name;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(href);
+}
+
 export function formValues(form: HTMLFormElement): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [key, value] of new FormData(form).entries())

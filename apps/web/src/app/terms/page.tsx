@@ -14,7 +14,6 @@ export default function TermsPage() {
         <Link href="/privacy">Privacy draft</Link>
       </nav>
       <article className="legal-document">
-        <p className="eyebrow">Terms / draft</p>
         <h1>Terms for the current product</h1>
         <div className="legal-warning" role="note">
           <strong>Draft for legal review.</strong> This page describes the current Growth OS
