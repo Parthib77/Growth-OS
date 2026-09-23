@@ -29,6 +29,7 @@ import { AppNav, type AppScreen } from './app-nav';
 import { ReviewsView } from './reviews-view';
 import { ResultsView } from './results-view';
 import { SettingsView } from './settings-view';
+import { AuthLanding, type AuthMode } from './auth-landing';
 
 type Customer = {
   id: string;
@@ -109,7 +110,6 @@ function formatAppointmentTime(value: string, timezone: string): string {
 }
 
 type Screen = 'auth' | 'onboarding' | AppScreen;
-type AuthMode = 'register' | 'sign-in' | 'request-reset' | 'complete-reset';
 
 export default function Home() {
   const [csrf, setCsrf] = useState('');
@@ -411,99 +411,26 @@ export default function Home() {
 
   if (screen === 'auth')
     return (
-      <main className="auth-shell">
-        <section className="auth-context">
-          <h1>Turn enquiries into booked appointments with a clear next action.</h1>
-          <p>
-            Capture the original context, respect contact permission, and keep recorded outcomes
-            connected to the work.
-          </p>
-        </section>
-        <section className="panel auth-panel">
-          <h2>
-            {authMode === 'register'
-              ? 'Start with one reliable register.'
-              : authMode === 'sign-in'
-                ? 'Sign in to Today.'
-                : authMode === 'request-reset'
-                  ? 'Reset your password.'
-                  : 'Choose a new password.'}
-          </h2>
-          {authMode === 'request-reset' ? (
-            <form onSubmit={submitPasswordResetRequest}>
-              <p className="intro">
-                Enter the account email. We will send a single-use link if it matches an account.
-              </p>
-              <Field label="Email" name="email" type="email" />
-              <button className="button primary" disabled={status.kind === 'pending'}>
-                {status.kind === 'pending' ? 'Preparing…' : 'Send reset instructions'}
-              </button>
-            </form>
-          ) : authMode === 'complete-reset' ? (
-            <form onSubmit={submitPasswordReset}>
-              <p className="intro">Use at least 12 characters. This link works once.</p>
-              <Field label="New password" name="password" type="password" />
-              <Field label="Confirm new password" name="confirmPassword" type="password" />
-              <button className="button primary" disabled={status.kind === 'pending'}>
-                {status.kind === 'pending' ? 'Updating…' : 'Update password'}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={submitAuth}>
-              {authMode === 'register' && <Field label="Business name" name="businessName" />}
-              <Field label="Email" name="email" type="email" />
-              <Field label="Password" name="password" type="password" />
-              <button className="button primary" disabled={status.kind === 'pending'}>
-                {status.kind === 'pending'
-                  ? 'Working…'
-                  : authMode === 'register'
-                    ? 'Create account'
-                    : 'Sign in'}
-              </button>
-            </form>
-          )}
-          <div className="auth-links">
-            <button
-              type="button"
-              className="text-button"
-              onClick={() => {
-                setStatus({ kind: 'idle' });
-                setAuthMode(authMode === 'register' ? 'sign-in' : 'register');
-              }}
-            >
-              {authMode === 'register'
-                ? 'Already have an account? Sign in.'
-                : 'Need an account? Register.'}
-            </button>
-            {authMode === 'sign-in' ? (
-              <button
-                type="button"
-                className="text-button"
-                onClick={() => {
-                  setStatus({ kind: 'idle' });
-                  setAuthMode('request-reset');
-                }}
-              >
-                Forgot password?
-              </button>
-            ) : null}
-            {authMode === 'request-reset' || authMode === 'complete-reset' ? (
-              <button
-                type="button"
-                className="text-button"
-                onClick={() => {
-                  setStatus({ kind: 'idle' });
-                  setResetToken('');
-                  setAuthMode('sign-in');
-                }}
-              >
-                Back to sign in
-              </button>
-            ) : null}
-          </div>
-          <StatusLine status={status} />
-        </section>
-      </main>
+      <AuthLanding
+        mode={authMode}
+        status={status}
+        onSubmitAuth={submitAuth}
+        onSubmitResetRequest={submitPasswordResetRequest}
+        onSubmitReset={submitPasswordReset}
+        onSwitchMode={() => {
+          setStatus({ kind: 'idle' });
+          setAuthMode(authMode === 'register' ? 'sign-in' : 'register');
+        }}
+        onForgotPassword={() => {
+          setStatus({ kind: 'idle' });
+          setAuthMode('request-reset');
+        }}
+        onBackToSignIn={() => {
+          setStatus({ kind: 'idle' });
+          setResetToken('');
+          setAuthMode('sign-in');
+        }}
+      />
     );
   if (screen === 'onboarding')
     return (

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-23T02:41:47.4037477Z",
+  "generatedAt": "2026-09-23T23:33:40Z",
   "title": "Design System: Growth OS",
   "extensions": {
     "colorMeta": {
@@ -123,6 +123,81 @@
           "color-mix(in oklch, #1e2b2b 35%, white)",
           "color-mix(in oklch, #1e2b2b 15%, white)"
         ]
+      },
+      "auth-navy": {
+        "role": "primary",
+        "displayName": "Auth Navy",
+        "canonical": "#142033",
+        "tonalRamp": [
+          "color-mix(in oklch, #142033 25%, black)",
+          "color-mix(in oklch, #142033 45%, black)",
+          "color-mix(in oklch, #142033 65%, black)",
+          "#142033",
+          "color-mix(in oklch, #142033 80%, white)",
+          "color-mix(in oklch, #142033 60%, white)",
+          "color-mix(in oklch, #142033 35%, white)",
+          "color-mix(in oklch, #142033 15%, white)"
+        ]
+      },
+      "auth-slate": {
+        "role": "neutral",
+        "displayName": "Auth Slate",
+        "canonical": "#536174",
+        "tonalRamp": [
+          "color-mix(in oklch, #536174 25%, black)",
+          "color-mix(in oklch, #536174 45%, black)",
+          "color-mix(in oklch, #536174 65%, black)",
+          "#536174",
+          "color-mix(in oklch, #536174 80%, white)",
+          "color-mix(in oklch, #536174 60%, white)",
+          "color-mix(in oklch, #536174 35%, white)",
+          "color-mix(in oklch, #536174 15%, white)"
+        ]
+      },
+      "auth-canvas": {
+        "role": "neutral",
+        "displayName": "Auth Canvas",
+        "canonical": "#fffefd",
+        "tonalRamp": [
+          "color-mix(in oklch, #fffefd 25%, black)",
+          "color-mix(in oklch, #fffefd 45%, black)",
+          "color-mix(in oklch, #fffefd 65%, black)",
+          "#fffefd",
+          "color-mix(in oklch, #fffefd 80%, white)",
+          "color-mix(in oklch, #fffefd 60%, white)",
+          "color-mix(in oklch, #fffefd 35%, white)",
+          "color-mix(in oklch, #fffefd 15%, white)"
+        ]
+      },
+      "auth-action": {
+        "role": "primary",
+        "displayName": "Auth Action Green",
+        "canonical": "#145a50",
+        "tonalRamp": [
+          "color-mix(in oklch, #145a50 25%, black)",
+          "color-mix(in oklch, #145a50 45%, black)",
+          "color-mix(in oklch, #145a50 65%, black)",
+          "#145a50",
+          "color-mix(in oklch, #145a50 80%, white)",
+          "color-mix(in oklch, #145a50 60%, white)",
+          "color-mix(in oklch, #145a50 35%, white)",
+          "color-mix(in oklch, #145a50 15%, white)"
+        ]
+      },
+      "auth-field-fill": {
+        "role": "neutral",
+        "displayName": "Auth Field Blue",
+        "canonical": "#f0f7ff",
+        "tonalRamp": [
+          "color-mix(in oklch, #f0f7ff 25%, black)",
+          "color-mix(in oklch, #f0f7ff 45%, black)",
+          "color-mix(in oklch, #f0f7ff 65%, black)",
+          "#f0f7ff",
+          "color-mix(in oklch, #f0f7ff 80%, white)",
+          "color-mix(in oklch, #f0f7ff 60%, white)",
+          "color-mix(in oklch, #f0f7ff 35%, white)",
+          "color-mix(in oklch, #f0f7ff 15%, white)"
+        ]
       }
     },
     "typographyMeta": {
@@ -149,9 +224,23 @@
       "numeric": {
         "displayName": "Numeric result",
         "purpose": "Counts and monetary results with tabular figures."
+      },
+      "auth-display": {
+        "displayName": "Auth display",
+        "purpose": "The Manrope headline on public registration and sign-in views."
+      },
+      "auth-body": {
+        "displayName": "Auth body",
+        "purpose": "Supporting Manrope copy on public auth views."
       }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "auth-card",
+        "value": "0 24px 58px rgb(39 43 45 / 11%)",
+        "purpose": "Public auth form card only."
+      }
+    ],
     "motion": [
       {
         "name": "control-press",
@@ -172,6 +261,11 @@
         "name": "reduced-motion",
         "value": "0.01ms",
         "purpose": "Replaces all animation and transition durations when the user prefers reduced motion."
+      },
+      {
+        "name": "auth-card-enter",
+        "value": "0.65s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Fades and sharpens the public auth card as it appears."
       }
     ],
     "breakpoints": [
@@ -186,6 +280,10 @@
       {
         "name": "split-workspace",
         "value": "800px"
+      },
+      {
+        "name": "auth-stack",
+        "value": "1350px"
       }
     ]
   },
@@ -258,11 +356,42 @@
       "description": "A divider-led operational record with aligned facts and value.",
       "html": "<button class=\"ds-register-row\"><span class=\"ds-register-main\"><strong>Mina Chen</strong><span>Consultation · Referral</span></span><span class=\"ds-register-reason\">Follow-up due</span><span>Prepare message</span><span class=\"ds-register-value\">USD 120.00</span></button>",
       "css": ".ds-register-row { width: 100%; display: grid; grid-template-columns: 1.2fr 1.5fr 1.5fr 0.7fr; gap: 1rem; align-items: center; border: 0; border-bottom: 1px solid var(--line); padding: 1.1rem 0.6rem; background: transparent; color: var(--text); font-family: 'IBM Plex Sans', sans-serif; text-align: left; cursor: pointer; } .ds-register-row:hover { background: #dedbd4; } .ds-register-row:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; } .ds-register-main { display: grid; gap: 0.3rem; } .ds-register-main strong { color: var(--ink); font-size: 1.05rem; } .ds-register-main span, .ds-register-reason, .ds-register-value { font-size: 0.86rem; } .ds-register-reason { color: var(--clay); font-weight: 700; } .ds-register-value { text-align: right; font-variant-numeric: tabular-nums; } @media (max-width: 760px) { .ds-register-row { grid-template-columns: 1fr; gap: 0.25rem; padding: 1rem 0.4rem; } .ds-register-value { text-align: left; } }"
+    },
+    {
+      "name": "Auth Action",
+      "kind": "button",
+      "refersTo": "auth-submit",
+      "description": "Full-width primary action on the public auth form.",
+      "html": "<button class=\"ds-auth-action\">Create account <svg aria-hidden=\"true\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M12 5l7 7-7 7\"/></svg></button>",
+      "css": ".ds-auth-action { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 62px; border: 0; border-radius: 7px; background: #145a50; color: #fff; font-family: Manrope, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.025em; cursor: pointer; transition: background 0.18s ease, transform 0.18s ease; } .ds-auth-action:hover { background: #0c4a42; } .ds-auth-action:active { transform: translateY(1px); } .ds-auth-action:focus-visible { outline: 3px solid #b87932; outline-offset: 2px; } @media (max-width: 760px) { .ds-auth-action { min-height: 56px; font-size: 18px; } }"
+    },
+    {
+      "name": "Auth Field",
+      "kind": "input",
+      "refersTo": "auth-field",
+      "description": "Labeled icon field on the public auth form; email and password fields have a pale blue fill.",
+      "html": "<label class=\"ds-auth-field\"><span>Email</span><span class=\"ds-auth-input-wrap\"><svg aria-hidden=\"true\" width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"m22 7-10 6L2 7\"/></svg><input type=\"email\" placeholder=\"demo@growthos.local\"></span></label>",
+      "css": ".ds-auth-field { display: grid; gap: 7px; color: #18283e; font-family: Manrope, sans-serif; font-size: 17px; font-weight: 700; } .ds-auth-input-wrap { position: relative; display: flex; align-items: center; height: 54px; } .ds-auth-input-wrap svg { position: absolute; z-index: 1; left: 20px; color: #5a6975; pointer-events: none; } .ds-auth-field input { width: 100%; height: 54px; border: 1px solid #ccd2d9; border-radius: 6px; padding: 0 16px 0 59px; background: #f0f7ff; color: #172337; font-family: inherit; font-size: 16px; font-weight: 500; outline: none; transition: border-color 0.18s ease, box-shadow 0.18s ease; } .ds-auth-field input:focus-visible { border-color: #138267; box-shadow: 0 0 0 3px rgb(24 146 108 / 15%); } @media (max-width: 760px) { .ds-auth-field { font-size: 16px; } .ds-auth-field input { font-size: 15px; } }"
+    },
+    {
+      "name": "Auth Card",
+      "kind": "card",
+      "refersTo": "auth-card",
+      "description": "The public registration and sign-in form container.",
+      "html": "<section class=\"ds-auth-card\"><h2>Start with one reliable register.</h2><p>Create your account to get started in minutes.</p></section>",
+      "css": ".ds-auth-card { width: 100%; max-width: 542px; padding: 42px 41px 37px; border: 1px solid #e0e1e2; border-radius: 17px; background: rgb(255 255 255 / 95%); box-shadow: 0 24px 58px rgb(39 43 45 / 11%); color: #142033; font-family: Manrope, sans-serif; } .ds-auth-card h2 { margin: 0; font-size: 28px; font-weight: 800; line-height: 1.24; letter-spacing: -0.035em; } .ds-auth-card p { margin: 6px 0 0; color: #536174; font-size: 18px; font-weight: 500; line-height: 1.42; } @media (max-width: 760px) { .ds-auth-card { padding: 28px 22px; } .ds-auth-card h2 { font-size: 25px; } .ds-auth-card p { font-size: 16px; } }"
+    },
+    {
+      "name": "Auth Demo Badge",
+      "kind": "chip",
+      "description": "Labels illustrative figures beside the public auth metrics.",
+      "html": "<strong class=\"ds-auth-metric\">1.2k+ <span class=\"ds-auth-demo\">Demo</span></strong>",
+      "css": ".ds-auth-metric { display: inline-flex; align-items: baseline; gap: 8px; color: #142033; font-family: Manrope, sans-serif; font-size: 29px; font-weight: 800; letter-spacing: -0.04em; } .ds-auth-demo { padding: 3px 6px; border-radius: 4px; background: #e4f3e9; color: #0c5849; font-size: 11px; font-weight: 800; letter-spacing: 0.03em; line-height: 1; text-transform: uppercase; } @media (max-width: 760px) { .ds-auth-metric { font-size: 23px; } }"
     }
   ],
   "narrative": {
     "northStar": "The Working Register",
-    "overview": "Growth OS uses the visual language of a well-kept appointment register: warm mineral-gray work surfaces, blue-green structure, clear rules, and compact records. The system is built for Operate mode. It favors scan speed, task order, and visible state over decorative display.\n\nThe interface stays flat and editorial. Strong headings establish hierarchy, horizontal rules organize evidence, and a small set of semantic colors marks focus, warning, success, and destructive action. It does not use shadows, gradients, glass effects, neon accents, floating card grids, or decorative icon sets.",
+    "overview": "Growth OS uses the visual language of a well-kept appointment register: warm mineral-gray work surfaces, blue-green structure, clear rules, and compact records. The system is built for Operate mode. It favors scan speed, task order, and visible state over decorative display.\n\nThe authenticated interface stays flat and editorial. Strong headings establish hierarchy, horizontal rules organize evidence, and a small set of semantic colors marks focus, warning, success, and destructive action. It does not use shadows, gradients, glass effects, neon accents, floating card grids, or decorative icon sets.\n\nThe public registration, sign-in, and password-reset views follow the user-supplied September 2026 reference. Their warm white canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card belong only to `.auth-shell`. The authenticated workspace keeps the Working Register system. The `1.2k+` and `94%` figures are illustrative and have visible Demo badges; replace them with supported results before public marketing use.",
     "keyCharacteristics": [
       "Warm mineral-gray page and paper layers.",
       "Deep blue-green navigation, headings, links, and primary actions.",
@@ -271,6 +400,11 @@
       "A complete two-row phone navigation that keeps every destination visible."
     ],
     "rules": [
+      {
+        "name": "The Auth Boundary Rule",
+        "body": "Use the rounded, shadowed Manrope treatment only in `.auth-shell`.",
+        "section": "overview"
+      },
       {
         "name": "The Accent Restraint Rule",
         "body": "Ochre and clay must explain focus, warning, validation, priority, or danger. They do not decorate neutral content.",
@@ -283,7 +417,7 @@
       },
       {
         "name": "The One Family Rule",
-        "body": "Use IBM Plex Sans for every interface role. Hierarchy comes from size, weight, tracking, and placement.",
+        "body": "Use IBM Plex Sans for authenticated workspace roles. Hierarchy comes from size, weight, tracking, and placement.",
         "section": "typography"
       },
       {
@@ -334,7 +468,8 @@
       "Don't turn repeated records into a floating rounded card grid.",
       "Don't add decorative icon libraries where text labels or native disclosure markers already explain the action.",
       "Don't use ochre or clay as broad brand fills without a focus, warning, validation, priority, or danger meaning.",
-      "Don't hide phone destinations behind a menu when the complete two-row navigation fits."
+      "Don't hide phone destinations behind a menu when the complete two-row navigation fits.",
+      "Don't carry the public auth gradients, rounded card, or shadow into authenticated workspaces."
     ]
   }
 }
