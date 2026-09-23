@@ -106,9 +106,10 @@ A single tenant-ownership manifest defines the deletion order and powers the com
 7. Consent records and interactions.
 8. Customers.
 9. Operational events.
-10. Every session for the user or workspace.
-11. The workspace.
-12. The user.
+10. Password-reset tokens for the user.
+11. Every session for the user or workspace.
+12. The workspace.
+13. The user.
 
 The same transaction inserts a system-owned `AccountDeletionReceipt`. It stores the request ID, occurrence time, schema version, and an HMAC of the deleted user and workspace IDs. It stores no raw identifier, email, business name, record count, or customer data. Its retention period remains marked for legal and security review.
 

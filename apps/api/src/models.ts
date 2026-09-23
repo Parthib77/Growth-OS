@@ -272,6 +272,19 @@ const SessionSchema = new mongoose.Schema(
   base,
 );
 SessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+const PasswordResetSchema = new mongoose.Schema(
+  {
+    ...stringIdentity,
+    userId: { type: String, required: true, index: true },
+    tokenHash: { type: String, required: true, unique: true },
+    expiresAt: { type: Date, required: true },
+    usedAt: { type: Date, default: null },
+    createdAt: { type: Date, required: true },
+  },
+  { versionKey: false, timestamps: false },
+);
+PasswordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+PasswordResetSchema.index({ userId: 1, createdAt: -1 });
 const EventSchema = new mongoose.Schema(
   {
     ...stringIdentity,
@@ -352,6 +365,7 @@ export type CampaignRecipientDoc = InferSchemaType<typeof CampaignRecipientSchem
 };
 export type BookingDoc = InferSchemaType<typeof BookingSchema> & { _id: string };
 export type SessionDoc = InferSchemaType<typeof SessionSchema> & { _id: mongoose.Types.ObjectId };
+export type PasswordResetDoc = InferSchemaType<typeof PasswordResetSchema> & { _id: string };
 export type OperationalEventDoc = InferSchemaType<typeof EventSchema> & { _id: string };
 export type CommandReceiptDoc = InferSchemaType<typeof CommandReceiptSchema> & { _id: string };
 export type AccountDeletionReceiptDoc = InferSchemaType<typeof AccountDeletionReceiptSchema> & {
@@ -383,6 +397,8 @@ export const Booking: Model<BookingDoc> =
   mongoose.models.Booking ?? mongoose.model('Booking', BookingSchema);
 export const Session: Model<SessionDoc> =
   mongoose.models.Session ?? mongoose.model('Session', SessionSchema);
+export const PasswordReset: Model<PasswordResetDoc> =
+  mongoose.models.PasswordReset ?? mongoose.model('PasswordReset', PasswordResetSchema);
 export const OperationalEvent =
   mongoose.models.OperationalEvent ?? mongoose.model('OperationalEvent', EventSchema);
 export const CommandReceipt: Model<CommandReceiptDoc> =
@@ -406,6 +422,7 @@ export async function ensureIndexes(): Promise<void> {
     CampaignRecipient.syncIndexes(),
     Booking.syncIndexes(),
     Session.syncIndexes(),
+    PasswordReset.syncIndexes(),
     OperationalEvent.syncIndexes(),
     CommandReceipt.syncIndexes(),
     AccountDeletionReceipt.syncIndexes(),
@@ -446,6 +463,7 @@ export async function verifyIndexes(): Promise<void> {
       'workspaceId_1_sourceCampaignRecipientId_1_createdAt_-1__id_-1',
     ],
     Session: ['tokenHash_1', 'expiresAt_1'],
+    PasswordReset: ['userId_1', 'tokenHash_1', 'expiresAt_1', 'userId_1_createdAt_-1'],
     OperationalEvent: [
       'eventId_1',
       'workspaceId_1',
@@ -474,6 +492,7 @@ export async function verifyIndexes(): Promise<void> {
     CampaignRecipient,
     Booking,
     Session,
+    PasswordReset,
     OperationalEvent,
     CommandReceipt,
     AccountDeletionReceipt,

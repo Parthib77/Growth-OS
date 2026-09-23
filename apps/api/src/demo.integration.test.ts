@@ -18,6 +18,7 @@ const config = {
   MONGODB_URI: '',
   SESSION_SECRET: 'd'.repeat(32),
   COOKIE_SECURE: false,
+  PASSWORD_RESET_EXPOSE_TOKEN: false,
 };
 let replSet: MongoMemoryReplSet;
 

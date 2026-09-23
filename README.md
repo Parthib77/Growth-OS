@@ -60,6 +60,17 @@ Sign in at `http://localhost:3000` with:
 
 Every authenticated screen labels this account as `Demo workspace`. Override the credentials on the first seed with `GROWTHOS_DEMO_EMAIL` and `GROWTHOS_DEMO_PASSWORD` when preparing a shared environment; later seed runs never replace account changes.
 
+## Configure password reset delivery
+
+Password reset uses single-use, 30-minute tokens. MongoDB stores only each token hash. For production delivery, configure both:
+
+```text
+PASSWORD_RESET_WEBHOOK_URL=https://your-delivery-service.example/reset
+PASSWORD_RESET_WEBHOOK_SECRET=replace-with-a-private-webhook-secret
+```
+
+Growth OS sends an authenticated JSON request containing `email`, `resetUrl`, and `expiresAt`. The delivery service is responsible for emailing the link. If delivery is not configured, the public endpoint still returns the same account-safe message but does not create an unusable token. `PASSWORD_RESET_EXPOSE_TOKEN=true` is available only in development and test; production configuration rejects it.
+
 ## Verify
 
 ```powershell
@@ -91,4 +102,4 @@ npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --p
 
 The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, Results and CSV export, review response workflows, workspace export, settings, account deletion, legal drafts, a database-backed demo, immutable revisions, and an operational event ledger.
 
-Password reset, broader booking management, final legal review, and the final release-quality visual, performance, and production-container gates remain.
+Broader booking management, final legal review, and the final release-quality visual, performance, and production-container gates remain.

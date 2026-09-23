@@ -357,6 +357,236 @@
         }
       }
     },
+    "/api/v1/auth/password-reset-requests": {
+      "post": {
+        "operationId": "requestPasswordReset",
+        "responses": {
+          "202": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "developmentResetToken": { "type": "string" }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  }
+                },
+                "required": ["email"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password-resets": {
+      "post": {
+        "operationId": "completePasswordReset",
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": { "type": "string" },
+                    "workspaceId": { "type": "string" },
+                    "csrfToken": { "type": "string", "minLength": 16 }
+                  },
+                  "required": ["userId", "workspaceId", "csrfToken"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "RESOURCE_NOT_FOUND",
+                            "INVALID_TRANSITION",
+                            "IDEMPOTENCY_KEY_REUSED",
+                            "RATE_LIMITED",
+                            "CONFLICT",
+                            "INTERNAL_ERROR",
+                            "CSRF_FAILED",
+                            "DUPLICATE_CUSTOMER",
+                            "DUPLICATE_REVIEW_REQUIRED",
+                            "CONSENT_REQUIRED",
+                            "CAMPAIGN_VERSION_CONFLICT",
+                            "CURRENCY_LOCKED",
+                            "ACCOUNT_DELETION_REQUIRES_CONFIRMATION"
+                          ]
+                        },
+                        "message": { "type": "string" },
+                        "requestId": { "type": "string" },
+                        "fieldErrors": {
+                          "type": "object",
+                          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                        },
+                        "details": { "type": "object", "additionalProperties": {} }
+                      },
+                      "required": ["code", "message", "requestId"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": { "type": "string", "minLength": 32, "maxLength": 200 },
+                  "password": { "type": "string", "minLength": 12, "maxLength": 128 }
+                },
+                "required": ["token", "password"],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/session": {
       "get": {
         "operationId": "session",

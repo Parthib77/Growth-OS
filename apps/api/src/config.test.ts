@@ -23,4 +23,20 @@ describe('readConfig', () => {
       '__Host-growthos.sid',
     );
   });
+
+  it('requires paired reset-delivery credentials and never exposes tokens in production', () => {
+    expect(() =>
+      readConfig({ ...base, PASSWORD_RESET_WEBHOOK_URL: 'https://example.com/reset' }),
+    ).toThrow(/Invalid environment/);
+    expect(() =>
+      readConfig({ ...base, NODE_ENV: 'production', PASSWORD_RESET_EXPOSE_TOKEN: 'true' }),
+    ).toThrow(/Invalid environment/);
+    expect(
+      readConfig({
+        ...base,
+        PASSWORD_RESET_WEBHOOK_URL: 'https://example.com/reset',
+        PASSWORD_RESET_WEBHOOK_SECRET: 'a-secret-with-16-characters',
+      }).PASSWORD_RESET_WEBHOOK_URL,
+    ).toBe('https://example.com/reset');
+  });
 });

@@ -4,6 +4,8 @@ import { argon2id, hash as hashPassword } from 'argon2';
 import {
   RegisterRequestSchema,
   SignInRequestSchema,
+  PasswordResetCompleteRequestSchema,
+  PasswordResetRequestSchema,
   userId as userIdValue,
   workspaceId as workspaceIdValue,
 } from '@growthos/contracts';
@@ -22,6 +24,7 @@ import {
   verify,
 } from '../auth.js';
 import { appendEvent } from './shared.js';
+import { completePasswordReset, requestPasswordReset } from '../identity/password-reset.js';
 
 export function registerAuthRoutes(router: Router, config: AppConfig): void {
   router.get('/auth/csrf', async (_req, res, next) => {
@@ -152,6 +155,38 @@ export function registerAuthRoutes(router: Router, config: AppConfig): void {
         workspaceId: String(workspace._id),
         csrfToken: csrf.csrfToken,
       });
+    } catch (error: unknown) {
+      next(error);
+    }
+  });
+
+  router.post('/auth/password-reset-requests', async (req, res, next) => {
+    try {
+      const input = PasswordResetRequestSchema.parse(req.body);
+      res.status(202).json(
+        await requestPasswordReset({
+          config,
+          email: input.email,
+          requestId: req.requestId,
+        }),
+      );
+    } catch (error: unknown) {
+      next(error);
+    }
+  });
+
+  router.post('/auth/password-resets', async (req, res, next) => {
+    try {
+      const input = PasswordResetCompleteRequestSchema.parse(req.body);
+      res.json(
+        await completePasswordReset({
+          config,
+          token: input.token,
+          password: input.password,
+          previousSessionToken: req.cookies?.[sessionCookieName(config)],
+          response: res,
+        }),
+      );
     } catch (error: unknown) {
       next(error);
     }

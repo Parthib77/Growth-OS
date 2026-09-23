@@ -17,6 +17,7 @@ const config = readConfig({
   MONGODB_URI: replSet.getUri(),
   SESSION_SECRET: process.env.GROWTHOS_E2E_SESSION_SECRET ?? 'a'.repeat(32),
   COOKIE_SECURE: 'false',
+  PASSWORD_RESET_EXPOSE_TOKEN: 'true',
 });
 await connectDatabase(config);
 await seedDemoWorkspace();

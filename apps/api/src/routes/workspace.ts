@@ -19,6 +19,7 @@ import {
   ImportBatch,
   Interaction,
   OperationalEvent,
+  PasswordReset,
   Review,
   ReviewImportBatch,
   Session,
@@ -72,6 +73,9 @@ async function deleteOwnedCollection(
       return;
     case 'operationalEvents':
       await OperationalEvent.deleteMany({ workspaceId }).session(session);
+      return;
+    case 'passwordResets':
+      await PasswordReset.deleteMany({ userId }).session(session);
       return;
     case 'sessions':
       await Session.deleteMany({ $or: [{ userId }, { workspaceId }] }).session(session);

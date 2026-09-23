@@ -27,6 +27,33 @@ test('seeded demo signs in to the real database and stays clearly labeled', asyn
   ).toBeVisible();
 });
 
+test('password reset uses a single-use link and returns to the authenticated workspace', async ({
+  page,
+}, testInfo) => {
+  const email = `reset-${testInfo.project.name}-${Date.now()}@example.com`;
+  const oldPassword = 'correct horse battery staple';
+  const newPassword = 'a newer correct horse battery staple';
+  await page.goto('/');
+  await page.getByLabel('Business name').fill('Reset Browser Salon');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(oldPassword);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await page.getByRole('button', { name: 'Save and open Today' }).click();
+  await page.getByRole('button', { name: 'Sign out' }).click();
+
+  await page.getByRole('button', { name: 'Already have an account? Sign in.' }).click();
+  await page.getByRole('button', { name: 'Forgot password?' }).click();
+  await page.getByLabel('Email').fill(email);
+  await page.getByRole('button', { name: 'Send reset instructions' }).click();
+  await expect(page.getByRole('heading', { name: 'Choose a new password.' })).toBeVisible();
+  await page.getByLabel('New password', { exact: true }).fill(newPassword);
+  await page.getByLabel('Confirm new password').fill(newPassword);
+  await page.getByRole('button', { name: 'Update password' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByText('Password updated. You are signed in.')).toBeVisible();
+});
+
 test('full workflow stores the booking and recorded value in Results', async ({
   page,
 }, testInfo) => {

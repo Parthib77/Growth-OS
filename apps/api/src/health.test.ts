@@ -9,6 +9,7 @@ const config = {
   MONGODB_URI: 'mongodb://127.0.0.1:27017/growthos-test',
   SESSION_SECRET: 'a'.repeat(32),
   COOKIE_SECURE: false,
+  PASSWORD_RESET_EXPOSE_TOKEN: false,
 };
 
 describe('API boundary', () => {

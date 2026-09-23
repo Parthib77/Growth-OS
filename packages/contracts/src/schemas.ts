@@ -40,6 +40,20 @@ export const SignInRequestSchema = z.object({
   password: z.string().min(1).max(128),
 });
 
+export const PasswordResetRequestSchema = z.object({
+  email: z.string().trim().email().max(254),
+});
+
+export const PasswordResetRequestResponseSchema = z.object({
+  message: z.string(),
+  developmentResetToken: z.string().optional(),
+});
+
+export const PasswordResetCompleteRequestSchema = z.object({
+  token: z.string().min(32).max(200),
+  password: z.string().min(12).max(128),
+});
+
 export const WorkspaceResponseSchema = z.object({
   id: z.string(),
   businessName: z.string(),
@@ -225,6 +239,7 @@ export const RegisterResponseSchema = z.object({
 });
 
 export const SignInResponseSchema = RegisterResponseSchema;
+export const PasswordResetCompleteResponseSchema = RegisterResponseSchema;
 export const SessionResponseSchema = z.object({ userId: z.string(), workspaceId: z.string() });
 export const CustomerListResponseSchema = z.object({
   items: z.array(CustomerResponseSchema),

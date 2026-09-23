@@ -189,6 +189,8 @@ Passwords use Argon2id with centrally validated parameters and rehash support. R
 
 The browser receives an opaque 256-bit token in `__Host-growthos.sid`. MongoDB stores only the token hash. Production cookies use `Secure`, `HttpOnly`, `SameSite=Lax`, and `Path=/`. Sessions have idle and absolute expiry, explicit revocation, a user session generation, and TTL cleanup. The server rotates the session after sign-in, password reset, and sensitive account changes.
 
+Password reset requests always return the same account-safe message. A matching account receives a 256-bit, single-use token through an authenticated HTTPS webhook; MongoDB stores only its hash and removes expired records through a TTL index. Reset completion changes the Argon2id password, increments the user session generation, revokes every prior session and unused reset token, and creates a fresh session in one transaction. Raw-token exposure is available only behind an explicit development/test flag and is rejected by production configuration.
+
 `GET /auth/csrf` creates or refreshes a short-lived anonymous or authenticated session and returns a random raw token. The server stores its hash with the session. Every unsafe browser request must send the raw token in `X-CSRF-Token`. Before parsing the body, the API validates the session-bound token, an allowlisted `Origin`, and Fetch Metadata. A session rotation also rotates the CSRF token.
 
 Each authenticated request receives a server-owned `RequestContext` with `userId`, `workspaceId`, `sessionId`, `requestId`, and the clock. The API never reads `workspaceId` from a request header or body. Repositories are constructed with `WorkspaceId`, and every business query includes it.

@@ -11,6 +11,7 @@ export const accountDeletionManifest = [
   'interactions',
   'customers',
   'operationalEvents',
+  'passwordResets',
   'sessions',
   'workspace',
   'user',

@@ -21,6 +21,7 @@ import {
   ImportBatch,
   Interaction,
   OperationalEvent,
+  PasswordReset,
   Review,
   ReviewImportBatch,
   Session,
@@ -35,6 +36,7 @@ const config = {
   MONGODB_URI: '',
   SESSION_SECRET: 'b'.repeat(32),
   COOKIE_SECURE: false,
+  PASSWORD_RESET_EXPOSE_TOKEN: false,
 };
 let replSet: MongoMemoryReplSet;
 
@@ -196,6 +198,14 @@ describe('Phase 6 backend workflows', () => {
       .set('x-csrf-token', token)
       .send({});
     expect(emptySettings.status).toBe(400);
+    await PasswordReset.create({
+      _id: 'phase6-reset-token',
+      userId: registered.body.userId,
+      tokenHash: 'phase6-reset-token-hash',
+      expiresAt: new Date(Date.now() + 60_000),
+      usedAt: null,
+      createdAt: new Date(),
+    });
     const wrongPassword = await agent
       .delete('/api/v1/workspace/account')
       .set('x-csrf-token', token)
@@ -231,6 +241,7 @@ describe('Phase 6 backend workflows', () => {
     expect(await Interaction.countDocuments({ workspaceId })).toBe(0);
     expect(await Customer.countDocuments({ workspaceId })).toBe(0);
     expect(await OperationalEvent.countDocuments({ workspaceId })).toBe(0);
+    expect(await PasswordReset.countDocuments({ userId: registered.body.userId })).toBe(0);
     expect(await Workspace.countDocuments({ _id: workspaceId })).toBe(0);
     const receipt = await AccountDeletionReceipt.findOne({
       requestId: deleted.headers['x-request-id'],

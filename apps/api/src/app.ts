@@ -57,6 +57,8 @@ export function createApp(options: AppOptions = {}) {
   });
   app.use('/api/v1/auth/register', authLimiter);
   app.use('/api/v1/auth/sign-in', authLimiter);
+  app.use('/api/v1/auth/password-reset-requests', authLimiter);
+  app.use('/api/v1/auth/password-resets', authLimiter);
 
   const api = express.Router();
   registerRoutes(api, config);

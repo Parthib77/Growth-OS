@@ -10,6 +10,9 @@ import {
   CsrfResponseSchema,
   CustomerResponseSchema,
   ResultsResponseSchema,
+  PasswordResetCompleteRequestSchema,
+  PasswordResetCompleteResponseSchema,
+  PasswordResetRequestResponseSchema,
   SessionResponseSchema,
   SignInResponseSchema,
   TodayResponseSchema,
@@ -72,10 +75,12 @@ type Booking = {
 };
 
 type Screen = 'auth' | 'onboarding' | AppScreen;
+type AuthMode = 'register' | 'sign-in' | 'request-reset' | 'complete-reset';
 
 export default function Home() {
   const [csrf, setCsrf] = useState('');
-  const [authMode, setAuthMode] = useState<'register' | 'sign-in'>('register');
+  const [authMode, setAuthMode] = useState<AuthMode>('register');
+  const [resetToken, setResetToken] = useState('');
   const [screen, setScreen] = useState<Screen>('auth');
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
@@ -108,6 +113,13 @@ export default function Home() {
     setBookings(bookingList.items);
   }
   useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get('reset_token');
+    if (token) {
+      setResetToken(token);
+      setAuthMode('complete-reset');
+      void refreshCsrf();
+      return;
+    }
     void refreshCsrf().then(() =>
       request('/api/v1/session', SessionResponseSchema)
         .then(refreshWorkspace)
@@ -153,6 +165,65 @@ export default function Home() {
       setStatus({
         kind: 'error',
         message: error instanceof Error ? error.message : 'Unable to continue.',
+      });
+    }
+  }
+  async function submitPasswordResetRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus({ kind: 'pending', message: 'Preparing password reset instructions…' });
+    const values = formValues(event.currentTarget);
+    try {
+      const token = await refreshCsrf();
+      const result = await request(
+        '/api/v1/auth/password-reset-requests',
+        PasswordResetRequestResponseSchema,
+        {
+          method: 'POST',
+          headers: { 'X-CSRF-Token': token },
+          body: JSON.stringify({ email: values.email }),
+        },
+      );
+      if (result.developmentResetToken) {
+        setResetToken(result.developmentResetToken);
+        setAuthMode('complete-reset');
+      }
+      setStatus({ kind: 'success', message: result.message });
+    } catch (error: unknown) {
+      setStatus({
+        kind: 'error',
+        message: error instanceof Error ? error.message : 'Unable to request a password reset.',
+      });
+    }
+  }
+  async function submitPasswordReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus({ kind: 'pending', message: 'Updating your password…' });
+    const values = formValues(event.currentTarget);
+    try {
+      if (values.password !== values.confirmPassword)
+        throw new Error('The password confirmation does not match.');
+      const input = PasswordResetCompleteRequestSchema.parse({
+        token: resetToken,
+        password: values.password,
+      });
+      const token = await refreshCsrf();
+      const result = await request(
+        '/api/v1/auth/password-resets',
+        PasswordResetCompleteResponseSchema,
+        {
+          method: 'POST',
+          headers: { 'X-CSRF-Token': token },
+          body: JSON.stringify(input),
+        },
+      );
+      setCsrf(result.csrfToken);
+      window.history.replaceState({}, '', window.location.pathname);
+      await refreshWorkspace();
+      setStatus({ kind: 'success', message: 'Password updated. You are signed in.' });
+    } catch (error: unknown) {
+      setStatus({
+        kind: 'error',
+        message: error instanceof Error ? error.message : 'Unable to update the password.',
       });
     }
   }
@@ -284,28 +355,86 @@ export default function Home() {
         </section>
         <section className="panel auth-panel">
           <h2>
-            {authMode === 'register' ? 'Start with one reliable register.' : 'Sign in to Today.'}
-          </h2>
-          <form onSubmit={submitAuth}>
-            {authMode === 'register' && <Field label="Business name" name="businessName" />}
-            <Field label="Email" name="email" type="email" />
-            <Field label="Password" name="password" type="password" />
-            <button className="button primary" disabled={status.kind === 'pending'}>
-              {status.kind === 'pending'
-                ? 'Working…'
-                : authMode === 'register'
-                  ? 'Create account'
-                  : 'Sign in'}
-            </button>
-          </form>
-          <button
-            className="text-button"
-            onClick={() => setAuthMode(authMode === 'register' ? 'sign-in' : 'register')}
-          >
             {authMode === 'register'
-              ? 'Already have an account? Sign in.'
-              : 'Need an account? Register.'}
-          </button>
+              ? 'Start with one reliable register.'
+              : authMode === 'sign-in'
+                ? 'Sign in to Today.'
+                : authMode === 'request-reset'
+                  ? 'Reset your password.'
+                  : 'Choose a new password.'}
+          </h2>
+          {authMode === 'request-reset' ? (
+            <form onSubmit={submitPasswordResetRequest}>
+              <p className="intro">
+                Enter the account email. We will send a single-use link if it matches an account.
+              </p>
+              <Field label="Email" name="email" type="email" />
+              <button className="button primary" disabled={status.kind === 'pending'}>
+                {status.kind === 'pending' ? 'Preparing…' : 'Send reset instructions'}
+              </button>
+            </form>
+          ) : authMode === 'complete-reset' ? (
+            <form onSubmit={submitPasswordReset}>
+              <p className="intro">Use at least 12 characters. This link works once.</p>
+              <Field label="New password" name="password" type="password" />
+              <Field label="Confirm new password" name="confirmPassword" type="password" />
+              <button className="button primary" disabled={status.kind === 'pending'}>
+                {status.kind === 'pending' ? 'Updating…' : 'Update password'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={submitAuth}>
+              {authMode === 'register' && <Field label="Business name" name="businessName" />}
+              <Field label="Email" name="email" type="email" />
+              <Field label="Password" name="password" type="password" />
+              <button className="button primary" disabled={status.kind === 'pending'}>
+                {status.kind === 'pending'
+                  ? 'Working…'
+                  : authMode === 'register'
+                    ? 'Create account'
+                    : 'Sign in'}
+              </button>
+            </form>
+          )}
+          <div className="auth-links">
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => {
+                setStatus({ kind: 'idle' });
+                setAuthMode(authMode === 'register' ? 'sign-in' : 'register');
+              }}
+            >
+              {authMode === 'register'
+                ? 'Already have an account? Sign in.'
+                : 'Need an account? Register.'}
+            </button>
+            {authMode === 'sign-in' ? (
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => {
+                  setStatus({ kind: 'idle' });
+                  setAuthMode('request-reset');
+                }}
+              >
+                Forgot password?
+              </button>
+            ) : null}
+            {authMode === 'request-reset' || authMode === 'complete-reset' ? (
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => {
+                  setStatus({ kind: 'idle' });
+                  setResetToken('');
+                  setAuthMode('sign-in');
+                }}
+              >
+                Back to sign in
+              </button>
+            ) : null}
+          </div>
           <StatusLine status={status} />
         </section>
       </main>
