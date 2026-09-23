@@ -50,6 +50,29 @@ test('seeded demo signs in to the real database and stays clearly labeled', asyn
   ).toBeVisible();
 });
 
+test('Today dialogs trap focus, close with Escape, and restore the trigger', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Already have an account? Sign in.' }).click();
+  await page.getByLabel('Email').fill('demo@growthos.local');
+  await page.getByLabel('Password').fill('DemoWorkspace!2026');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+
+  const trigger = page.getByRole('button', { name: /Mina Chen/ });
+  await expect(trigger).toBeVisible();
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Mina Chen' })).toBeVisible();
+  const close = page.getByRole('button', { name: 'Close customer details' });
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.getByRole('button', { name: 'Record booking' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Mina Chen' })).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test('password reset uses a single-use link and returns to the authenticated workspace', async ({
   page,
 }, testInfo) => {
