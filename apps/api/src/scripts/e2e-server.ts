@@ -2,6 +2,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import type { Server } from 'node:http';
 import { createApp, connectDatabase, disconnectDatabase } from '../app.js';
 import { readConfig } from '../config.js';
+import { seedDemoWorkspace } from '../demo/seed.js';
 
 const allowMongoDownload = process.env.GROWTHOS_ALLOW_MONGODB_DOWNLOAD === '1';
 if (!allowMongoDownload) process.env.MONGOMS_RUNTIME_DOWNLOAD = '0';
@@ -18,6 +19,7 @@ const config = readConfig({
   COOKIE_SECURE: 'false',
 });
 await connectDatabase(config);
+await seedDemoWorkspace();
 const server = createApp({ config }).listen(config.PORT, '127.0.0.1');
 let shuttingDown = false;
 

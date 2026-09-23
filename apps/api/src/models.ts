@@ -31,6 +31,7 @@ const WorkspaceSchema = new mongoose.Schema(
     followUpDays: { type: Number, default: 3 },
     reviewResponseTemplate: { type: String, default: '' },
     onboardingComplete: { type: Boolean, default: false },
+    isDemo: { type: Boolean, required: true, default: false },
   },
   base,
 );

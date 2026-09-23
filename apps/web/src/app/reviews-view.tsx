@@ -37,6 +37,7 @@ function responseLabel(review: Review): string {
 export function ReviewsView({
   csrf,
   businessName,
+  isDemo,
   responseTemplate,
   status,
   setStatus,
@@ -45,6 +46,7 @@ export function ReviewsView({
 }: {
   csrf: string;
   businessName: string;
+  isDemo: boolean;
   responseTemplate: string;
   status: Status;
   setStatus: (status: Status) => void;
@@ -238,6 +240,7 @@ export function ReviewsView({
       <AppNav
         active="reviews"
         businessName={businessName}
+        isDemo={isDemo}
         onNavigate={onNavigate}
         onSignOut={onSignOut}
         signOutPending={pending}

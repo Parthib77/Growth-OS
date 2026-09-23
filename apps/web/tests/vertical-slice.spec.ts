@@ -10,6 +10,23 @@ test('real app exposes an accessible registration surface', async ({ page }) => 
   ).toBe(0);
 });
 
+test('seeded demo signs in to the real database and stays clearly labeled', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Already have an account? Sign in.' }).click();
+  await page.getByLabel('Email').fill('demo@growthos.local');
+  await page.getByLabel('Password').fill('DemoWorkspace!2026');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+
+  await expect(page.getByText('Demo workspace', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Mina Chen/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Reviews' }).click();
+  await expect(page.getByText('Demo workspace', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('The consultation was clear, thoughtful, and never rushed.'),
+  ).toBeVisible();
+});
+
 test('full workflow stores the booking and recorded value in Results', async ({
   page,
 }, testInfo) => {

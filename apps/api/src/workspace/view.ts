@@ -13,6 +13,7 @@ export function workspaceView(
     | 'followUpDays'
     | 'onboardingComplete'
     | 'reviewResponseTemplate'
+    | 'isDemo'
   >,
 ) {
   return {
@@ -26,5 +27,6 @@ export function workspaceView(
     followUpDays: workspace.followUpDays,
     onboardingComplete: workspace.onboardingComplete,
     reviewResponseTemplate: workspace.reviewResponseTemplate ?? '',
+    isDemo: workspace.isDemo,
   };
 }

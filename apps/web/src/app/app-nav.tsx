@@ -12,12 +12,14 @@ const destinations: readonly { screen: AppScreen; label: string }[] = [
 export function AppNav({
   active,
   businessName,
+  isDemo,
   onNavigate,
   onSignOut,
   signOutPending,
 }: {
   active: AppScreen;
   businessName: string;
+  isDemo: boolean;
   onNavigate: (screen: AppScreen) => void;
   onSignOut: () => void;
   signOutPending: boolean;
@@ -27,6 +29,7 @@ export function AppNav({
       <div className="app-identity" aria-label={`${businessName} workspace`}>
         <span>Growth OS</span>
         <strong>{businessName}</strong>
+        {isDemo ? <em>Demo workspace</em> : null}
       </div>
       <nav className="app-nav" aria-label="Workspace">
         {destinations.map((destination) => (

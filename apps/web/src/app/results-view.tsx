@@ -30,6 +30,7 @@ function money(currency: string, minorUnits: number): string {
 
 export function ResultsView({
   businessName,
+  isDemo,
   timezone,
   status,
   setStatus,
@@ -37,6 +38,7 @@ export function ResultsView({
   onSignOut,
 }: {
   businessName: string;
+  isDemo: boolean;
   timezone: string;
   status: Status;
   setStatus: (status: Status) => void;
@@ -103,6 +105,7 @@ export function ResultsView({
       <AppNav
         active="results"
         businessName={businessName}
+        isDemo={isDemo}
         onNavigate={onNavigate}
         onSignOut={onSignOut}
         signOutPending={pending}

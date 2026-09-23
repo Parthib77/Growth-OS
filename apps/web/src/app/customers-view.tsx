@@ -25,6 +25,7 @@ type Preview = ReturnType<typeof CustomerImportPreviewResponseSchema.parse>;
 export function CustomersView({
   csrf,
   businessName,
+  isDemo,
   status,
   setStatus,
   onNavigate,
@@ -32,6 +33,7 @@ export function CustomersView({
 }: {
   csrf: string;
   businessName: string;
+  isDemo: boolean;
   status: Status;
   setStatus: (status: Status) => void;
   onNavigate: (screen: AppScreen) => void;
@@ -246,6 +248,7 @@ export function CustomersView({
       <AppNav
         active="customers"
         businessName={businessName}
+        isDemo={isDemo}
         onNavigate={onNavigate}
         onSignOut={onSignOut}
         signOutPending={status.kind === 'pending'}

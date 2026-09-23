@@ -1,6 +1,6 @@
 # Growth OS
 
-Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, consent-aware campaigns, booking capture, and stored Results.
+Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, consent-aware campaigns, booking capture, reviews, stored Results, exports, settings, and account deletion.
 
 ## Start the supported stack
 
@@ -35,6 +35,31 @@ npm run dev
 
 Source development requires the MongoDB replica-set URI configured in `.env`. The web app runs at `http://localhost:3000`; the API runs at `http://localhost:4000`.
 
+## Seed the demo workspace
+
+The demo is a real account backed by the configured MongoDB database. Seeding is guarded and idempotent: the first run creates the fictional workspace, and later runs leave operator changes untouched.
+
+From a source checkout with the database running:
+
+```powershell
+$env:DEMO_SEED_GUARD='seed-growthos-demo'
+npm run seed:demo
+Remove-Item Env:DEMO_SEED_GUARD
+```
+
+Against the Compose stack:
+
+```powershell
+docker compose run --rm -e DEMO_SEED_GUARD=seed-growthos-demo api node apps/api/dist/scripts/seed-demo.js
+```
+
+Sign in at `http://localhost:3000` with:
+
+- Email: `demo@growthos.local`
+- Password: `DemoWorkspace!2026`
+
+Every authenticated screen labels this account as `Demo workspace`. Override the credentials on the first seed with `GROWTHOS_DEMO_EMAIL` and `GROWTHOS_DEMO_PASSWORD` when preparing a shared environment; later seed runs never replace account changes.
+
 ## Verify
 
 ```powershell
@@ -64,6 +89,6 @@ npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --p
 
 ## Current scope
 
-The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, Results, immutable campaign revisions, and an operational event ledger.
+The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, Results and CSV export, review response workflows, workspace export, settings, account deletion, legal drafts, a database-backed demo, immutable revisions, and an operational event ledger.
 
-Review requests, broader reporting and export, settings, account deletion, legal pages, demo mode, and the final release-quality visual and performance pass remain to be built.
+Password reset, broader booking management, final legal review, and the final release-quality visual, performance, and production-container gates remain.

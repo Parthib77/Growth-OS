@@ -193,6 +193,15 @@ dt {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.app-identity em {
+  width: fit-content;
+  border: 1px solid rgb(243 241 235 / 0.45);
+  padding: 0.12rem 0.3rem;
+  color: var(--paper);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 700;
+}
 .app-nav {
   display: flex;
   min-width: 0;

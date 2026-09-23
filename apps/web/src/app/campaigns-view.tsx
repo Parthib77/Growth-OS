@@ -24,6 +24,7 @@ type AuditItem = ReturnType<typeof CampaignAuditResponseSchema.parse>['items'][n
 type Props = {
   csrf: string;
   businessName: string;
+  isDemo: boolean;
   status: Status;
   setStatus: (status: Status) => void;
   onNavigate: (screen: AppScreen) => void;
@@ -51,6 +52,7 @@ async function campaignRequest<T>(
 export function CampaignsView({
   csrf,
   businessName,
+  isDemo,
   status,
   setStatus,
   onNavigate,
@@ -299,6 +301,7 @@ export function CampaignsView({
       <AppNav
         active="campaigns"
         businessName={businessName}
+        isDemo={isDemo}
         onNavigate={onNavigate}
         onSignOut={onSignOut}
         signOutPending={status.kind === 'pending'}

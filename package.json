@@ -15,6 +15,7 @@
     "format:check": "prettier --check .",
     "generate:openapi": "tsx apps/api/src/scripts/generate-openapi.ts",
     "migrate:indexes": "npm run migrate:indexes --workspace @growthos/api",
+    "seed:demo": "npm run seed:demo --workspace @growthos/api",
     "check:openapi": "npm run check:openapi --workspace @growthos/api",
     "check:rewrite": "npm run check:rewrite --workspace @growthos/web",
     "e2e:api": "tsx apps/api/src/scripts/e2e-server.ts",

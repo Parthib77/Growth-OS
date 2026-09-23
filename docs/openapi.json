@@ -453,7 +453,8 @@
                       "maximum": 9007199254740991
                     },
                     "onboardingComplete": { "type": "boolean" },
-                    "reviewResponseTemplate": { "type": "string" }
+                    "reviewResponseTemplate": { "type": "string" },
+                    "isDemo": { "type": "boolean" }
                   },
                   "required": [
                     "id",
@@ -465,7 +466,8 @@
                     "bookingLink",
                     "followUpDays",
                     "onboardingComplete",
-                    "reviewResponseTemplate"
+                    "reviewResponseTemplate",
+                    "isDemo"
                   ],
                   "additionalProperties": false
                 }
@@ -546,7 +548,8 @@
                       "maximum": 9007199254740991
                     },
                     "onboardingComplete": { "type": "boolean" },
-                    "reviewResponseTemplate": { "type": "string" }
+                    "reviewResponseTemplate": { "type": "string" },
+                    "isDemo": { "type": "boolean" }
                   },
                   "required": [
                     "id",
@@ -558,7 +561,8 @@
                     "bookingLink",
                     "followUpDays",
                     "onboardingComplete",
-                    "reviewResponseTemplate"
+                    "reviewResponseTemplate",
+                    "isDemo"
                   ],
                   "additionalProperties": false
                 }
@@ -4993,7 +4997,8 @@
                           "maximum": 9007199254740991
                         },
                         "onboardingComplete": { "type": "boolean" },
-                        "reviewResponseTemplate": { "type": "string" }
+                        "reviewResponseTemplate": { "type": "string" },
+                        "isDemo": { "type": "boolean" }
                       },
                       "required": [
                         "id",
@@ -5005,7 +5010,8 @@
                         "bookingLink",
                         "followUpDays",
                         "onboardingComplete",
-                        "reviewResponseTemplate"
+                        "reviewResponseTemplate",
+                        "isDemo"
                       ],
                       "additionalProperties": false
                     },

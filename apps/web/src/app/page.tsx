@@ -51,6 +51,7 @@ type Workspace = {
   followUpDays: number;
   onboardingComplete: boolean;
   reviewResponseTemplate: string;
+  isDemo: boolean;
 };
 type Results = {
   newEnquiries: number;
@@ -356,6 +357,7 @@ export default function Home() {
       <CustomersView
         csrf={csrf}
         businessName={workspace?.businessName ?? 'Growth OS'}
+        isDemo={workspace?.isDemo ?? false}
         status={status}
         setStatus={setStatus}
         onNavigate={navigate}
@@ -367,6 +369,7 @@ export default function Home() {
       <CampaignsView
         csrf={csrf}
         businessName={workspace?.businessName ?? 'Growth OS'}
+        isDemo={workspace?.isDemo ?? false}
         status={status}
         setStatus={setStatus}
         onNavigate={navigate}
@@ -378,6 +381,7 @@ export default function Home() {
       <ReviewsView
         csrf={csrf}
         businessName={workspace.businessName}
+        isDemo={workspace.isDemo}
         responseTemplate={workspace.reviewResponseTemplate}
         status={status}
         setStatus={setStatus}
@@ -389,6 +393,7 @@ export default function Home() {
     return (
       <ResultsView
         businessName={workspace.businessName}
+        isDemo={workspace.isDemo}
         timezone={workspace.timezone}
         status={status}
         setStatus={setStatus}
@@ -414,6 +419,7 @@ export default function Home() {
       <AppNav
         active="today"
         businessName={workspace?.businessName ?? 'Growth OS'}
+        isDemo={workspace?.isDemo ?? false}
         onNavigate={navigate}
         onSignOut={signOut}
         signOutPending={status.kind === 'pending'}

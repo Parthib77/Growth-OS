@@ -108,6 +108,7 @@ export function SettingsView({
       <AppNav
         active="settings"
         businessName={workspace.businessName}
+        isDemo={workspace.isDemo}
         onNavigate={onNavigate}
         onSignOut={onSignOut}
         signOutPending={pending}

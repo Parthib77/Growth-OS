@@ -51,6 +51,7 @@ export const WorkspaceResponseSchema = z.object({
   followUpDays: z.number().int(),
   onboardingComplete: z.boolean(),
   reviewResponseTemplate: z.string(),
+  isDemo: z.boolean(),
 });
 
 export const OnboardingRequestSchema = z.object({

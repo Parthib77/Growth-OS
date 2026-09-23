@@ -5,7 +5,7 @@
 - Ground: complete. The current request, session, workspace, event, Results, and browser flows were traced.
 - Sketch: complete. Two designs were compared against the original brief and current architecture.
 - Agree: complete. Candidate A is the base, with the selected additions below.
-- Implement: backend, authenticated web workspace, legal drafts, export, and account deletion complete. The guarded demo seed/reset remains pending.
+- Implement: complete. Backend, authenticated web workspace, legal drafts, export, deletion, and the guarded database-backed demo are verified. A destructive demo reset is deliberately omitted because the idempotent seed does not overwrite operator changes.
 - Scrap: use only if implementation needs repeated casts, partial-state fields, or caller-managed transactions.
 
 ## Caller usage
@@ -134,17 +134,17 @@ Privacy and Terms are public App Router pages. Both start with `Draft for legal 
 
 ## Demo workspace
 
-A guarded, idempotent operator command seeds one `isDemo: true` workspace through the normal domain services and MongoDB models. The seed contains fictional customers, consent history, campaigns, a booking, reviews, and operational events. The application displays `Demo workspace` on every authenticated view.
+A guarded, idempotent operator command seeds one `isDemo: true` workspace in a single transaction through the production MongoDB models and registered operational-event schema. The seed contains fictional customers, consent history, a campaign, a booking, reviews, and operational events. The normal authentication and API routes serve that stored data, and the application displays `Demo workspace` on every authenticated view.
 
-The seed command is disabled unless an explicit environment guard is set. It does not overwrite later demo changes. A reset command may run only in local or test environments with a second explicit guard. A public endpoint that creates demo accounts was rejected because it permits unauthenticated database growth before an approved cleanup policy exists.
+The seed command is disabled unless `DEMO_SEED_GUARD=seed-growthos-demo` is set. It does not overwrite later demo changes and refuses to claim an existing non-demo account. A destructive reset command is not included. A public endpoint that creates demo accounts was rejected because it permits unauthenticated database growth before an approved cleanup policy exists.
 
 ## Verification
 
 Unit tests cover review transitions, immutable original fields, CSV bounds, template variables, local date conversion, formula-safe exports, currency locking, export projectors, and the deletion manifest.
 
-Replica-set integration tests cover tenant isolation, review import retry, response events without text, original-text immutability, Results and CSV agreement, settings persistence, export inclusion and secret exclusion, deletion refusal, atomic deletion, session revocation, and the deletion receipt.
+Replica-set integration tests cover tenant isolation, review import retry, response events without text, original-text immutability, Results and CSV agreement, settings persistence, export inclusion and secret exclusion, deletion refusal, atomic deletion, session revocation, the deletion receipt, sequential and concurrent demo idempotency, non-overwrite behavior, collision refusal, and demo data through the real API.
 
-Playwright covers review drafting and manual posting, date-filtered Results, both downloads, settings reload, deletion cancellation and completion, and legal pages on desktop Chromium and iPhone/WebKit. The latest gate passed 10 tests; the two deterministic visual-capture tests are skipped by default and passed separately against a production build. The database-backed demo remains pending and is not included in that evidence.
+Playwright covers demo sign-in and labeling, review drafting and manual posting, date-filtered Results, both downloads, settings reload, deletion cancellation and completion, and legal pages on desktop Chromium and iPhone/WebKit. The latest gate passed 12 tests; the two deterministic visual-capture tests are skipped by default and passed separately against a production build.
 
 ## Synthesis record
 

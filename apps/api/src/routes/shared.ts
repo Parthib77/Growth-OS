@@ -112,6 +112,7 @@ export function appendEvent(
     subjectKind: SubjectKind;
     subjectId: string;
     ordinal: number;
+    occurredAt?: Date | string;
     payload: OperationalEventPayload;
   },
   session?: ClientSession,
@@ -122,7 +123,7 @@ export function appendEvent(
     workspaceId: input.workspaceId,
     commandId: input.commandId,
     ordinal: input.ordinal,
-    occurredAt: new Date().toISOString(),
+    occurredAt: new Date(input.occurredAt ?? Date.now()).toISOString(),
     actor: { kind: 'user', userId: actorUserId },
     requestId: input.requestId,
     subject: { kind: input.subjectKind, id: input.subjectId },
