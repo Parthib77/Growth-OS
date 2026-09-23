@@ -327,16 +327,34 @@ dt {
 
 .booking-record {
   display: grid;
-  grid-template-columns: minmax(12rem, 1.5fr) repeat(3, minmax(8rem, 1fr));
+  grid-template-columns: minmax(12rem, 1.5fr) repeat(3, minmax(8rem, 1fr)) minmax(12rem, auto);
   gap: 1rem;
   align-items: center;
   padding: 0.85rem 0;
   border-top: 1px solid var(--line);
 }
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+.booking-actions:empty {
+  min-height: 1px;
+}
+.booking-actions .button {
+  min-height: 38px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
+}
 
 @media (max-width: 700px) {
   .booking-record {
     grid-template-columns: 1fr 1fr;
+  }
+  .booking-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
   }
 }
 .summary-row div {

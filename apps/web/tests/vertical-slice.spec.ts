@@ -90,6 +90,10 @@ test('full workflow stores the booking and recorded value in Results', async ({
   await expect(page.getByText('Booking recorded. The enquiry moved out of Today.')).toBeVisible();
   await expect(page.getByText('Colour consultation')).toBeVisible();
   await expect(page.locator('.results-panel').getByText('USD 200.00')).toBeVisible();
+  await page.getByRole('button', { name: 'Complete Colour consultation booking' }).click();
+  await expect(page.getByText('Booking marked completed.')).toBeVisible();
+  await expect(page.locator('.booking-register').getByText('Completed')).toBeVisible();
+  await expect(page.locator('.results-panel').getByText('USD 200.00')).toBeVisible();
 });
 
 test('customer register supports add, search, detail history, and consent withdrawal', async ({

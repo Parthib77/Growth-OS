@@ -227,8 +227,9 @@ type OperationalEventPayload =
       sourceRecipientId?: CampaignRecipientId;
     }
   | {
-      type: 'booking.status_changed';
+      type: 'booking.state_changed';
       bookingId: BookingId;
+      customerId: CustomerId;
       from: BookingState['kind'];
       to: BookingState['kind'];
     }
@@ -293,6 +294,8 @@ Recording `booked` requires a stored booking. A provider-confirmed delivery stat
 | `completed`, `cancelled`, `no_show` | none                                |
 
 A correction to a terminal booking is a separate command with a reason and a correction event. It does not rewrite history silently.
+
+Changing a confirmed booking to `completed` moves a currently booked customer to `completed` in the same transaction. Changing it to `cancelled` or `no_show` moves a currently booked customer back to `replied`. Every accepted change appends `booking.state_changed`; a resulting customer change also appends `customer.lifecycle_changed`.
 
 ### Review response
 

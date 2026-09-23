@@ -100,6 +100,6 @@ npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --p
 
 ## Current scope
 
-The verified implementation covers tenant-scoped registration and sessions, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, Results and CSV export, review response workflows, workspace export, settings, account deletion, legal drafts, a database-backed demo, immutable revisions, and an operational event ledger.
+The verified implementation covers tenant-scoped registration and sessions, password recovery, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, booking status management, Results and CSV export, review response workflows, workspace export, settings, account deletion, legal drafts, a database-backed demo, immutable revisions, and an operational event ledger.
 
-Broader booking management, final legal review, and the final release-quality visual, performance, and production-container gates remain.
+Final legal review and the release-quality visual, performance, container-scan, and production-container rerun gates remain.

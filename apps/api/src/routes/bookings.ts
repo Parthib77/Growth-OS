@@ -3,7 +3,10 @@ import mongoose from 'mongoose';
 import {
   BookingResponseSchema,
   CreateBookingRequestSchema,
+  UpdateBookingStatusRequestSchema,
   assertCustomerTransition,
+  bookingStateKind,
+  canTransitionBooking,
   bookingId as bookingIdValue,
   currencyCode,
   customerId as customerIdValue,
@@ -161,6 +164,101 @@ export function registerBookingRoutes(router: Router, config: AppConfig): void {
       }
       if (!created) throw new Error('Booking creation returned no document');
       res.status(201).json(bookingView(created));
+    } catch (error: unknown) {
+      next(error);
+    }
+  });
+
+  router.patch('/bookings/:bookingId/status', requireSession(config), async (req, res, next) => {
+    try {
+      const input = UpdateBookingStatusRequestSchema.parse(req.body);
+      const context = commandContext(req);
+      const actorUserId = commandActorUserId(context);
+      const session = await mongoose.startSession();
+      let updated: BookingDoc | undefined;
+      try {
+        await session.withTransaction(async () => {
+          const booking = await Booking.findOne({
+            _id: req.params.bookingId,
+            workspaceId: context.workspaceId,
+          }).session(session);
+          if (!booking) throw new AppError('RESOURCE_NOT_FOUND', 'Booking not found.', 404);
+          const from = bookingStateKind(booking.state);
+          if (!canTransitionBooking(from, input.state))
+            throw new AppError(
+              'INVALID_TRANSITION',
+              `Cannot move booking from ${from} to ${input.state}.`,
+              409,
+            );
+          booking.state = input.state;
+          await booking.save({ session });
+          updated = booking;
+
+          const customer = await Customer.findOne({
+            _id: booking.customerId,
+            workspaceId: context.workspaceId,
+          }).session(session);
+          if (!customer) throw new AppError('RESOURCE_NOT_FOUND', 'Customer not found.', 404);
+          const previousLifecycle = customerLifecycleKind(customer.lifecycle);
+          const nextLifecycle =
+            previousLifecycle === 'booked'
+              ? input.state === 'completed'
+                ? 'completed'
+                : input.state === 'cancelled' || input.state === 'no_show'
+                  ? 'replied'
+                  : null
+              : null;
+          if (nextLifecycle) {
+            assertCustomerTransition(previousLifecycle, nextLifecycle);
+            customer.lifecycle = nextLifecycle;
+            customer.lastInteractionAt = new Date();
+            await customer.save({ session });
+          }
+
+          await appendEvent(
+            {
+              workspaceId: context.workspaceId,
+              userId: actorUserId,
+              requestId: String(context.requestId),
+              commandId: String(context.commandId),
+              subjectKind: 'booking',
+              subjectId: String(booking._id),
+              ordinal: 0,
+              payload: {
+                type: 'booking.state_changed',
+                bookingId: bookingIdValue(String(booking._id)),
+                customerId: customerIdValue(booking.customerId),
+                from,
+                to: input.state,
+              },
+            },
+            session,
+          );
+          if (nextLifecycle)
+            await appendEvent(
+              {
+                workspaceId: context.workspaceId,
+                userId: actorUserId,
+                requestId: String(context.requestId),
+                commandId: String(context.commandId),
+                subjectKind: 'customer',
+                subjectId: booking.customerId,
+                ordinal: 1,
+                payload: {
+                  type: 'customer.lifecycle_changed',
+                  customerId: customerIdValue(booking.customerId),
+                  from: previousLifecycle,
+                  to: nextLifecycle,
+                },
+              },
+              session,
+            );
+        });
+      } finally {
+        await session.endSession();
+      }
+      if (!updated) throw new Error('Booking status transaction returned no booking.');
+      res.json(bookingView(updated));
     } catch (error: unknown) {
       next(error);
     }

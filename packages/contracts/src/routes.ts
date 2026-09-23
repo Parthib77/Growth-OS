@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   BookingResponseSchema,
   CreateBookingRequestSchema,
+  UpdateBookingStatusRequestSchema,
   CreateCustomerRequestSchema,
   CustomerResponseSchema,
   CustomerDetailResponseSchema,
@@ -411,6 +412,15 @@ export const routeRegistry = [
       200: z.object({ items: z.array(BookingResponseSchema) }),
       401: ErrorResponseSchema,
     },
+  },
+  {
+    operationId: 'updateBookingStatus',
+    module: 'bookings',
+    method: 'patch',
+    path: '/api/v1/bookings/{bookingId}/status',
+    auth: 'csrf',
+    request: UpdateBookingStatusRequestSchema,
+    responses: { 200: BookingResponseSchema, 404: ErrorResponseSchema, 409: ErrorResponseSchema },
   },
   {
     operationId: 'getResults',

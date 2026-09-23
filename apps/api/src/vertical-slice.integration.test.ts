@@ -157,9 +157,40 @@ describe('vertical slice with a real MongoDB replica set', () => {
     expect((await one.agent.get('/api/v1/results')).body.recordedBookingValue.minorUnits).toBe(
       20000,
     );
+    const completedBooking = await one.agent
+      .patch(`/api/v1/bookings/${firstBooking.body.id}/status`)
+      .set('x-csrf-token', one.csrf)
+      .send({ state: 'completed' });
+    expect(completedBooking.status).toBe(200);
+    expect(completedBooking.body.state).toBe('completed');
+    BookingResponseSchema.parse(completedBooking.body);
+    expect((await one.agent.get(`/api/v1/customers/${customer.body.id}`)).body.lifecycle).toBe(
+      'completed',
+    );
+    expect(
+      await OperationalEvent.countDocuments({
+        workspaceId: one.workspaceId,
+        type: 'booking.state_changed',
+        subjectId: firstBooking.body.id,
+      }),
+    ).toBe(1);
+    const invalidTransition = await one.agent
+      .patch(`/api/v1/bookings/${firstBooking.body.id}/status`)
+      .set('x-csrf-token', one.csrf)
+      .send({ state: 'cancelled' });
+    expect(invalidTransition.status).toBe(409);
+    expect(invalidTransition.body.error.code).toBe('INVALID_TRANSITION');
+    expect((await one.agent.get('/api/v1/results')).body.recordedBookingValue.minorUnits).toBe(
+      20000,
+    );
     const two = await authenticatedAgent('two@example.com', 'Two Salon');
     const crossRead = await two.agent.get(`/api/v1/customers/${customer.body.id}`);
     expect(crossRead.status).toBe(404);
+    const crossWorkspaceUpdate = await two.agent
+      .patch(`/api/v1/bookings/${firstBooking.body.id}/status`)
+      .set('x-csrf-token', two.csrf)
+      .send({ state: 'cancelled' });
+    expect(crossWorkspaceUpdate.status).toBe(404);
     expect((await two.agent.get('/api/v1/today')).body.items).toHaveLength(0);
     expect((await two.agent.get('/api/v1/bookings')).body.items).toHaveLength(0);
     expect((await two.agent.get('/api/v1/results')).body.newEnquiries).toBe(0);

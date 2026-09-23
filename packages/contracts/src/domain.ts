@@ -345,6 +345,13 @@ export type OperationalEventPayload =
       agreedMinorUnits: number;
       currency: CurrencyCode;
     }
+  | {
+      type: 'booking.state_changed';
+      bookingId: BookingId;
+      customerId: CustomerId;
+      from: BookingState['kind'];
+      to: BookingState['kind'];
+    }
   | { type: 'account.registered'; userId: UserId; workspaceId: WorkspaceId }
   | { type: 'workspace.settings_changed'; changedFields: readonly string[] }
   | {
@@ -494,6 +501,13 @@ export const operationalEventPayloadSchemas = {
     customerId: z.string(),
     agreedMinorUnits: z.number().int(),
     currency: z.string(),
+  }),
+  'booking.state_changed': z.object({
+    type: z.literal('booking.state_changed'),
+    bookingId: z.string(),
+    customerId: z.string(),
+    from: z.enum(bookingStateKinds),
+    to: z.enum(bookingStateKinds),
   }),
   'account.registered': z.object({
     type: z.literal('account.registered'),
@@ -653,6 +667,14 @@ export function parseOperationalEventPayload(value: unknown): OperationalEventPa
         currency: currencyCode(parsed.currency),
       };
     }
+    case 'booking.state_changed': {
+      const parsed = operationalEventPayloadSchemas['booking.state_changed'].parse(value);
+      return {
+        ...parsed,
+        bookingId: bookingId(parsed.bookingId),
+        customerId: customerId(parsed.customerId),
+      };
+    }
     case 'account.registered': {
       const parsed = operationalEventPayloadSchemas['account.registered'].parse(value);
       return {
@@ -709,6 +731,7 @@ export const eventRedactors: {
   'campaign.reply_recorded': (payload) => ({ ...payload }),
   'campaign.booking_attributed': (payload) => ({ ...payload }),
   'booking.recorded': (payload) => ({ ...payload }),
+  'booking.state_changed': (payload) => ({ ...payload }),
   'account.registered': (payload) => ({ ...payload }),
   'workspace.settings_changed': (payload) => ({ ...payload }),
   'review.created': (payload) => ({ ...payload }),
@@ -750,6 +773,8 @@ export function redactEventPayload(payload: OperationalEventPayload): Record<str
       return eventRedactors['campaign.booking_attributed'](payload);
     case 'booking.recorded':
       return eventRedactors['booking.recorded'](payload);
+    case 'booking.state_changed':
+      return eventRedactors['booking.state_changed'](payload);
     case 'account.registered':
       return eventRedactors['account.registered'](payload);
     case 'workspace.settings_changed':

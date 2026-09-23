@@ -162,6 +162,10 @@ export const CreateBookingRequestSchema = z.object({
   notes: z.string().trim().max(2000).optional().default(''),
 });
 
+export const UpdateBookingStatusRequestSchema = z.object({
+  state: z.enum(['tentative', 'confirmed', 'completed', 'cancelled', 'no_show']),
+});
+
 export const CsrfResponseSchema = z.object({ csrfToken: z.string().min(16) });
 
 export const CustomerResponseSchema = z.object({
@@ -259,7 +263,7 @@ export const BookingResponseSchema = z.object({
   service: z.string(),
   appointmentAt: z.string(),
   agreedMoney: z.object({ currency: z.string(), minorUnits: z.number().int() }),
-  state: z.string(),
+  state: z.enum(['tentative', 'confirmed', 'completed', 'cancelled', 'no_show']),
 });
 
 export const BookingListResponseSchema = z.object({ items: z.array(BookingResponseSchema) });

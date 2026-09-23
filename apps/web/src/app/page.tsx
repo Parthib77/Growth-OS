@@ -16,6 +16,7 @@ import {
   SessionResponseSchema,
   SignInResponseSchema,
   TodayResponseSchema,
+  UpdateBookingStatusRequestSchema,
   WorkspaceResponseSchema,
   RegisterResponseSchema,
 } from '@growthos/contracts';
@@ -71,8 +72,29 @@ type Booking = {
   service: string;
   appointmentAt: string;
   agreedMoney: { currency: string; minorUnits: number };
-  state: string;
+  state: 'tentative' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
 };
+
+const bookingActions = {
+  tentative: [
+    { state: 'confirmed', label: 'Confirm' },
+    { state: 'cancelled', label: 'Cancel' },
+  ],
+  confirmed: [
+    { state: 'completed', label: 'Complete' },
+    { state: 'cancelled', label: 'Cancel' },
+    { state: 'no_show', label: 'Mark no-show' },
+  ],
+  completed: [],
+  cancelled: [],
+  no_show: [],
+} as const satisfies Readonly<
+  Record<Booking['state'], readonly { state: Booking['state']; label: string }[]>
+>;
+
+function bookingStateLabel(state: Booking['state']): string {
+  return state === 'no_show' ? 'No-show' : `${state[0]?.toUpperCase()}${state.slice(1)}`;
+}
 
 type Screen = 'auth' | 'onboarding' | AppScreen;
 type AuthMode = 'register' | 'sign-in' | 'request-reset' | 'complete-reset';
@@ -309,6 +331,27 @@ export default function Home() {
       setStatus({
         kind: 'error',
         message: error instanceof Error ? error.message : 'Unable to record booking.',
+      });
+    }
+  }
+  async function updateBookingStatus(booking: Booking, state: Booking['state']) {
+    setStatus({ kind: 'pending', message: `Updating ${booking.service}…` });
+    try {
+      const input = UpdateBookingStatusRequestSchema.parse({ state });
+      await request(`/api/v1/bookings/${booking.id}/status`, BookingResponseSchema, {
+        method: 'PATCH',
+        headers: { 'X-CSRF-Token': csrf },
+        body: JSON.stringify(input),
+      });
+      setStatus({
+        kind: 'success',
+        message: `Booking marked ${bookingStateLabel(state).toLowerCase()}.`,
+      });
+      await refreshToday();
+    } catch (error: unknown) {
+      setStatus({
+        kind: 'error',
+        message: error instanceof Error ? error.message : 'Unable to update the booking.',
       });
     }
   }
@@ -614,7 +657,21 @@ export default function Home() {
                 <span>
                   {booking.agreedMoney.currency} {(booking.agreedMoney.minorUnits / 100).toFixed(2)}
                 </span>
-                <span>{booking.state}</span>
+                <span className="state-label">{bookingStateLabel(booking.state)}</span>
+                <div className="booking-actions">
+                  {bookingActions[booking.state].map((action) => (
+                    <button
+                      type="button"
+                      className="button quiet"
+                      key={action.state}
+                      disabled={status.kind === 'pending'}
+                      onClick={() => void updateBookingStatus(booking, action.state)}
+                      aria-label={`${action.label} ${booking.service} booking`}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
