@@ -321,6 +321,7 @@ dt {
 }
 
 .booking-register {
+  container-type: inline-size;
   display: grid;
   gap: 0.5rem;
 }
@@ -348,7 +349,7 @@ dt {
   font-size: 0.78rem;
 }
 
-@media (max-width: 1000px) {
+@container (max-width: 52rem) {
   .booking-record {
     grid-template-columns: 1fr 1fr;
   }

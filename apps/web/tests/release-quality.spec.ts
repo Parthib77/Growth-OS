@@ -58,6 +58,7 @@ test('main screens remain accessible and responsive from tablet through wide des
   for (const viewport of [
     { width: 768, height: 1024 },
     { width: 912, height: 900 },
+    { width: 1001, height: 900 },
     { width: 1366, height: 768 },
     { width: 1920, height: 1080 },
   ]) {
@@ -87,6 +88,25 @@ test('main screens remain accessible and responsive from tablet through wide des
         overflow.scrollWidth,
         `${destination.button} at ${viewport.width}x${viewport.height} overflowed: ${JSON.stringify(overflow.offenders)}`,
       ).toBeLessThanOrEqual(overflow.clientWidth);
+      if (destination.button === 'Today') {
+        const bookingBounds = await page
+          .locator('.booking-record')
+          .first()
+          .evaluate((row) => {
+            const panel = row.closest('.results-panel');
+            if (!panel) throw new Error('Booking row is outside the results panel');
+            const panelStyle = getComputedStyle(panel);
+            return {
+              rowRight: row.getBoundingClientRect().right,
+              contentRight:
+                panel.getBoundingClientRect().right - Number.parseFloat(panelStyle.paddingRight),
+            };
+          });
+        expect(
+          bookingBounds.rowRight,
+          `Booking row exceeded the Results content area at ${viewport.width}px`,
+        ).toBeLessThanOrEqual(bookingBounds.contentRight + 1);
+      }
     }
   }
 
