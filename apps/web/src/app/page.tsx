@@ -160,11 +160,13 @@ export default function Home() {
       void refreshCsrf();
       return;
     }
-    void refreshCsrf().then(() =>
-      request('/api/v1/session', SessionResponseSchema)
-        .then(refreshWorkspace)
-        .catch(() => undefined),
-    );
+    void refreshCsrf()
+      .then(() =>
+        request('/api/v1/session', SessionResponseSchema)
+          .then(refreshWorkspace)
+          .catch(() => undefined),
+      )
+      .catch(() => undefined);
   }, []);
   useEffect(() => {
     if (screen === 'today')

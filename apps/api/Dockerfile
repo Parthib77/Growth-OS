@@ -1,4 +1,4 @@
-FROM node:24.21.0-bookworm-slim AS deps
+FROM node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS deps
 WORKDIR /app
 ENV MONGOMS_DISABLE_POSTINSTALL=1
 COPY package.json package-lock.json ./
@@ -11,21 +11,19 @@ FROM deps AS build
 COPY . .
 RUN npm run build --workspace @growthos/contracts
 RUN npm run build --workspace @growthos/api
+RUN npm prune --omit=dev
 
-FROM node:24.21.0-bookworm-slim AS runner
+FROM node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/package.json /app/package-lock.json ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/apps/api/dist ./apps/api/dist
-COPY --from=build /app/apps/api/package.json ./apps/api/package.json
-COPY --from=build /app/apps/web/package.json ./apps/web/package.json
-COPY --from=build /app/packages/contracts/dist ./packages/contracts/dist
-COPY --from=build /app/packages/contracts/package.json ./packages/contracts/package.json
-RUN npm prune --omit=dev \
-  && addgroup --system --gid 1001 growthos \
-  && adduser --system --uid 1001 --ingroup growthos growthos \
-  && chown -R growthos:growthos /app
-USER growthos
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+COPY --from=build --chown=node:node /app/package.json /app/package-lock.json ./
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
+COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
+COPY --from=build --chown=node:node /app/apps/web/package.json ./apps/web/package.json
+COPY --from=build --chown=node:node /app/packages/contracts/dist ./packages/contracts/dist
+COPY --from=build --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
+USER node
 EXPOSE 4000
 CMD ["node", "apps/api/dist/server.js"]

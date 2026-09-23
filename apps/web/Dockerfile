@@ -1,4 +1,4 @@
-FROM node:24.21.0-bookworm-slim AS deps
+FROM node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS deps
 WORKDIR /app
 ENV MONGOMS_DISABLE_POSTINSTALL=1
 COPY package.json package-lock.json ./
@@ -13,14 +13,12 @@ ENV API_ORIGIN=http://api:4000
 RUN npm run build --workspace @growthos/contracts
 RUN npm run build --workspace @growthos/web
 
-FROM node:24.21.0-bookworm-slim AS runner
+FROM node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/apps/web/.next/standalone ./
-COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
-RUN addgroup --system --gid 1001 growthos \
-  && adduser --system --uid 1001 --ingroup growthos growthos \
-  && chown -R growthos:growthos /app
-USER growthos
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+COPY --from=build --chown=node:node /app/apps/web/.next/standalone ./
+COPY --from=build --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
+USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

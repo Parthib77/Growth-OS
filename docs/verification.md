@@ -2,53 +2,138 @@
 
 ## Environment
 
-Measured on 2026-09-21 in `C:\Users\Parthib\code\growthos`:
+Final release evidence was captured on September 23, 2026, in `C:\Users\Parthib\code\growthos`.
 
-- Windows with Node.js 24.21.0, npm 11.19.0, and Git 2.53.0.
+- Windows 10.0.19045 on an AMD Ryzen 5 5600X with 12 logical CPUs and 16 GB memory.
+- Node.js 24.21.0, npm 11.19.0, and Git 2.53.0.
 - Docker Desktop 4.92.0, Docker Engine 29.8.0, and Docker Compose 5.5.1.
-- MongoDB 8.0.6 for disposable integration/browser tests and `mongo:8.3.11-noble` for the production-like Compose stack.
+- MongoDB 8.0.6 for disposable integration/browser tests and `mongo:8.3.11-noble` for Compose.
 
-## Automated checks
+## Source checks
 
-- `MONGOMS_DISABLE_POSTINSTALL=1 MONGOMS_RUNTIME_DOWNLOAD=0 npm ci` completed from the committed lockfile without an installation-time MongoDB download.
-- `npm run format` and `npm run typecheck` completed successfully.
-- `npm test` passed 12 files and 30 tests. Coverage includes configuration, CSV limits and parsing, duplicate review, lifecycle and booking transitions, formula-safe cells, customer import retry behavior, campaign template rendering, audience eligibility, recipient review, review response rules, results calculations, network-failure copy, and CSV formula protection.
-- `npm run test:integration` passed 4 files and 9 tests against real single-node replica sets. The runner pins the already verified MongoDB 8.0.6 binary. Coverage includes registration, password recovery, onboarding, event metadata, idempotent booking retries, booking status and customer lifecycle changes, invalid-transition rejection, Results, two-workspace isolation, import preview and commit, retry-safe import commit, consent withdrawal, campaign version conflicts, recipient review, consent rechecks, concurrent outcome retries, immutable revisions, review workflows, exports, deletion, and demo-seed convergence.
-- `npm run generate:openapi`, `npm run check:openapi`, `npm run build`, and `npm run check:rewrite` completed successfully.
-- The self-contained Playwright run passed the new offline recovery path and the affected demo and booking workflows in both desktop Chromium and the phone profile after the complete-product refinement. The complete suite now contains 16 active checks and 4 opt-in visual-capture checks. A final whole-suite run remains part of the release gate.
-- `npm audit --audit-level=high` reports 0 vulnerabilities after upgrading `concurrently` and `express-rate-limit`.
+The final source gate uses these commands:
 
-## Production-container evidence
+```powershell
+npm run format:check
+npm run typecheck
+npm test
+$env:MONGOMS_VERSION='8.0.6'
+$env:MONGOMS_RUNTIME_DOWNLOAD='0'
+npm run test:integration
+npm run generate:openapi
+npm run check:openapi
+npm run check:rewrite
+npm run build
+npm audit --audit-level=high
+npx playwright test
+```
 
-- Clean production images built from the API and web Dockerfiles. The build context is approximately 1 MB after adding `.dockerignore`.
-- `docker compose up -d --build` initialized the authenticated MongoDB replica set, ran the index migration to completion, and brought `mongo`, `api`, and `web` to `healthy` state. `mongo-init` and `mongo-migrate` exited successfully.
-- The external-stack Playwright run against `http://localhost:3000` passed all 8 Chromium and iPhone 13/WebKit checks.
-- A record created through the production web origin remained available after sequentially restarting `mongo`, `api`, and `web`. Sign-in returned the same workspace and the saved customer retained both its name and internal notes.
-- The production HTTP topology was checked with a non-secure local cookie name; secure deployments use the `__Host-` cookie prefix only when `COOKIE_SECURE=true`.
+Results:
 
-Foundation result: `VERIFIED` for locked installation, compilation, database transactions, workspace isolation, browser workflow, dependency audit, production images, container health, index migration, and restart persistence.
+- Unit tests passed 12 files and 30 tests. Coverage includes prioritization, consent eligibility, status transitions, money, personalization, duplicate detection, CSV limits and formula protection, timezone rules, network-failure copy, configuration, and error envelopes.
+- API integration tests passed 4 files and 9 tests against real single-node MongoDB replica sets. Coverage includes registration, password reset and token reuse, session behavior, workspace isolation, customer/import behavior, consent withdrawal, campaign conflicts and idempotency, booking idempotency and status transitions, Results, reviews, exports, deletion, and convergent demo seeding.
+- OpenAPI generation and drift checking, same-origin rewrite checking, TypeScript compilation, formatting, and the production build passed.
+- The source Playwright gate passed 19 tests with 5 intentional skips. Four visual-capture cases are opt-in; the fifth skip is the phone project for the Chromium-only tablet/laptop/wide matrix.
+- `npm audit --audit-level=high` reported zero vulnerabilities.
 
-## Implemented vertical slice
+## Browser quality evidence
 
-- Registration atomically creates a user and workspace and rotates the anonymous session.
-- Onboarding persists business category, timezone, currency, country code, booking link, and follow-up interval.
-- Customer records are workspace-scoped and support search, lifecycle filters, cursor pagination, service interests, internal notes, interaction history, full consent history, validated lifecycle transitions, and contact suppression after consent withdrawal.
-- CSV import enforces byte, row, column, and cell limits; rejects formula-like cells; previews mappings; surfaces normalized phone/email duplicates; and requires an explicit skip or create-separately decision. Replaying a committed import returns the original response instead of creating more customers.
-- Today reads stored enquiry facts and explains each recommended action.
-- Booking creation requires an idempotency key, updates customer lifecycle, records an operational event, and returns the original booking for a matching retry. Status controls enforce the declared transition table, update the linked customer in the same transaction, append typed audit events, and hide cross-workspace records as not found.
-- Campaigns support drafts, audience filters, recipient review and removal, version conflicts through `ETag` and `If-Match`, activation, formula-safe recipient export, and WhatsApp click-to-chat handoff. The API rechecks consent and booking suppression before activation, link preparation, and sent outcomes.
-- Campaign outcome receipts make retries idempotent, including two concurrent requests with the same key. Attributed conversions come from bookings that own a campaign-recipient reference.
-- Campaign revisions are immutable and versioned. The campaign audit view reads the operational event ledger.
-- Results derives enquiry, booking, prepared-link, sent, reply, and attributed-conversion metrics from stored facts in the workspace timezone.
-- Sessions provide idle and absolute expiry, CSRF protection, origin checks in production, and workspace identity derived on the server.
-- The web interface exposes pending, success, empty, and recoverable-error states, focus-visible controls, and reduced-motion behavior.
+The browser suite exercises registration, onboarding, enquiry capture, Today, customer search and history, consent withdrawal, campaigns, WhatsApp handoff, outcomes, bookings, Results, reviews, exports, settings, account deletion, legal pages, sign-out/sign-in persistence, password reset, and offline recovery.
 
-Campaign-phase result: `VERIFIED` across direct API/database tests, desktop and phone browser tests, and production containers. The earlier restart-persistence proof still covers the shared MongoDB volume and production topology.
+- Chromium and the iPhone 13 profile completed the full daily workflow.
+- The six primary authenticated screens passed axe scans with no serious or critical violations.
+- Responsive overflow checks passed at 768 × 1024, 1366 × 768, and 1920 × 1080. The phone project covers the 390 px workflow.
+- Today dialogs trap focus, cycle Tab and Shift+Tab, close with Escape, and restore the trigger.
+- Reduced-motion emulation reduced transition duration to at most 1 ms.
+- The authenticated quality flow produced no unexpected console errors and no failed API responses.
+- Offline registration preserved entered values, showed actionable connection guidance, and succeeded after reconnection.
 
-## Earlier environment failures
+Production screenshots are committed in [`docs/screenshots`](screenshots). The root review inspected the desktop and phone Today and Reviews captures after the production build.
 
-The first MongoDB 8.2.6 test-binary download stalled and left a truncated archive. Verification stayed fail-closed until a valid 8.0.6 archive was restored. Docker Desktop initially lacked a usable WSL kernel; after the engine became available, the full production-container gate was rerun and passed. The corrupt 8.2.6 cache is not used by the current test commands.
+## Production containers and persistence
 
-## Remaining release gates
+Commands:
 
-The complete product result remains `NOT VERIFIED`. Lighthouse budgets, container scanning, the final visual/accessibility review, and the final production-container rerun remain open. Privacy and terms are implemented drafts but still require external legal review before a public launch. No release-complete claim should be made until the remaining technical gates have evidence.
+```powershell
+docker compose up -d --build
+docker compose ps -a
+docker compose run --rm -e DEMO_SEED_GUARD=seed-growthos-demo api node apps/api/dist/scripts/seed-demo.js
+$env:GROWTHOS_E2E_EXTERNAL='1'
+$env:PLAYWRIGHT_BASE_URL='http://localhost:3000'
+npx playwright test apps/web/tests/vertical-slice.spec.ts apps/web/tests/release-quality.spec.ts --project=chromium --project=phone
+```
+
+The Compose run initialized the authenticated replica set, applied indexes, and brought MongoDB, API, and web health checks to healthy. MongoDB has no host port. The final API and web images run as the unprivileged `node` user on a digest-pinned Alpine Node 24.21.0 base, with npm removed from the runtime layers.
+
+The external production test passed 17 tests with 3 intentional skips. One is the phone project for the Chromium-only viewport matrix. Two are password-reset completion on desktop and phone because the production stack has no external delivery credentials; the source-browser and integration suites verify the development provider, webhook contract, single-use token, and session rotation.
+
+After restarting MongoDB, API, and web, browser sign-in returned the same demo workspace and its active `September consultation follow-up` campaign. This directly verifies volume and application persistence across service restarts.
+
+## Security evidence
+
+Commands:
+
+```powershell
+npm audit --audit-level=high
+docker scout cves local://growthos-web:latest --only-severity critical,high --only-vuln-packages
+docker scout cves local://growthos-api:latest --only-severity critical,high --only-vuln-packages
+```
+
+The first image scan exposed inherited Debian and bundled npm findings. The runtime images were rebuilt on a smaller digest-pinned Alpine base and npm was removed. The repeated final scans reported:
+
+- Web image `96a52abaf9c1`: 0 critical, 0 high, 94 indexed packages, 74 MB Scout size.
+- API image `09bc92a1f2b7`: 0 critical, 0 high, 301 indexed packages, 161 MB Scout size.
+- npm dependency audit: 0 vulnerabilities.
+
+No unresolved high-severity finding remains in the checked dependency tree or final application images. The concise threat analysis and control mapping are in [threat-model.md](threat-model.md).
+
+## Performance evidence
+
+Lighthouse command:
+
+```powershell
+npm run measure:lighthouse
+```
+
+The script signs into the seeded production workspace, obtains the HTTP-only session cookie through the browser, and measures the authenticated Today view with the Lighthouse desktop profile and local supplied network conditions.
+
+| Measure                  | Result |        Gate |
+| ------------------------ | -----: | ----------: |
+| Performance              |    100 | at least 90 |
+| Accessibility            |    100 | at least 95 |
+| Largest Contentful Paint | 475 ms | below 2.5 s |
+| Cumulative Layout Shift  | 0.0026 |   below 0.1 |
+| Total Blocking Time      |   0 ms |    recorded |
+
+The six screens share one Next.js client shell rather than separate routes. Lighthouse therefore measures the authenticated entry view; axe, responsive, console, and failed-request checks independently exercise every primary screen. Raw output is committed as [HTML](performance/lighthouse-today.html) and [JSON](performance/lighthouse-today.json).
+
+Load-smoke command:
+
+```powershell
+npm run smoke:load
+```
+
+The authenticated test made 240 reads across Today, Results, Customers, Campaigns, Reviews, and Bookings at concurrency 12. It completed in 0.99 seconds with zero errors, 241.3 requests per second, 32 ms p50, 81 ms p95, 155 ms p99, and 158 ms maximum latency. This is a local baseline on the machine above, not a production capacity claim. The raw result is [api-load-smoke.json](performance/api-load-smoke.json).
+
+## Verified product behavior
+
+- Registration creates a user and workspace atomically, rotates the anonymous session, and preserves server-derived tenancy.
+- Sessions have idle and absolute expiry, CSRF tokens, production Origin and Fetch Metadata checks, HTTP-only cookies, and secure-cookie support.
+- Customers retain enquiry context, interactions, consent history, lifecycle, notes, service interests, bookings, and explicit duplicate decisions.
+- CSV imports are size-bounded, mapping-aware, retry-safe, formula-safe, and never merge silently.
+- Today explains each priority with stored facts and excludes already-booked enquiries.
+- Campaigns keep immutable revisions, optimistic conflicts, explicit recipient review, consent and booking rechecks, idempotent outcomes, formula-safe exports, and audit history.
+- WhatsApp is a reviewed click-to-chat handoff. The application records owner-marked outcomes and never claims provider delivery.
+- Bookings enforce idempotency and valid status transitions, update linked lifecycle state transactionally, and feed Results from stored records.
+- Reviews preserve the original review while responses move through explicit draft and manually-posted states.
+- Workspace export, settings, deletion confirmation, Privacy, Terms, and the guarded database-backed demo are implemented.
+
+## Limits that require external action
+
+The technical release gate is `VERIFIED` for the local production topology. A public launch still requires:
+
+- Legal approval of the visibly marked Privacy and Terms drafts.
+- A private session secret, TLS, secure-cookie configuration, backup/restore operations, monitoring, and a deployment owner.
+- Real password-reset webhook credentials and delivery-provider acceptance testing.
+- Optional WhatsApp Cloud API or Google Business Profile credentials if those integrations are later added.
+- Interviews, usability sessions, and screen-reader evaluation with representative owners. No user-research or business-impact claim is made.

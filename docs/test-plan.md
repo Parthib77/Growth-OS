@@ -114,7 +114,7 @@ Run the critical workflow at these viewport classes:
 | ------------ | ------------------ | ---------------------------------------------------------- |
 | Phone        | 390 by 844         | Complete every daily action without hidden capability.     |
 | Tablet       | 768 by 1024        | No clipped tables, dialogs, or navigation.                 |
-| Laptop       | 1440 by 900        | Register and inspector remain usable together.             |
+| Laptop       | 1366 by 768        | Register and inspector remain usable together.             |
 | Wide desktop | 1920 by 1080       | Content stays bounded and reading lines remain controlled. |
 
 ## Accessibility tests

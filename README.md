@@ -85,6 +85,7 @@ npm run check:openapi
 npm run build
 npm run check:rewrite
 npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone
+npx playwright test apps/web/tests/release-quality.spec.ts --project=chromium
 npm audit --audit-level=high
 ```
 
@@ -98,8 +99,35 @@ $env:PLAYWRIGHT_BASE_URL='http://localhost:3000'
 npx playwright test apps/web/tests/vertical-slice.spec.ts --project=chromium --project=phone
 ```
 
+The production run intentionally skips password-reset completion when no delivery webhook is
+configured. The source-browser and integration suites exercise the single-use reset flow with the
+development provider.
+
+Measure the seeded production stack and scan the final runtime images:
+
+```powershell
+npm run measure:lighthouse
+npm run smoke:load
+docker scout cves local://growthos-web:latest --only-severity critical,high --only-vuln-packages
+docker scout cves local://growthos-api:latest --only-severity critical,high --only-vuln-packages
+```
+
+Refresh the committed production screenshots when the interface changes:
+
+```powershell
+$env:GROWTHOS_E2E_EXTERNAL='1'
+$env:PLAYWRIGHT_BASE_URL='http://localhost:3000'
+$env:GROWTHOS_CAPTURE_VISUALS='1'
+$env:GROWTHOS_SCREENSHOT_DIR='docs/screenshots'
+npx playwright test apps/web/tests/phase6-visual.spec.ts --project=chromium --project=phone
+```
+
 ## Current scope
 
 The verified implementation covers tenant-scoped registration and sessions, password recovery, onboarding, searchable customer records, consent and interaction history, lifecycle transitions, bounded CSV import with explicit duplicate handling, the Today register, campaign drafting and recipient review, consent-aware WhatsApp handoff, idempotent campaign outcomes, attributed bookings, booking status management, Results and CSV export, review response workflows, workspace export, settings, account deletion, legal drafts, a database-backed demo, immutable revisions, and an operational event ledger.
 
-Final legal review and the release-quality visual, performance, container-scan, and production-container rerun gates remain.
+The technical release gates are recorded in `docs/verification.md`, including production-container,
+restart-persistence, responsive, accessibility, performance, load-smoke, dependency, and container
+scan evidence. A public launch still requires legal approval of the marked Privacy and Terms drafts,
+a private production session secret, TLS with secure cookies, backup operations, and real password
+reset delivery credentials.

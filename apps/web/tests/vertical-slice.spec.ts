@@ -48,6 +48,8 @@ test('seeded demo signs in to the real database and stays clearly labeled', asyn
   await expect(
     page.getByText('The consultation was clear, thoughtful, and never rushed.'),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Campaigns', exact: true }).click();
+  await expect(page.getByText('September consultation follow-up', { exact: true })).toBeVisible();
 });
 
 test('Today dialogs trap focus, close with Escape, and restore the trigger', async ({ page }) => {
@@ -57,8 +59,9 @@ test('Today dialogs trap focus, close with Escape, and restore the trigger', asy
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
+  await expect(page.getByText('Loading bookings and results…')).toBeHidden({ timeout: 15_000 });
   const trigger = page.getByRole('button', { name: /Mina Chen/ });
-  await expect(trigger).toBeVisible();
+  await expect(trigger).toBeVisible({ timeout: 15_000 });
   await trigger.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Mina Chen' })).toBeVisible();
@@ -76,6 +79,10 @@ test('Today dialogs trap focus, close with Escape, and restore the trigger', asy
 test('password reset uses a single-use link and returns to the authenticated workspace', async ({
   page,
 }, testInfo) => {
+  test.skip(
+    process.env.GROWTHOS_E2E_EXTERNAL === '1',
+    'The production stack requires external password-reset delivery credentials.',
+  );
   const email = `reset-${testInfo.project.name}-${Date.now()}@example.com`;
   const oldPassword = 'correct horse battery staple';
   const newPassword = 'a newer correct horse battery staple';
@@ -203,6 +210,7 @@ test('campaign workflow reviews recipients, opens a WhatsApp link, and records s
   await page.getByRole('button', { name: 'Prepare WhatsApp' }).click();
   const popup = await popupPromise;
   await expect.poll(() => popup.url()).toMatch(/(?:wa\.me|whatsapp\.com)/);
+  await popup.close();
   await page.getByRole('button', { name: 'Mark sent' }).click();
   await expect(page.getByText(/outcome recorded: sent/i)).toBeVisible();
 });

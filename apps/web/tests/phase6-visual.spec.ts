@@ -35,9 +35,9 @@ test('capture the completed review workspace', async ({ page }, testInfo) => {
   if (testInfo.project.name === 'phone')
     await page.getByText('Add or import reviews', { exact: true }).click();
 
-  const reviewDir = path.resolve('.impeccable/review');
+  const reviewDir = path.resolve(process.env.GROWTHOS_SCREENSHOT_DIR || '.impeccable/review');
   await mkdir(reviewDir, { recursive: true });
-  const filename = testInfo.project.name === 'phone' ? 'mobile.png' : 'desktop.png';
+  const filename = testInfo.project.name === 'phone' ? 'reviews-mobile.png' : 'reviews-desktop.png';
   await page.screenshot({ path: path.join(reviewDir, filename), fullPage: true });
 });
 
@@ -50,7 +50,7 @@ test('capture the daily workspace with stored bookings', async ({ page }, testIn
   await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
   await expect(page.getByText('Cut and finish')).toBeVisible();
 
-  const reviewDir = path.resolve('.impeccable/review');
+  const reviewDir = path.resolve(process.env.GROWTHOS_SCREENSHOT_DIR || '.impeccable/review');
   await mkdir(reviewDir, { recursive: true });
   const filename = testInfo.project.name === 'phone' ? 'today-mobile.png' : 'today-desktop.png';
   await page.screenshot({ path: path.join(reviewDir, filename), fullPage: true });

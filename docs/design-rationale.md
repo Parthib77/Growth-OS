@@ -134,7 +134,7 @@ The interface does not call rules artificial intelligence. It shows stable reaso
 
 ## Design verification
 
-Phase 7 must inspect every required screen at phone, tablet, laptop, and wide desktop sizes. It must test light and dark only if both are implemented. The current direction is one locked light theme with ink navigation, as the brief does not require dark mode. Automated checks do not replace keyboard, zoom, screen-reader spot checks, or browser screenshots.
+Phase 7 inspected the primary authenticated screens at phone, tablet, laptop, and wide desktop sizes. The product uses one locked light theme with ink navigation because the brief does not require dark mode. Axe scans, keyboard dialog checks, responsive overflow assertions, reduced-motion checks, and browser screenshots now guard the implemented behavior. Screen-reader testing with representative owners remains part of pre-launch research.
 
 ## Complete-product refinement
 

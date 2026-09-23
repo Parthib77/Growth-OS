@@ -24,7 +24,8 @@ test('main screens remain accessible and responsive from tablet through wide des
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('button', { name: /Mina Chen/ })).toBeVisible();
+  await expect(page.getByText('Loading bookings and results…')).toBeHidden({ timeout: 15_000 });
+  await expect(page.getByRole('button', { name: /Mina Chen/ })).toBeVisible({ timeout: 15_000 });
   monitoringAuthenticatedFlow = true;
 
   const destinations = [
