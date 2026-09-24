@@ -21,12 +21,12 @@
     "measure:lighthouse": "node apps/web/scripts/measure-lighthouse.mjs",
     "smoke:load": "node apps/api/src/scripts/load-smoke.mjs",
     "e2e:api": "tsx apps/api/src/scripts/e2e-server.ts",
-    "lint": "tsc -b packages/contracts apps/api apps/web",
+    "lint": "npm run typecheck",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
     "test:watch": "vitest",
-    "typecheck": "tsc -b packages/contracts apps/api apps/web"
+    "typecheck": "npm run build --workspace @growthos/contracts && tsc -b apps/api apps/web"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
