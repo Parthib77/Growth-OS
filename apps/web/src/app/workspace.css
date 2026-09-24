@@ -90,6 +90,7 @@
 .app-shell .results-panel,
 .app-shell > .status {
   max-width: 1436px;
+  margin-inline: auto;
 }
 .app-shell .app-nav-shell {
   position: relative;
