@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import { Check, Copy, FileUp, Pencil, Star } from 'lucide-react';
 import {
   CreateReviewRequestSchema,
   ReviewImportCommitResponseSchema,
@@ -12,6 +13,7 @@ import {
 import { formValues, request } from './api-client';
 import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
+import { IconWell } from './workspace-ui';
 
 type Review = ReturnType<typeof ReviewResponseSchema.parse>;
 type ImportPreview = ReturnType<typeof ReviewImportPreviewResponseSchema.parse>;
@@ -282,7 +284,12 @@ export function ReviewsView({
               Add or import reviews
             </summary>
             <div className="review-add-content">
-              <h2 id="add-review-title">Add a review</h2>
+              <div className="workspace-panel-heading">
+                <IconWell>
+                  <Pencil size={23} />
+                </IconWell>
+                <h2 id="add-review-title">Add a review</h2>
+              </div>
               <p className="muted">
                 Use this for feedback received outside a connected review provider.
               </p>
@@ -311,7 +318,10 @@ export function ReviewsView({
               </form>
 
               <details className="import-disclosure">
-                <summary>Import review CSV</summary>
+                <summary>
+                  <FileUp size={20} aria-hidden="true" />
+                  Import review CSV
+                </summary>
                 <p className="muted">
                   Required columns: reviewerName, rating, text, source. receivedAt is optional.
                 </p>
@@ -367,10 +377,30 @@ export function ReviewsView({
                 <article className="review-record" key={review.id}>
                   <div className="review-original">
                     <div className="review-meta">
+                      <span className="review-avatar" aria-hidden="true">
+                        {review.reviewerName
+                          .split(' ')
+                          .map((part) => part[0])
+                          .join('')
+                          .slice(0, 2)}
+                      </span>
                       <strong>{review.reviewerName}</strong>
                       <span>{review.rating} / 5</span>
-                      <span>{review.source}</span>
-                      <time dateTime={review.receivedAt}>
+                      <span
+                        className="review-stars"
+                        role="img"
+                        aria-label={`${review.rating} out of 5 stars`}
+                      >
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <Star
+                            key={index}
+                            size={18}
+                            fill={index < review.rating ? 'currentColor' : 'none'}
+                          />
+                        ))}
+                      </span>
+                      <span className="review-source">{review.source}</span>
+                      <time className="review-date" dateTime={review.receivedAt}>
                         {new Date(review.receivedAt).toLocaleDateString()}
                       </time>
                     </div>
@@ -411,6 +441,7 @@ export function ReviewsView({
                           onClick={() => changeResponse(review, 'save_draft')}
                           disabled={pending || !responseText.trim()}
                         >
+                          <Check size={18} aria-hidden="true" />
                           Save draft
                         </button>
                       )}
@@ -420,6 +451,7 @@ export function ReviewsView({
                         onClick={() => copyResponse(review)}
                         disabled={!responseText.trim()}
                       >
+                        <Copy size={17} aria-hidden="true" />
                         Copy response
                       </button>
                       {review.response.kind === 'drafted' ? (

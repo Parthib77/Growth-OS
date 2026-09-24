@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Ellipsis, Eye, Layers3, PlusCircle, Search, Send } from 'lucide-react';
 import {
   CampaignAuditResponseSchema,
   CampaignListResponseSchema,
@@ -16,6 +17,7 @@ import {
 import { request } from './api-client';
 import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
+import { IconWell, TodayBadge } from './workspace-ui';
 
 type Campaign = ReturnType<typeof CampaignResponseSchema.parse>;
 type Recipient = ReturnType<typeof CampaignRecipientListResponseSchema.parse>['items'][number];
@@ -70,8 +72,18 @@ export function CampaignsView({
   const [lifecycle, setLifecycle] = useState('');
   const [service, setService] = useState('');
   const [source, setSource] = useState('');
+  const [listFilter, setListFilter] = useState<'all' | 'active' | 'draft' | 'ready' | 'completed'>(
+    'all',
+  );
+  const [listSearch, setListSearch] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
   const [bookingIdByRecipient, setBookingIdByRecipient] = useState<Record<string, string>>({});
   const outcomeSubmission = useRef<Record<string, { fingerprint: string; key: string }>>({});
+  const visibleCampaigns = campaigns.filter(
+    (campaign) =>
+      (listFilter === 'all' || campaign.status === listFilter) &&
+      campaign.name.toLowerCase().includes(listSearch.trim().toLowerCase()),
+  );
 
   async function loadCampaigns() {
     const result = await request('/api/v1/campaigns', CampaignListResponseSchema);
@@ -306,16 +318,33 @@ export function CampaignsView({
         onSignOut={onSignOut}
         signOutPending={status.kind === 'pending'}
       />
-      <header className="topbar">
+      <header className="topbar screen-heading">
         <div>
           <h1 id="screen-title" tabIndex={-1}>
             Permission-aware follow-up
           </h1>
+          <p className="screen-intro">
+            Create and manage follow-up campaigns for customers who have given permission.
+            <br />
+            Send personalised messages at the right time to drive more bookings and revenue.
+          </p>
         </div>
+        <TodayBadge />
       </header>
       <div className="campaign-layout">
         <section className="panel campaign-composer" aria-labelledby="campaign-composer-title">
-          <h2 id="campaign-composer-title">Create a campaign draft</h2>
+          <div className="workspace-panel-heading">
+            <IconWell>
+              <Send size={25} />
+            </IconWell>
+            <div>
+              <h2 id="campaign-composer-title">Create a campaign draft</h2>
+              <p>
+                Set up a permission-aware follow-up campaign. Save it as a draft and launch when
+                you're ready.
+              </p>
+            </div>
+          </div>
           <form onSubmit={create}>
             <Field
               label="Campaign name"
@@ -362,9 +391,32 @@ export function CampaignsView({
               Supported variables: {'{first_name}'}, {'{service}'}, {'{business_name}'}. Links are
               prepared only; delivery is never claimed.
             </p>
-            <button className="button primary" disabled={status.kind === 'pending'}>
-              Save draft
-            </button>
+            <div className="button-row campaign-compose-actions">
+              <button className="button primary" disabled={status.kind === 'pending'}>
+                <Send aria-hidden="true" size={18} />
+                Save draft
+              </button>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => setShowPreview((open) => !open)}
+                aria-expanded={showPreview}
+                disabled={!template.trim()}
+              >
+                <Eye aria-hidden="true" size={18} />
+                Preview message
+              </button>
+            </div>
+            {showPreview && (
+              <div className="campaign-message-preview" role="status">
+                <strong>Message preview</strong>
+                <p>{template}</p>
+                <small>
+                  Variables are filled only after you review recipients. This does not send a
+                  message.
+                </small>
+              </div>
+            )}
           </form>
           {selected && (
             <div className="campaign-edit">
@@ -379,25 +431,106 @@ export function CampaignsView({
           )}
         </section>
         <section className="panel campaign-list" aria-labelledby="campaign-list-title">
-          <div className="toolbar compact">
-            <h2 id="campaign-list-title">Campaigns</h2>
-            <button className="button quiet" onClick={() => void loadCampaigns()}>
-              Refresh
+          <div className="workspace-panel-heading campaign-list-heading">
+            <IconWell>
+              <Layers3 size={25} />
+            </IconWell>
+            <div>
+              <h2 id="campaign-list-title">Campaigns</h2>
+              <p>Manage your permission-aware follow-up campaigns.</p>
+            </div>
+            <button
+              className="button primary"
+              onClick={() => {
+                setSelected(null);
+                setName('');
+                setTemplate('Hi {first_name}, your {service} at {business_name} is ready.');
+                setLifecycle('');
+                setService('');
+                setSource('');
+                document.getElementById('campaign-composer-title')?.scrollIntoView();
+              }}
+            >
+              <PlusCircle size={18} />
+              Create campaign
             </button>
           </div>
-          {campaigns.length === 0 ? (
-            <p className="muted">No campaigns yet.</p>
+          <div className="campaign-list-controls">
+            <div className="campaign-filter-tabs" aria-label="Filter campaigns">
+              {(['all', 'active', 'draft', 'ready', 'completed'] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={listFilter === value ? 'active' : ''}
+                  aria-pressed={listFilter === value}
+                  onClick={() => setListFilter(value)}
+                >
+                  {value === 'all'
+                    ? 'All'
+                    : value === 'draft'
+                      ? 'Drafts'
+                      : value[0].toUpperCase() + value.slice(1)}
+                </button>
+              ))}
+            </div>
+            <label className="campaign-search">
+              <Search size={18} aria-hidden="true" />
+              <span className="sr-only">Search campaigns</span>
+              <input
+                value={listSearch}
+                onChange={(event) => setListSearch(event.target.value)}
+                placeholder="Search campaigns..."
+              />
+            </label>
+          </div>
+          <div className="campaign-table-head" aria-hidden="true">
+            <span>Campaign</span>
+            <span>Status</span>
+            <span>Audience</span>
+            <span>Created</span>
+            <span>Recipients</span>
+            <span>Actions</span>
+          </div>
+          {visibleCampaigns.length === 0 ? (
+            <p className="muted campaign-empty">No campaigns match this view.</p>
           ) : (
             <div className="campaign-items">
-              {campaigns.map((campaign) => (
+              {visibleCampaigns.map((campaign) => (
                 <button
                   className={`campaign-item ${selected?.id === campaign.id ? 'selected' : ''}`}
                   key={campaign.id}
                   onClick={() => void openCampaign(campaign.id)}
                 >
-                  <strong>{campaign.name}</strong>
+                  <span className="campaign-item-name">
+                    <IconWell>
+                      <Send size={18} />
+                    </IconWell>
+                    <strong>{campaign.name}</strong>
+                  </span>
+                  <span className={`campaign-state ${campaign.status}`}>{campaign.status}</span>
                   <span>
-                    {campaign.status} · {campaign.recipientCount} eligible
+                    {campaign.audience.lifecycle || 'Any lifecycle'}
+                    <small>{campaign.audience.service || 'No service filter'}</small>
+                  </span>
+                  <time className="campaign-created" dateTime={campaign.createdAt}>
+                    {new Date(campaign.createdAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                    <small>
+                      {new Date(campaign.createdAt).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </small>
+                  </time>
+                  <span>
+                    <strong>{campaign.recipientCount}</strong>
+                    <small>eligible</small>
+                  </span>
+                  <span className="customer-more" aria-hidden="true">
+                    <Ellipsis size={20} />
                   </span>
                 </button>
               ))}

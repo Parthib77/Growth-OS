@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import { Ellipsis, FileUp, PlusCircle, Search, UsersRound } from 'lucide-react';
 import { z } from 'zod';
 import {
   CreateCustomerRequestSchema,
@@ -17,6 +18,7 @@ import {
 import { formValues, request } from './api-client';
 import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
+import { IconWell, TodayBadge } from './workspace-ui';
 
 type Customer = ReturnType<typeof CustomerResponseSchema.parse>;
 type Detail = ReturnType<typeof CustomerDetailResponseSchema.parse>;
@@ -44,6 +46,7 @@ export function CustomersView({
   const [lifecycle, setLifecycle] = useState('');
   const [selected, setSelected] = useState<Detail | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [showImport, setShowImport] = useState(true);
   const [csv, setCsv] = useState('');
   const [preview, setPreview] = useState<Preview | null>(null);
   const [mapping, setMapping] = useState<Record<string, string | null>>({});
@@ -162,6 +165,7 @@ export function CustomersView({
       );
       setPreview(null);
       setCsv('');
+      setShowImport(false);
       setStatus({
         kind: 'success',
         message: `Created ${result.created.length} customer${result.created.length === 1 ? '' : 's'}.`,
@@ -258,12 +262,17 @@ export function CustomersView({
           <h1 id="screen-title" tabIndex={-1}>
             Customers
           </h1>
+          <p className="screen-intro">
+            Manage your customers, view their status, and take the next best action.
+          </p>
         </div>
+        <TodayBadge />
       </header>
       <div className="toolbar">
         <div className="customer-filters">
-          <label className="field">
-            <span>Search</span>
+          <label className="field customer-search">
+            <span className="sr-only">Search</span>
+            <Search aria-hidden="true" size={21} />
             <input
               aria-label="Search customers"
               value={search}
@@ -289,24 +298,20 @@ export function CustomersView({
         </div>
         <div>
           <button className="button secondary" onClick={() => setShowAdd(!showAdd)}>
+            <PlusCircle aria-hidden="true" size={20} />
             Add customer
           </button>{' '}
           <button
             className="button primary"
-            onClick={() =>
-              setPreview(
-                preview
-                  ? null
-                  : {
-                      importId: '',
-                      headers: [],
-                      mapping: {},
-                      rows: [],
-                      limits: { maxRows: 1000, maxBytes: 1000000 },
-                    },
-              )
-            }
+            onClick={() => {
+              setShowImport(true);
+              setPreview(null);
+              requestAnimationFrame(() =>
+                document.getElementById('customer-import')?.scrollIntoView(),
+              );
+            }}
           >
+            <FileUp aria-hidden="true" size={20} />
             Import CSV
           </button>
         </div>
@@ -354,119 +359,86 @@ export function CustomersView({
           </form>
         </section>
       )}
-      {preview?.importId === '' && (
-        <section className="panel customer-form">
-          <h2>Import CSV</h2>
-          <p className="muted">
-            Required columns: first name, phone, source, and service. Duplicate rows require a
-            deliberate choice.
-          </p>
-          <form onSubmit={previewImport}>
-            <label className="field">
-              <span>CSV contents</span>
-              <textarea
-                aria-label="CSV contents"
-                rows={7}
-                value={csv}
-                onChange={(event) => setCsv(event.target.value)}
-                placeholder="first name,phone,source,service\nAda,+15551212,website,Consultation"
-              />
-            </label>
-            <button className="button primary">Preview import</button>
-          </form>
-        </section>
-      )}
-      {preview?.importId && (
-        <section className="panel customer-form">
-          <h2>Review import</h2>
-          <div className="form-grid import-mapping">
-            {Object.keys(mapping).map((field) => (
-              <label className="field" key={field}>
-                <span>{field} column</span>
-                <select
-                  value={mapping[field] ?? ''}
-                  onChange={(event) =>
-                    setMapping({ ...mapping, [field]: event.target.value || null })
-                  }
-                >
-                  <option value="">Not mapped</option>
-                  {preview.headers.map((header) => (
-                    <option key={header} value={header}>
-                      {header}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ))}
-          </div>
-          <button className="button secondary" type="button" onClick={() => void remapImport()}>
-            Apply column mapping
-          </button>
-          <div className="import-review">
-            {preview.rows.map((row) => (
-              <div className="import-row" key={row.rowNumber}>
-                <strong>Row {row.rowNumber}</strong>
-                <span>
-                  {row.values.firstName} {row.values.lastName}
-                </span>
-                <span>{row.values.phone}</span>
-                <span>
-                  {row.errors.join(', ') ||
-                    (row.duplicates.length
-                      ? `Possible duplicate: ${row.duplicates.map((duplicate) => duplicate.matchedOn.join(' + ')).join(', ')}`
-                      : 'Ready')}
-                </span>
-                {row.duplicates.length > 0 && (
-                  <span>
-                    <button
-                      className="button quiet"
-                      type="button"
-                      onClick={() => setResolutions({ ...resolutions, [row.rowNumber]: 'create' })}
-                    >
-                      Create separately
-                    </button>{' '}
-                    <button
-                      className="button quiet"
-                      type="button"
-                      onClick={() => setResolutions({ ...resolutions, [row.rowNumber]: 'skip' })}
-                    >
-                      Skip
-                    </button>{' '}
-                    <b>{resolutions[String(row.rowNumber)] ?? 'Choose'}</b>
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-          <button className="button primary" onClick={commitImport}>
-            Confirm import
-          </button>
-        </section>
-      )}
       <section className="customer-layout">
         <div className="panel customer-list">
-          <h2>Customer register</h2>
+          <div className="workspace-panel-heading">
+            <IconWell>
+              <UsersRound size={25} />
+            </IconWell>
+            <div>
+              <h2>Customer register</h2>
+              <p>
+                Each customer's status is based on their activity and consent. No hidden scores.
+              </p>
+            </div>
+            <span className="customer-count">
+              {customers.length} customer{customers.length === 1 ? '' : 's'}
+            </span>
+          </div>
           {customers.length === 0 ? (
             <p className="muted">No customers match this search.</p>
           ) : (
-            customers.map((customer) => (
-              <button
-                className="customer-row"
-                key={customer.id}
-                onClick={() => void loadDetail(customer.id)}
-              >
-                <strong>
-                  {customer.firstName} {customer.lastName}
-                </strong>
-                <span>
-                  {customer.phone} · {customer.service}
-                </span>
-                <span>
-                  {customer.lifecycle} ·{' '}
-                  {customer.contactEligible ? 'contact eligible' : 'contact suppressed'}
-                </span>
-              </button>
-            ))
+            <div className="customer-table">
+              <div className="customer-table-head" aria-hidden="true">
+                <span>Customer</span>
+                <span>Contact</span>
+                <span>Service / Source</span>
+                <span>Lifecycle</span>
+                <span>Status</span>
+                <span>Last activity</span>
+                <span>Actions</span>
+              </div>
+              {customers.map((customer) => (
+                <button
+                  className="customer-row"
+                  key={customer.id}
+                  onClick={() => void loadDetail(customer.id)}
+                  aria-label={`Open ${customer.firstName} ${customer.lastName}`}
+                >
+                  <span className="customer-name">
+                    <span className="customer-avatar">
+                      {customer.firstName.slice(0, 1)}
+                      {customer.lastName.slice(0, 1)}
+                    </span>
+                    <strong>
+                      {customer.firstName} {customer.lastName}
+                    </strong>
+                  </span>
+                  <span>
+                    {customer.phone}
+                    <small>{customer.email || 'No email'}</small>
+                  </span>
+                  <span>
+                    {customer.service}
+                    <small>{customer.source}</small>
+                  </span>
+                  <span>
+                    <span className={`lifecycle-pill ${customer.lifecycle}`}>
+                      {customer.lifecycle}
+                    </span>
+                  </span>
+                  <span>
+                    <span
+                      className={`eligibility-pill ${customer.contactEligible ? 'eligible' : 'suppressed'}`}
+                    >
+                      {customer.contactEligible ? 'Contact eligible' : 'Contact suppressed'}
+                    </span>
+                  </span>
+                  <span>
+                    {new Date(customer.lastInteractionAt).toLocaleDateString()}
+                    <small>
+                      {new Date(customer.lastInteractionAt).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </small>
+                  </span>
+                  <span className="customer-more" aria-hidden="true">
+                    <Ellipsis size={20} />
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
         {selected && (
@@ -541,6 +513,105 @@ export function CustomersView({
           </section>
         )}
       </section>
+      {showImport && !preview?.importId && (
+        <section id="customer-import" className="panel customer-form customer-import-form">
+          <div className="workspace-panel-heading">
+            <IconWell>
+              <FileUp size={24} />
+            </IconWell>
+            <div>
+              <h2>Import CSV</h2>
+              <p>
+                Import customers from a CSV file by pasting the contents below. Required columns:
+                first name, phone, source, and service. Duplicate rows require a deliberate choice.
+              </p>
+            </div>
+          </div>
+          <form onSubmit={previewImport}>
+            <label className="field">
+              <span>CSV contents</span>
+              <textarea
+                aria-label="CSV contents"
+                rows={4}
+                value={csv}
+                onChange={(event) => setCsv(event.target.value)}
+                placeholder="first name,phone,source,service\nAda,+15551212,website,Consultation"
+              />
+            </label>
+            <button className="button primary">
+              <FileUp size={19} aria-hidden="true" />
+              Preview import
+            </button>
+          </form>
+        </section>
+      )}
+      {preview?.importId && (
+        <section className="panel customer-form">
+          <h2>Review import</h2>
+          <div className="form-grid import-mapping">
+            {Object.keys(mapping).map((field) => (
+              <label className="field" key={field}>
+                <span>{field} column</span>
+                <select
+                  value={mapping[field] ?? ''}
+                  onChange={(event) =>
+                    setMapping({ ...mapping, [field]: event.target.value || null })
+                  }
+                >
+                  <option value="">Not mapped</option>
+                  {preview.headers.map((header) => (
+                    <option key={header} value={header}>
+                      {header}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+          <button className="button secondary" type="button" onClick={() => void remapImport()}>
+            Apply column mapping
+          </button>
+          <div className="import-review">
+            {preview.rows.map((row) => (
+              <div className="import-row" key={row.rowNumber}>
+                <strong>Row {row.rowNumber}</strong>
+                <span>
+                  {row.values.firstName} {row.values.lastName}
+                </span>
+                <span>{row.values.phone}</span>
+                <span>
+                  {row.errors.join(', ') ||
+                    (row.duplicates.length
+                      ? `Possible duplicate: ${row.duplicates.map((duplicate) => duplicate.matchedOn.join(' + ')).join(', ')}`
+                      : 'Ready')}
+                </span>
+                {row.duplicates.length > 0 && (
+                  <span>
+                    <button
+                      className="button quiet"
+                      type="button"
+                      onClick={() => setResolutions({ ...resolutions, [row.rowNumber]: 'create' })}
+                    >
+                      Create separately
+                    </button>{' '}
+                    <button
+                      className="button quiet"
+                      type="button"
+                      onClick={() => setResolutions({ ...resolutions, [row.rowNumber]: 'skip' })}
+                    >
+                      Skip
+                    </button>{' '}
+                    <b>{resolutions[String(row.rowNumber)] ?? 'Choose'}</b>
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          <button className="button primary" onClick={commitImport}>
+            Confirm import
+          </button>
+        </section>
+      )}
       <StatusLine status={status} />
     </main>
   );

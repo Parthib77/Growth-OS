@@ -201,7 +201,9 @@ test('campaign workflow reviews recipients, opens a WhatsApp link, and records s
   await page.getByRole('button', { name: 'Campaigns' }).click();
   await expect(page.getByRole('heading', { name: /permission-aware follow-up/i })).toBeVisible();
   await page.getByLabel('Campaign name').fill('Spring follow-up');
+  await expect(page.getByLabel('Campaign name')).toHaveValue('Spring follow-up');
   await page.getByRole('button', { name: 'Save draft' }).click();
+  await expect(page.getByText('Draft saved. Review recipients when ready.')).toBeVisible();
   await page.getByRole('button', { name: 'Review recipients' }).click();
   await expect(page.getByText(/eligible recipient\(s\) prepared/i)).toBeVisible();
   await page.getByRole('button', { name: 'Mark ready' }).click();

@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { BarChart3, PlusCircle, UsersRound } from 'lucide-react';
 import { z } from 'zod';
 import {
   BookingListResponseSchema,
@@ -30,6 +31,7 @@ import { ReviewsView } from './reviews-view';
 import { ResultsView } from './results-view';
 import { SettingsView } from './settings-view';
 import { AuthLanding, type AuthMode } from './auth-landing';
+import { IconWell, TodayBadge } from './workspace-ui';
 
 type Customer = {
   id: string;
@@ -551,7 +553,11 @@ export default function Home() {
           <h1 id="screen-title" tabIndex={-1}>
             Who needs attention?
           </h1>
+          <p className="screen-intro">
+            Your consent-aware daily queue, bookings, and next actions in one place.
+          </p>
         </div>
+        <TodayBadge />
       </header>
       <section className="summary-row">
         <div>
@@ -575,9 +581,16 @@ export default function Home() {
       </section>
       <section className="panel results-panel" aria-labelledby="results-title">
         <div className="toolbar compact">
-          <div>
-            <h2 id="results-title">Results</h2>
-            <p className="muted">Stored bookings and recorded value from the current workspace.</p>
+          <div className="workspace-panel-heading">
+            <IconWell>
+              <BarChart3 size={24} />
+            </IconWell>
+            <div>
+              <h2 id="results-title">Results</h2>
+              <p className="muted">
+                Stored bookings and recorded value from the current workspace.
+              </p>
+            </div>
           </div>
         </div>
         <div className="summary-row campaign-results" aria-label="Campaign results">
@@ -643,12 +656,16 @@ export default function Home() {
       </section>
       <div className="toolbar">
         <div>
-          <h2>Priority register</h2>
+          <h2>
+            <UsersRound size={24} aria-hidden="true" />
+            Priority register
+          </h2>
           <p className="muted">
             Each reason is based on stored activity and consent. No hidden score.
           </p>
         </div>
         <button className="button primary" onClick={() => setShowCustomer(true)}>
+          <PlusCircle size={19} aria-hidden="true" />
           Add enquiry
         </button>
       </div>

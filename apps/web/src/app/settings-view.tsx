@@ -1,6 +1,16 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import {
+  Building2,
+  Check,
+  Database,
+  Download,
+  ExternalLink,
+  FileText,
+  ShieldCheck,
+  Trash2,
+} from 'lucide-react';
 import { z } from 'zod';
 import {
   DeleteAccountRequestSchema,
@@ -10,6 +20,7 @@ import {
 import { download, formValues, request } from './api-client';
 import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
+import { IconWell } from './workspace-ui';
 
 type Workspace = ReturnType<typeof WorkspaceResponseSchema.parse>;
 
@@ -126,7 +137,18 @@ export function SettingsView({
 
       <div className="settings-layout">
         <section className="panel settings-primary" aria-labelledby="business-settings-title">
-          <h2 id="business-settings-title">Business and follow-up defaults</h2>
+          <div className="workspace-panel-heading">
+            <IconWell>
+              <Building2 size={25} />
+            </IconWell>
+            <div>
+              <h2 id="business-settings-title">Business and follow-up defaults</h2>
+              <p>
+                These settings are used across your workspace for bookings, follow-ups and customer
+                communications.
+              </p>
+            </div>
+          </div>
           <form onSubmit={saveSettings}>
             <div className="form-grid">
               <Field
@@ -173,6 +195,7 @@ export function SettingsView({
               Currency becomes locked after the first quoted value or booking is stored.
             </p>
             <button className="button primary" disabled={pending}>
+              <Check aria-hidden="true" size={19} />
               Save settings
             </button>
           </form>
@@ -180,30 +203,53 @@ export function SettingsView({
 
         <aside className="settings-secondary">
           <section className="settings-section" aria-labelledby="data-export-title">
-            <h2 id="data-export-title">Data export</h2>
-            <p>
-              Download a validated JSON copy of workspace settings and business records. Passwords,
-              sessions, and internal lookup fields are excluded.
-            </p>
+            <div className="workspace-panel-heading">
+              <IconWell>
+                <Database size={25} />
+              </IconWell>
+              <div>
+                <h2 id="data-export-title">Data export</h2>
+                <p>
+                  Download a validated JSON copy of workspace settings and business records.
+                  Passwords, sessions, and internal lookup fields are excluded.
+                </p>
+              </div>
+            </div>
             <button
               type="button"
               className="button secondary"
               onClick={exportData}
               disabled={pending}
             >
+              <Download aria-hidden="true" size={19} />
               Download workspace data
             </button>
           </section>
 
           <section className="settings-section" aria-labelledby="privacy-settings-title">
-            <h2 id="privacy-settings-title">Privacy and legal drafts</h2>
-            <p>
-              The current policy and terms describe implemented behavior and remain marked for legal
-              review.
-            </p>
+            <div className="workspace-panel-heading">
+              <IconWell>
+                <FileText size={25} />
+              </IconWell>
+              <div>
+                <h2 id="privacy-settings-title">Privacy and legal drafts</h2>
+                <p>
+                  The current policy and terms describe implemented behavior and remain marked for
+                  legal review.
+                </p>
+              </div>
+            </div>
             <div className="legal-links">
-              <a href="/privacy">Privacy policy</a>
-              <a href="/terms">Terms of service</a>
+              <a href="/privacy">
+                <ShieldCheck size={19} aria-hidden="true" />
+                Privacy policy
+                <ExternalLink size={16} aria-hidden="true" />
+              </a>
+              <a href="/terms">
+                <FileText size={19} aria-hidden="true" />
+                Terms of service
+                <ExternalLink size={16} aria-hidden="true" />
+              </a>
             </div>
           </section>
 
@@ -211,13 +257,21 @@ export function SettingsView({
             className="settings-section danger-section"
             aria-labelledby="delete-account-title"
           >
-            <h2 id="delete-account-title">Delete account</h2>
-            <p>
-              This permanently removes the account, workspace, sessions, and business records. This
-              action cannot be undone.
-            </p>
+            <div className="workspace-panel-heading">
+              <IconWell tone="red">
+                <Trash2 size={25} />
+              </IconWell>
+              <div>
+                <h2 id="delete-account-title">Delete account</h2>
+                <p>
+                  This permanently removes the account, workspace, sessions, and business records.
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
             {!showDeletion ? (
               <button type="button" className="button danger" onClick={() => setShowDeletion(true)}>
+                <Trash2 aria-hidden="true" size={19} />
                 Start account deletion
               </button>
             ) : (

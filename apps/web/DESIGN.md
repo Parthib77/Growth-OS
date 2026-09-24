@@ -1,15 +1,21 @@
 ---
 name: Growth OS
-description: A dense, consent-aware operating workspace built from warm mineral surfaces, blue-green structure, and explicit state.
+description: A bright appointment-business workspace with warm white canvas, mint support, navy hierarchy, and deep-green actions.
 colors:
-  mineral: '#e9e6df'
-  paper: '#f3f1eb'
-  ink: '#153b3b'
-  ink-2: '#235050'
-  ochre: '#b87932'
-  clay: '#a24c3a'
-  line: '#c9c5bb'
-  text: '#1e2b2b'
+  mineral: '#f8fbf9'
+  paper: '#ffffff'
+  ink: '#122238'
+  ink-2: '#125a51'
+  ochre: '#a35b13'
+  clay: '#a22525'
+  line: '#dce3e5'
+  text: '#172a42'
+  canvas: '#fffdfb'
+  mint-backdrop: '#e9f7f1'
+  mint-active: '#eaf7f2'
+  mint-well: '#e1f8ef'
+  muted: '#536b88'
+  focus: '#0b8a69'
   auth-navy: '#142033'
   auth-slate: '#536174'
   auth-canvas: '#fffefd'
@@ -17,38 +23,32 @@ colors:
   auth-field-fill: '#f0f7ff'
 typography:
   display:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: 'clamp(2.5rem, 6vw, 5rem)'
-    fontWeight: 700
-    lineHeight: 1.03
-    letterSpacing: '-0.04em'
-  headline:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: 'clamp(2rem, 4vw, 4rem)'
-    fontWeight: 700
-    lineHeight: 1.05
+    fontFamily: 'Manrope, sans-serif'
+    fontSize: 'clamp(42px, 4.1vw, 62px)'
+    fontWeight: 800
+    lineHeight: 1.12
     letterSpacing: '-0.04em'
   title:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: '1.5rem'
-    fontWeight: 700
-    lineHeight: 1.2
+    fontFamily: 'Manrope, sans-serif'
+    fontSize: '22px'
+    fontWeight: 800
+    lineHeight: 1.24
+    letterSpacing: '-0.025em'
   body:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: '1rem'
+    fontFamily: 'Manrope, sans-serif'
+    fontSize: '15px'
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.45
   label:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: '0.78rem'
-    fontWeight: 700
-    lineHeight: 1.2
-    letterSpacing: '0.03em'
+    fontFamily: 'Manrope, sans-serif'
+    fontSize: '13px'
+    fontWeight: 800
+    lineHeight: 1.3
   numeric:
-    fontFamily: 'IBM Plex Sans, sans-serif'
-    fontSize: '1.6rem'
-    fontWeight: 700
-    lineHeight: 1
+    fontFamily: 'Manrope, sans-serif'
+    fontSize: '26px'
+    fontWeight: 800
+    lineHeight: 1.2
   auth-display:
     fontFamily: 'Manrope, sans-serif'
     fontSize: 'clamp(3.4rem, 4.78vw, 5rem)'
@@ -61,65 +61,79 @@ typography:
     fontWeight: 500
     lineHeight: 1.42
 rounded:
-  square: '0'
-  control: '2px'
-  contained: '0.4rem'
+  field: '6px'
+  tab: '7px'
+  status: '8px'
+  nav-item: '11px'
+  empty: '12px'
+  metric: '13px'
+  panel: '15px'
   auth-card: '17px'
-  auth-field: '6px'
-  auth-action: '7px'
+  pill: '999px'
 spacing:
-  xxs: '0.25rem'
-  xs: '0.5rem'
-  sm: '0.75rem'
-  md: '1rem'
-  lg: '1.5rem'
-  xl: '2rem'
-  2xl: '3rem'
+  xs: '4px'
+  sm: '8px'
+  md: '12px'
+  lg: '14px'
+  xl: '18px'
+  2xl: '24px'
+  3xl: '32px'
 components:
   button-primary:
-    backgroundColor: '{colors.ink}'
-    textColor: '{colors.paper}'
+    backgroundColor: 'linear-gradient(110deg, #0e4e49, #135b54)'
+    textColor: '#ffffff'
     typography: '{typography.label}'
-    rounded: '{rounded.control}'
-    padding: '0.7rem 1rem'
+    rounded: '{rounded.field}'
+    padding: '10px 19px'
   button-secondary:
-    backgroundColor: 'transparent'
-    textColor: '{colors.ink}'
+    backgroundColor: '{colors.paper}'
+    textColor: '#0e504c'
     typography: '{typography.label}'
-    rounded: '{rounded.control}'
-    padding: '0.7rem 1rem'
+    rounded: '{rounded.field}'
+    padding: '10px 19px'
   button-danger:
-    backgroundColor: '{colors.clay}'
-    textColor: '#fff8f3'
+    backgroundColor: '#fff0ef'
+    textColor: '{colors.clay}'
     typography: '{typography.label}'
-    rounded: '{rounded.control}'
-    padding: '0.7rem 1rem'
+    rounded: '{rounded.field}'
+    padding: '10px 19px'
   text-field:
-    backgroundColor: '#faf9f5'
+    backgroundColor: '{colors.paper}'
     textColor: '{colors.text}'
     typography: '{typography.body}'
-    rounded: '{rounded.control}'
-    padding: '0.75rem'
+    rounded: '{rounded.field}'
+    padding: '11px 14px'
   panel:
     backgroundColor: '{colors.paper}'
     textColor: '{colors.text}'
-    rounded: '{rounded.square}'
-    padding: 'clamp(1.25rem, 4vw, 2.5rem)'
+    rounded: '{rounded.panel}'
+    padding: '24px 27px'
   nav-active:
-    backgroundColor: '{colors.paper}'
-    textColor: '{colors.ink}'
+    backgroundColor: '{colors.mint-active}'
+    textColor: '#0e524b'
     typography: '{typography.label}'
-    rounded: '{rounded.square}'
-    padding: '0.7rem 0.9rem'
+    rounded: '{rounded.nav-item}'
+    padding: '9px 17px'
+  icon-well:
+    backgroundColor: '{colors.mint-well}'
+    textColor: '#0b6860'
+    rounded: '{rounded.panel}'
+    size: '60px'
+  state-pill:
+    backgroundColor: '#e5f9f1'
+    textColor: '#155e52'
+    typography: '{typography.label}'
+    rounded: '{rounded.pill}'
+    padding: '8px 12px'
   auth-submit:
     backgroundColor: '{colors.auth-action}'
-    textColor: '#fff'
-    rounded: '{rounded.auth-action}'
+    textColor: '#ffffff'
+    rounded: '{rounded.tab}'
     height: '62px'
   auth-field:
     backgroundColor: '{colors.auth-field-fill}'
     textColor: '{colors.auth-navy}'
-    rounded: '{rounded.auth-field}'
+    rounded: '{rounded.field}'
     height: '54px'
   auth-card:
     backgroundColor: 'rgb(255 255 255 / 95%)'
@@ -132,176 +146,193 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Working Register"**
+**Creative North Star: "The Calm Front Desk"**
 
-Growth OS uses the visual language of a well-kept appointment register: warm mineral-gray work surfaces, blue-green structure, clear rules, and compact records. The system is built for Operate mode. It favors scan speed, task order, and visible state over decorative display.
+The authenticated Growth OS workspace follows the supplied product references. It uses a warm white canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, white rounded panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.
 
-The authenticated interface stays flat and editorial. Strong headings establish hierarchy, horizontal rules organize evidence, and a small set of semantic colors marks focus, warning, success, and destructive action. It does not use shadows, gradients, glass effects, neon accents, floating card grids, or decorative icon sets.
+The workspace should feel composed rather than sparse. Each page starts with one large title and a short description, then moves directly into the primary task. Tables, split work areas, metric cards, and settings groups follow the fixed reference compositions. Soft shadows separate work areas without making every row float.
 
 **Key Characteristics:**
 
-- Warm mineral-gray page and paper layers.
-- Deep blue-green navigation, headings, links, and primary actions.
-- Dense registers and ledgers separated by visible rules.
-- Nearly square controls with explicit focus and state treatments.
-- A complete two-row phone navigation that keeps every destination visible.
+- Warm white canvas with restrained mint curves, dots, and leaf detail at the edges.
+- Navy headings and copy with deep-green primary actions.
+- White panels with 15px corners and low-contrast neutral shadows.
+- Pale icon wells, status pills, and line icons that support scanning.
+- A white navigation capsule that keeps all six destinations visible.
 
-### Public auth exception
+### Public auth continuity
 
-The public registration, sign-in, and password-reset views follow the user-supplied September 2026 reference. Their warm white canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card belong only to `.auth-shell`. The authenticated workspace keeps the Working Register system. The `1.2k+` and `94%` figures are illustrative and have visible Demo badges; replace them with supported results before public marketing use.
+The public registration, sign-in, and password-reset views retain the user-supplied September 2026 reference. Their warm white canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card remain accurate. The `1.2k+` and `94%` figures are illustrative and carry visible Demo badges. Replace them with supported results before public marketing use.
 
-**The Auth Boundary Rule.** Use the rounded, shadowed Manrope treatment only in `.auth-shell`.
+**The Auth Boundary Rule.** The auth page keeps its larger marketing headline, 542px form card, and page-specific decorative composition. Do not copy that exact layout into signed-in work screens.
 
 ## Colors
 
-The palette pairs warm neutral work surfaces with a dark blue-green structural color. Ochre and clay appear only when they carry meaning.
+The workspace palette uses warm white and pale mint for atmosphere, navy for hierarchy, and deep green for action. Amber and red remain semantic.
 
 ### Primary
 
-- **Deep Register Ink** (`ink`): Navigation, large headings, primary actions, strong rules, and high-value figures.
-- **Working Teal** (`ink-2`): Links, secondary text emphasis, scrollbars, and hover states inside dark navigation.
+- **Front Desk Navy** (`ink`): Screen titles, panel headings, strong record names, and primary reading hierarchy.
+- **Action Green** (`ink-2`): Active navigation, links, recorded-value emphasis, and primary action direction.
 
 ### Secondary
 
-- **Focus Ochre** (`ochre`): Keyboard focus, text selection, and attention states.
-- **Action Clay** (`clay`): Validation emphasis, priority reasons, and destructive actions.
+- **Focus Green** (`focus`): Keyboard focus rings and selected control emphasis.
+- **Warm Attention** (`ochre`): Pending status and consent-aware attention states.
+- **Guardrail Red** (`clay`): Errors, destructive actions, and danger sections.
 
 ### Neutral
 
-- **Mineral Desk** (`mineral`): The full-page background and the resting canvas behind records.
-- **Paper Sheet** (`paper`): Panels, active navigation cells, and inverse text on dark controls.
-- **Ledger Rule** (`line`): Panel borders, dividers, field groups, and quiet button outlines.
-- **Reading Ink** (`text`): Default body copy and record text.
+- **Warm Canvas** (`canvas`): The signed-in page background beneath all work areas.
+- **Clean Paper** (`paper`): Navigation, panels, forms, cards, and table rows.
+- **Cool Rule** (`line`): Dividers, panel borders, and low-priority control borders.
+- **Reading Navy** (`text`): Default workspace copy.
+- **Muted Slate** (`muted`): Descriptions, metadata, timestamps, and secondary labels.
 
-**The Accent Restraint Rule.** Ochre and clay must explain focus, warning, validation, priority, or danger. They do not decorate neutral content.
+### Mint support
 
-**The Meaning Before Decoration Rule.** Keep large areas mineral, paper, or blue-green. State colors remain local to the message or action they qualify.
+- **Organic Mint** (`mint-backdrop`): Large low-contrast backdrop shapes near page edges.
+- **Active Mint** (`mint-active`): Selected navigation and quiet interactive feedback.
+- **Icon Mint** (`mint-well`): Default icon wells and friendly status cues.
+
+**The Green Action Rule.** Use deep green for the next useful action, active location, or positive stored value. Do not spread it across neutral reading content.
+
+**The Semantic Status Rule.** Keep amber, red, blue, violet, and green status colors attached to text labels. Color never replaces the state name.
 
 ### Public auth palette
 
-The auth canvas uses warm white (`auth-canvas`), navy (`auth-navy`) for headings, and slate (`auth-slate`) for supporting text. A green text gradient gives the second headline line emphasis. The primary action uses `auth-action`; email and password fields use the pale blue `auth-field-fill`. These tokens do not change the workspace palette.
+The auth page keeps warm white (`auth-canvas`), navy (`auth-navy`), and slate (`auth-slate`). Its headline uses a scoped green text gradient, the primary action uses `auth-action`, and email and password fields use `auth-field-fill`.
 
 ## Typography
 
-**Display Font:** IBM Plex Sans with a sans-serif fallback
+**Display Font:** Manrope with a sans-serif fallback
 
-**Body Font:** IBM Plex Sans with a sans-serif fallback
+**Body Font:** Manrope with a sans-serif fallback
 
-**Character:** One bundled family carries the entire interface. Bold, tightly tracked headings make the hierarchy editorial; regular body text keeps operational copy direct. The app bundles weights 400, 600, and 700 locally through Fontsource.
+**Character:** Manrope carries both the signed-in workspace and public auth flow. Heavy headings give each task a clear entry point. Regular body copy, compact labels, and tabular numbers keep dense operational content legible. The app bundles Manrope weights 400, 500, 600, 700, and 800 locally through Fontsource.
 
 ### Hierarchy
 
-- **Display** (700, `clamp(2.5rem, 6vw, 5rem)`, 1.03): Legal-page statements in the workspace type system.
-- **Headline** (700, `clamp(2rem, 4vw, 4rem)`, about 1.05): The single screen title at the top of each workspace.
-- **Title** (700, `1.5rem`, 1.2): Panel and section headings.
-- **Body** (400, `1rem`, typically 1.5): Forms, explanations, records, and response copy. Introductory copy stops near 66 characters per line.
-- **Label** (700, `0.78rem`, `0.03em`): Field labels and definition terms. Uppercase is reserved for the small Growth OS identity line.
-- **Numeric** (700, `1.6rem` or responsive display size): Counts and monetary results use tabular figures.
+- **Display** (800, `clamp(42px, 4.1vw, 62px)`, 1.12): One signed-in screen title per page.
+- **Title** (800, `22px`, 1.24): Panel headings and primary work-area labels.
+- **Body** (400, `15px`, 1.45): Forms, records, descriptions, and response copy.
+- **Label** (800, `13px`, about 1.3): Field labels and compact control text.
+- **Numeric** (800, `26px` or responsive display size): Metric cards and recorded values.
+- **Metadata** (600 or 700, `11px` to `13px`): Dates, sources, counts, and compact table labels.
 
-**The One Family Rule.** Use IBM Plex Sans for authenticated workspace roles. Hierarchy comes from size, weight, tracking, and placement.
+**The Single Page Title Rule.** Each work screen gets one large title. Use panel titles, labels, and metadata for every level beneath it.
 
-**The Editorial Scale Rule.** Each screen gets one large heading. Dense task content then steps down to section titles, labels, body copy, and muted metadata.
+**The Dense Copy Rule.** Keep descriptions short and factual. The visual system creates room for work, not promotional copy inside the app.
 
-The public auth views use Manrope. The landing headline uses `auth-display`; supporting copy uses `auth-body`. The form heading is 28px and 800 weight on desktop, while field labels are 17px and 700 weight. These roles stay inside `.auth-shell`.
+The public auth headline uses `auth-display`; supporting copy uses `auth-body`. Its form heading is 28px at weight 800, while field labels are 17px at weight 700. IBM Plex Sans remains bundled for existing legal and non-workspace pages that have not adopted the reference-led shell.
 
 ## Layout
 
-The authenticated shell centers content at a maximum width of 1360px. Its page padding is `2rem clamp(1rem, 5vw, 6rem) 5rem`. Major sections use one- or two-column grids, a 1rem local gap, and large vertical separation between the navigation, heading, filters, and working content.
+The authenticated shell centers major content at a maximum width of 1436px. Page padding is `14px clamp(24px, 4.75vw, 76px) 72px`. The 86px navigation capsule leads the page, followed by a title row, optional date badge, controls, and the main work area.
 
-Registers, ledgers, and definition lists are the default structure for repeated information. Rows use horizontal dividers and align related facts in columns. Panels are reserved for forms, filters, and bounded work areas. This keeps the main record stream open on the mineral background.
+Customers uses a full-width table panel on desktop and a stacked two-column record layout on phone. Campaigns uses a composer and campaign list split. Reviews pairs intake with the review ledger. Results places a six-card metric row above a chart and recorded-value split. Settings uses a wide primary form with a narrower stack of account and legal panels.
 
-At 800px and below, customer and campaign split layouts become one column. Booking rows change from four columns to two at 700px. At 760px and below, all major workspaces become one column, summary rows stack, toolbars put the action below the heading, and form grids become single-column.
+At 1250px, result metrics change from six columns to three and campaign rows remove one secondary column. At 1000px, navigation becomes a second row, and the campaign, review, results, and settings splits become one column. At 700px, navigation becomes three columns by two rows, metrics become two columns, controls stack, customer rows reflow without a desktop minimum width, and campaign rows reduce to the facts needed for action.
 
-The phone navigation uses two explicit rows. The first row holds workspace identity and Sign out. The second area contains all six destinations in a three-column by two-row grid. On the Reviews screen, existing reviews stay first in task order; the add and import tools move after them inside a disclosure.
+On phone, Reviews places the ledger before add and import tools. Results keeps the chart horizontally scrollable inside its panel. Every page retains the same tasks and labeled actions without page-level horizontal overflow.
 
-**The Register Before Cards Rule.** Use open rows and dividers for repeated operational records. Use a bordered paper panel only when the content needs a bounded editing or filtering context.
+**The Reference Composition Rule.** Keep each page's implemented grid and content order. The supplied screenshots are the composition authority for Customers, Campaigns, Reviews, Results, and Settings.
 
-**The Phone Task Order Rule.** When a desktop split collapses, place the current work and its result before secondary creation or import tools.
+**The Phone Task Order Rule.** When a split collapses, put the current record or result before secondary creation and import tools.
 
-On the public auth page, a two-column desktop layout pairs the message and benefits with a 542px form card. At 1350px and below the columns stack. At 760px and below, the reading order is headline, form, then benefits and illustrative metrics; the foliage image drops away.
+On public auth screens, the desktop layout pairs the message and benefits with a 542px form card. The columns stack at 1350px. At 760px, the reading order is headline, form, then benefits and illustrative metrics; the foliage image drops away.
 
 ## Elevation & Depth
 
-Growth OS has no box-shadow vocabulary. It creates depth with tonal contrast, one-pixel borders, two-pixel section rules, and the dark navigation block. Dialogs are right-aligned paper sheets over a translucent blue-green backdrop, with a brief horizontal entrance motion rather than a lifted shadow.
+The workspace uses soft neutral shadows to separate bounded work areas from the warm canvas. Navigation uses a broad low-opacity shadow. Standard panels use a slightly deeper neutral shadow. Metric and summary cards use a smaller version, while buttons add lift only on hover. Dialogs use a stronger left-facing shadow because they sit above a darkened backdrop.
 
-**The Divider Depth Rule.** Use color fields and rules to separate layers. Do not add shadows, blur, glass, or gradients.
+Mint curves, dot fields, a fixed leaf plate, and pale icon wells add depth behind or inside content. They stay away from form copy and table values. The primary button has a controlled green gradient; result chart bars use a pale mint gradient. These are the only routine signed-in gradients.
 
-The public auth page has one scoped depth exception: the form card uses `0 24px 58px rgb(39 43 45 / 11%)`. Soft radial color fields and curved background shapes sit behind the content. The card enters with a brief fade and blur; the reduced-motion override removes the animation.
+**The Soft Separation Rule.** Use low-opacity shadows on navigation, bounded panels, metrics, and dialogs. Table rows and text groups rely on borders and spacing.
+
+**The Quiet Backdrop Rule.** Organic shapes and the leaf plate remain peripheral. Do not place detailed imagery under controls or records.
+
+The public auth card keeps its scoped `0 24px 58px rgb(39 43 45 / 11%)` shadow. Its radial fields and curved background forms remain page-specific. Reduced-motion mode cuts the auth entrance animation to 0.01ms and removes workspace lift transitions.
 
 ## Shapes
 
-The system is rectilinear. Panels, navigation cells, ledgers, state labels, disclosures, and empty states have square corners. Buttons and fields use a 2px radius. A softer `0.4rem` radius appears only on contained campaign choices and the campaign message area.
+The signed-in system uses a controlled rounded scale. Fields, buttons, and Sign out use 6px corners. Tabs and small callouts use 7px to 8px. Empty states and compact cards use 12px to 13px. Navigation, panels, review cards, and icon wells use 15px. Status and lifecycle labels use full pills.
 
-Borders do the structural work. Standard panels and controls use a one-pixel border; primary register starts use a two-pixel blue-green rule. Dashed borders are limited to empty states.
+Circles are reserved for customer avatars, review avatars, compact date icons, and small overflow controls. The large backdrop shapes are irregular organic curves rather than interface containers.
 
-**The Near-Square Rule.** Default to square corners or the 2px control radius. Do not introduce pills, oversized rounding, or floating capsules.
+**The Rounded Hierarchy Rule.** Match radius to component scale. Do not apply one large radius to every object.
 
-The public auth page uses a 17px form card, 6px fields, 7px primary action, and circular benefit icon wells. The rounded kicker is a page-specific label, not a workspace component.
+**The Pill Meaning Rule.** Use full pills for lifecycle, eligibility, campaign state, review state, and small identity badges. Do not turn ordinary buttons or panels into capsules.
+
+The public auth form card keeps its 17px radius, 6px fields, 7px action, circular benefit icons, and rounded kicker.
 
 ## Components
 
 ### Buttons
 
-- **Shape:** Nearly square with a 2px radius, a one-pixel border, a 44px minimum height, and `0.7rem 1rem` padding.
-- **Primary:** Deep Register Ink fill with Paper Sheet text.
-- **Secondary:** Transparent fill with a Deep Register Ink border and text.
-- **Quiet:** Transparent fill with a Ledger Rule border for lower-priority actions.
-- **Danger:** Action Clay fill, a darker clay border, and warm white text. The hover state darkens the fill.
-- **Active / Focus:** Pressing moves the control down by 1px. Keyboard focus uses a 3px Focus Ochre outline with a 2px offset. Disabled work states keep the layout stable and reduce opacity.
+- **Shape:** 6px corners, a 47px minimum height, and `10px 19px` padding.
+- **Primary:** A short deep-green gradient, white text, a dark green border, and a small resting shadow.
+- **Secondary / Quiet:** White fill with a muted mint border and deep-green text.
+- **Danger:** Pale red fill, red border, and red text.
+- **Hover / Active:** Hover lifts by 2px and strengthens the shadow. Active returns to the baseline and scales to 0.99. Reduced-motion mode removes the lift.
+- **Focus / Disabled:** Keyboard focus uses a 3px green outline with a 3px offset. Disabled controls reduce opacity, remove the shadow, and use a not-allowed cursor.
 
 ### Chips
 
-- **Style:** State labels are square, compact bordered tags with bold `0.76rem` text.
-- **State:** Unanswered uses the warm warning pair; posted manually uses the quiet green success pair. The copy names the state instead of relying on color alone.
+- **Lifecycle / Eligibility:** Full pills with explicit labels. Eligibility adds a colored dot but retains the text state.
+- **Campaign / Review State:** Full pills use muted semantic fills for draft, ready, completed, unanswered, and posted states.
+- **Identity:** The Demo workspace badge is a compact rounded rectangle inside the navigation identity.
 
 ### Cards / Containers
 
-- **Corner Style:** Square for panels and workspaces. Selectable campaign items use the contained radius.
-- **Background:** Paper Sheet for bounded work, Mineral Desk for the page and selected campaign state.
-- **Shadow Strategy:** None.
-- **Border:** One-pixel Ledger Rule. Strong register starts use a two-pixel Deep Register Ink top rule.
-- **Internal Padding:** Responsive panel padding ranges from 1.25rem to 2.5rem. Record rows stay denser, usually between 0.7rem and 1.5rem vertically.
+- **Navigation:** White translucent capsule, 15px corners, subtle border, and a low neutral shadow.
+- **Panel:** White fill, 15px corners, one-pixel cool border, and a low neutral shadow.
+- **Metric:** White fill, 13px corners, icon well, label, and bold tabular value.
+- **Table:** A rounded outer panel with a pale header band. Data rows stay flat and use dividers or a very light hover fill.
+- **Organic Backdrop:** One mint shape, one outlined curve, a small dot field, and the leaf plate at the page edge.
 
 ### Inputs / Fields
 
-- **Style:** Warm off-white fill, a medium warm-gray one-pixel border, a 2px radius, and 0.75rem padding.
-- **Focus:** The shared 3px ochre outline remains visible outside the control.
-- **Error / Disabled:** Errors appear in nearby clay text or in a pale clay message field. Read-only and disabled behavior must remain visible in text or copy, not color alone.
+- **Style:** White fill, 6px corners, one-pixel cool border, 47px minimum height, and `11px 14px` padding.
+- **Focus:** Border changes to green and a translucent 3px green ring appears outside it.
+- **Text areas:** Keep the same field treatment, a 104px minimum height, and vertical resizing.
+- **Placeholder:** Muted slate remains legible but secondary to entered text.
 
 ### Navigation
 
-- **Desktop:** A single dark blue-green bar contains the identity, six destinations, and Sign out. Thin translucent dividers separate cells.
-- **Active:** The active destination reverses to Paper Sheet with Deep Register Ink text.
-- **Hover / Focus:** Inactive cells use Working Teal on hover. Keyboard focus moves the ochre outline inside the bar.
-- **Phone:** Identity and Sign out occupy the first row. All six destinations occupy a three-column by two-row grid beneath them.
+- **Desktop:** Identity, six icon-and-text destinations, and Sign out share one 86px capsule.
+- **Active:** Pale mint fill with deep-green text and weight 800.
+- **Hover:** Inactive destinations receive a quieter mint fill and a 1px lift.
+- **Compact:** At 1000px, the six destinations move to a full second row. At 700px, they form a three-column by two-row grid.
 
-### Registers and ledgers
+### Icon wells
 
-Record lists use full-width rows, aligned columns, and horizontal rules. Hover may add a quiet mineral-darkened fill. Values align right on wide screens and use tabular figures; narrow layouts return them to the left and preserve the reading order.
+Default wells are 60px squares with 15px corners and pale mint fill. Blue and red variants belong to clearly different subject groups. Date badges use a 38px circular well, while avatars remain 48px to 50px circles. Lucide icons use a 2px stroke and remain supportive, never unlabeled primary actions.
 
-**The Explicit State Rule.** Every selected, active, pending, success, warning, and destructive state needs a visible label, copy change, border, or fill change.
+### Tables and work lists
 
-**The Manual Action Rule.** Primary buttons identify the next user-reviewed action. Secondary and quiet buttons hold alternate, export, reopen, or status-marking actions.
+Desktop customer and campaign lists use explicit column headers. Customer records become compact stacked rows on phone. Campaign cards keep name, state, date, key count, and overflow action. Review records keep original content and manual response work in one card. Results distinguish summary metrics, the activity chart, and recorded booking value.
 
-### Public auth form
+**The Visible State Rule.** Selected, active, pending, success, warning, and destructive states need text plus a visible fill, border, or control change.
 
-The auth action fills the card width and is at least 62px tall on desktop, 56px on phone. It uses deep green with white text and darkens on hover. Icon-led fields are 54px tall with 6px corners. Email and password fields have a pale blue fill; focus changes the border to green and adds a soft green ring. The form card uses a white fill, a thin gray border, and the auth-only shadow. A Demo badge sits immediately beside each illustrative number.
+**The Reviewed Action Rule.** Primary actions identify the next user-reviewed step. Secondary and quiet actions hold exports, alternate paths, reopen actions, and manual status marks.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** keep screen titles large and singular, then use dense section-level hierarchy below them.
-- **Do** use strong horizontal dividers to organize records, metrics, history, and response work.
-- **Do** preserve all six destinations in the phone navigation's two-row grid.
-- **Do** keep the 44px minimum action height, visible ochre focus outline, and reduced-motion override.
-- **Do** use stored-state language and semantic color together so meaning survives without color.
+- **Do** keep the warm white, mint, navy, and green palette consistent across every signed-in page.
+- **Do** preserve the reference-led page compositions and the complete six-destination navigation.
+- **Do** use white rounded panels and soft shadows for bounded work areas, not every record row.
+- **Do** pair status color with a written state and keep product claims tied to stored data.
+- **Do** preserve the 47px workspace control height, visible focus treatment, and reduced-motion behavior.
+- **Do** keep the public auth composition and its Demo labels scoped to the auth flow.
 
 ### Don't:
 
-- **Don't** add shadows, gradients, glass effects, neon accents, or blurred layers.
-- **Don't** turn repeated records into a floating rounded card grid.
-- **Don't** add decorative icon libraries where text labels or native disclosure markers already explain the action.
-- **Don't** use ochre or clay as broad brand fills without a focus, warning, validation, priority, or danger meaning.
-- **Don't** hide phone destinations behind a menu when the complete two-row navigation fits.
-- **Don't** carry the public auth gradients, rounded card, or shadow into authenticated workspaces.
+- **Don't** restore the old dark square register treatment inside the authenticated workspace.
+- **Don't** place organic imagery, dots, or mint curves under dense text, fields, charts, or table values.
+- **Don't** hide phone destinations behind a menu when the two-row grid fits.
+- **Don't** turn every row into a floating card or every control into a pill.
+- **Don't** use red, amber, blue, or violet without a named state or subject role.
+- **Don't** present the auth page's illustrative metrics as verified outcomes.

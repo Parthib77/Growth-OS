@@ -1,10 +1,21 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import {
+  BarChart3,
+  CalendarDays,
+  CornerUpLeft,
+  Database,
+  Download,
+  Link2,
+  Mail,
+  Send,
+} from 'lucide-react';
 import { ResultsResponseSchema } from '@growthos/contracts';
 import { download, request } from './api-client';
 import { AppNav, type AppScreen } from './app-nav';
 import { Field, StatusLine, type Status } from './ui';
+import { IconWell, TodayBadge } from './workspace-ui';
 
 type Results = ReturnType<typeof ResultsResponseSchema.parse>;
 
@@ -22,10 +33,7 @@ function localDateIn(timezone: string): string {
 }
 
 function money(currency: string, minorUnits: number): string {
-  return new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency,
-  }).format(minorUnits / 100);
+  return `${currency} ${new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(minorUnits / 100)}`;
 }
 
 export function ResultsView({
@@ -91,14 +99,15 @@ export function ResultsView({
   const pending = status.kind === 'pending';
   const measures = results
     ? [
-        ['New enquiries', results.newEnquiries],
-        ['Follow-ups prepared', results.followUpsPrepared],
-        ['Marked as sent', results.followUpsSent],
-        ['Replies recorded', results.campaignReplies],
-        ['Bookings recorded', results.bookingsRecorded],
-        ['Campaign-attributed bookings', results.campaignConversions],
+        { label: 'New enquiries', value: results.newEnquiries, icon: Mail },
+        { label: 'Follow-ups prepared', value: results.followUpsPrepared, icon: Send },
+        { label: 'Marked as sent', value: results.followUpsSent, icon: Mail },
+        { label: 'Replies recorded', value: results.campaignReplies, icon: CornerUpLeft },
+        { label: 'Bookings recorded', value: results.bookingsRecorded, icon: BarChart3 },
+        { label: 'Campaign-attributed bookings', value: results.campaignConversions, icon: Link2 },
       ]
     : [];
+  const chartMaximum = Math.max(4, ...measures.map((measure) => measure.value));
 
   return (
     <main className="app-shell">
@@ -117,12 +126,18 @@ export function ResultsView({
           </h1>
           <p className="screen-intro">Counts come from stored events and bookings in {timezone}.</p>
         </div>
+        <TodayBadge />
       </header>
 
       <section className="panel results-filter" aria-labelledby="results-range-title">
-        <div>
-          <h2 id="results-range-title">Reporting period</h2>
-          <p className="muted">Both dates are included in the report.</p>
+        <div className="workspace-panel-heading">
+          <IconWell>
+            <CalendarDays size={25} />
+          </IconWell>
+          <div>
+            <h2 id="results-range-title">Reporting period</h2>
+            <p>Both dates are included in the report.</p>
+          </div>
         </div>
         <form className="results-filter-form" onSubmit={submitDates}>
           <Field
@@ -148,44 +163,83 @@ export function ResultsView({
             onClick={exportCsv}
             disabled={pending || !results}
           >
+            <Download size={19} aria-hidden="true" />
             Download CSV
           </button>
         </form>
       </section>
 
       {results ? (
-        <div className="results-workspace">
-          <section className="results-ledger" aria-labelledby="activity-results-title">
-            <div className="section-heading">
-              <h2 id="activity-results-title">Activity recorded</h2>
-              <p>
-                {results.range.fromLocal} through {results.throughLocal}
-              </p>
-            </div>
-            <dl className="metric-ledger">
-              {measures.map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
+        <>
+          <section className="results-metrics" aria-label="Activity totals">
+            {measures.map((measure) => (
+              <div className="result-metric-card" key={measure.label}>
+                <IconWell>
+                  <measure.icon size={23} />
+                </IconWell>
+                <span>{measure.label}</span>
+                <strong>{measure.value}</strong>
+              </div>
+            ))}
+          </section>
+          <div className="results-workspace">
+            <section className="results-ledger" aria-labelledby="activity-results-title">
+              <div className="section-heading workspace-panel-heading">
+                <IconWell>
+                  <BarChart3 size={25} />
+                </IconWell>
+                <h2 id="activity-results-title">Activity overview</h2>
+                <p>
+                  {results.range.fromLocal} through {results.throughLocal}
+                </p>
+              </div>
+              <div
+                className="results-chart"
+                role="img"
+                aria-label={measures
+                  .map((measure) => `${measure.label}: ${measure.value}`)
+                  .join(', ')}
+              >
+                <div className="results-chart-y-axis" aria-hidden="true">
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <span key={index}>{Math.round((chartMaximum * (4 - index)) / 4)}</span>
+                  ))}
                 </div>
-              ))}
-            </dl>
-          </section>
-          <section className="recorded-value" aria-labelledby="recorded-value-title">
-            <h2 id="recorded-value-title">Recorded booking value</h2>
-            <strong>
-              {money(
-                results.recordedBookingValue.currency,
-                results.recordedBookingValue.minorUnits,
-              )}
-            </strong>
-            <p>{results.recordedValueDefinition}</p>
-            <p>{results.bookingDefinition}</p>
-            <p className="muted">
-              Included booking statuses: {results.includedBookingStatuses.join(', ')}.
-            </p>
-          </section>
-        </div>
+                {measures.map((measure) => (
+                  <div className="results-chart-column" key={measure.label}>
+                    <div className="results-chart-bar-area">
+                      <strong>{measure.value}</strong>
+                      <span
+                        className="results-chart-bar"
+                        style={{ height: `${Math.max(3, (measure.value / chartMaximum) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="results-chart-label">{measure.label}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+            <section className="recorded-value" aria-labelledby="recorded-value-title">
+              <div className="workspace-panel-heading">
+                <IconWell>
+                  <Database size={25} />
+                </IconWell>
+                <h2 id="recorded-value-title">Recorded booking value</h2>
+              </div>
+              <strong>
+                {money(
+                  results.recordedBookingValue.currency,
+                  results.recordedBookingValue.minorUnits,
+                )}
+              </strong>
+              <p>{results.recordedValueDefinition}</p>
+              <p>{results.bookingDefinition}</p>
+              <p className="muted">
+                Included booking statuses: {results.includedBookingStatuses.join(', ')}.
+              </p>
+            </section>
+          </div>
+        </>
       ) : (
         <div className="empty">
           <h2>Choose a reporting period</h2>

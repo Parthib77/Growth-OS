@@ -1,0 +1,554 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-24T03:16:34.7000730Z",
+  "title": "Design System: Growth OS",
+  "extensions": {
+    "colorMeta": {
+      "mineral": {
+        "role": "neutral",
+        "displayName": "Cool Mineral",
+        "canonical": "#f8fbf9",
+        "tonalRamp": [
+          "color-mix(in oklch, #f8fbf9 25%, black)",
+          "color-mix(in oklch, #f8fbf9 45%, black)",
+          "color-mix(in oklch, #f8fbf9 65%, black)",
+          "#f8fbf9",
+          "color-mix(in oklch, #f8fbf9 80%, white)",
+          "color-mix(in oklch, #f8fbf9 60%, white)",
+          "color-mix(in oklch, #f8fbf9 35%, white)",
+          "color-mix(in oklch, #f8fbf9 15%, white)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Clean Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "color-mix(in oklch, #ffffff 25%, black)",
+          "color-mix(in oklch, #ffffff 45%, black)",
+          "color-mix(in oklch, #ffffff 65%, black)",
+          "#ffffff",
+          "color-mix(in oklch, #ffffff 80%, white)",
+          "color-mix(in oklch, #ffffff 60%, white)",
+          "color-mix(in oklch, #ffffff 35%, white)",
+          "color-mix(in oklch, #ffffff 15%, white)"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Front Desk Navy",
+        "canonical": "#122238",
+        "tonalRamp": [
+          "color-mix(in oklch, #122238 25%, black)",
+          "color-mix(in oklch, #122238 45%, black)",
+          "color-mix(in oklch, #122238 65%, black)",
+          "#122238",
+          "color-mix(in oklch, #122238 80%, white)",
+          "color-mix(in oklch, #122238 60%, white)",
+          "color-mix(in oklch, #122238 35%, white)",
+          "color-mix(in oklch, #122238 15%, white)"
+        ]
+      },
+      "ink-2": {
+        "role": "primary",
+        "displayName": "Action Green",
+        "canonical": "#125a51",
+        "tonalRamp": [
+          "color-mix(in oklch, #125a51 25%, black)",
+          "color-mix(in oklch, #125a51 45%, black)",
+          "color-mix(in oklch, #125a51 65%, black)",
+          "#125a51",
+          "color-mix(in oklch, #125a51 80%, white)",
+          "color-mix(in oklch, #125a51 60%, white)",
+          "color-mix(in oklch, #125a51 35%, white)",
+          "color-mix(in oklch, #125a51 15%, white)"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "Warm Attention",
+        "canonical": "#a35b13",
+        "tonalRamp": [
+          "color-mix(in oklch, #a35b13 25%, black)",
+          "color-mix(in oklch, #a35b13 45%, black)",
+          "color-mix(in oklch, #a35b13 65%, black)",
+          "#a35b13",
+          "color-mix(in oklch, #a35b13 80%, white)",
+          "color-mix(in oklch, #a35b13 60%, white)",
+          "color-mix(in oklch, #a35b13 35%, white)",
+          "color-mix(in oklch, #a35b13 15%, white)"
+        ]
+      },
+      "clay": {
+        "role": "secondary",
+        "displayName": "Guardrail Red",
+        "canonical": "#a22525",
+        "tonalRamp": [
+          "color-mix(in oklch, #a22525 25%, black)",
+          "color-mix(in oklch, #a22525 45%, black)",
+          "color-mix(in oklch, #a22525 65%, black)",
+          "#a22525",
+          "color-mix(in oklch, #a22525 80%, white)",
+          "color-mix(in oklch, #a22525 60%, white)",
+          "color-mix(in oklch, #a22525 35%, white)",
+          "color-mix(in oklch, #a22525 15%, white)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Cool Rule",
+        "canonical": "#dce3e5",
+        "tonalRamp": [
+          "color-mix(in oklch, #dce3e5 25%, black)",
+          "color-mix(in oklch, #dce3e5 45%, black)",
+          "color-mix(in oklch, #dce3e5 65%, black)",
+          "#dce3e5",
+          "color-mix(in oklch, #dce3e5 80%, white)",
+          "color-mix(in oklch, #dce3e5 60%, white)",
+          "color-mix(in oklch, #dce3e5 35%, white)",
+          "color-mix(in oklch, #dce3e5 15%, white)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Reading Navy",
+        "canonical": "#172a42",
+        "tonalRamp": [
+          "color-mix(in oklch, #172a42 25%, black)",
+          "color-mix(in oklch, #172a42 45%, black)",
+          "color-mix(in oklch, #172a42 65%, black)",
+          "#172a42",
+          "color-mix(in oklch, #172a42 80%, white)",
+          "color-mix(in oklch, #172a42 60%, white)",
+          "color-mix(in oklch, #172a42 35%, white)",
+          "color-mix(in oklch, #172a42 15%, white)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Warm Canvas",
+        "canonical": "#fffdfb",
+        "tonalRamp": [
+          "color-mix(in oklch, #fffdfb 25%, black)",
+          "color-mix(in oklch, #fffdfb 45%, black)",
+          "color-mix(in oklch, #fffdfb 65%, black)",
+          "#fffdfb",
+          "color-mix(in oklch, #fffdfb 80%, white)",
+          "color-mix(in oklch, #fffdfb 60%, white)",
+          "color-mix(in oklch, #fffdfb 35%, white)",
+          "color-mix(in oklch, #fffdfb 15%, white)"
+        ]
+      },
+      "mint-backdrop": {
+        "role": "secondary",
+        "displayName": "Organic Mint",
+        "canonical": "#e9f7f1",
+        "tonalRamp": [
+          "color-mix(in oklch, #e9f7f1 25%, black)",
+          "color-mix(in oklch, #e9f7f1 45%, black)",
+          "color-mix(in oklch, #e9f7f1 65%, black)",
+          "#e9f7f1",
+          "color-mix(in oklch, #e9f7f1 80%, white)",
+          "color-mix(in oklch, #e9f7f1 60%, white)",
+          "color-mix(in oklch, #e9f7f1 35%, white)",
+          "color-mix(in oklch, #e9f7f1 15%, white)"
+        ]
+      },
+      "mint-active": {
+        "role": "secondary",
+        "displayName": "Active Mint",
+        "canonical": "#eaf7f2",
+        "tonalRamp": [
+          "color-mix(in oklch, #eaf7f2 25%, black)",
+          "color-mix(in oklch, #eaf7f2 45%, black)",
+          "color-mix(in oklch, #eaf7f2 65%, black)",
+          "#eaf7f2",
+          "color-mix(in oklch, #eaf7f2 80%, white)",
+          "color-mix(in oklch, #eaf7f2 60%, white)",
+          "color-mix(in oklch, #eaf7f2 35%, white)",
+          "color-mix(in oklch, #eaf7f2 15%, white)"
+        ]
+      },
+      "mint-well": {
+        "role": "secondary",
+        "displayName": "Icon Mint",
+        "canonical": "#e1f8ef",
+        "tonalRamp": [
+          "color-mix(in oklch, #e1f8ef 25%, black)",
+          "color-mix(in oklch, #e1f8ef 45%, black)",
+          "color-mix(in oklch, #e1f8ef 65%, black)",
+          "#e1f8ef",
+          "color-mix(in oklch, #e1f8ef 80%, white)",
+          "color-mix(in oklch, #e1f8ef 60%, white)",
+          "color-mix(in oklch, #e1f8ef 35%, white)",
+          "color-mix(in oklch, #e1f8ef 15%, white)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#536b88",
+        "tonalRamp": [
+          "color-mix(in oklch, #536b88 25%, black)",
+          "color-mix(in oklch, #536b88 45%, black)",
+          "color-mix(in oklch, #536b88 65%, black)",
+          "#536b88",
+          "color-mix(in oklch, #536b88 80%, white)",
+          "color-mix(in oklch, #536b88 60%, white)",
+          "color-mix(in oklch, #536b88 35%, white)",
+          "color-mix(in oklch, #536b88 15%, white)"
+        ]
+      },
+      "focus": {
+        "role": "secondary",
+        "displayName": "Focus Green",
+        "canonical": "#0b8a69",
+        "tonalRamp": [
+          "color-mix(in oklch, #0b8a69 25%, black)",
+          "color-mix(in oklch, #0b8a69 45%, black)",
+          "color-mix(in oklch, #0b8a69 65%, black)",
+          "#0b8a69",
+          "color-mix(in oklch, #0b8a69 80%, white)",
+          "color-mix(in oklch, #0b8a69 60%, white)",
+          "color-mix(in oklch, #0b8a69 35%, white)",
+          "color-mix(in oklch, #0b8a69 15%, white)"
+        ]
+      },
+      "auth-navy": {
+        "role": "primary",
+        "displayName": "Auth Navy",
+        "canonical": "#142033",
+        "tonalRamp": [
+          "color-mix(in oklch, #142033 25%, black)",
+          "color-mix(in oklch, #142033 45%, black)",
+          "color-mix(in oklch, #142033 65%, black)",
+          "#142033",
+          "color-mix(in oklch, #142033 80%, white)",
+          "color-mix(in oklch, #142033 60%, white)",
+          "color-mix(in oklch, #142033 35%, white)",
+          "color-mix(in oklch, #142033 15%, white)"
+        ]
+      },
+      "auth-slate": {
+        "role": "neutral",
+        "displayName": "Auth Slate",
+        "canonical": "#536174",
+        "tonalRamp": [
+          "color-mix(in oklch, #536174 25%, black)",
+          "color-mix(in oklch, #536174 45%, black)",
+          "color-mix(in oklch, #536174 65%, black)",
+          "#536174",
+          "color-mix(in oklch, #536174 80%, white)",
+          "color-mix(in oklch, #536174 60%, white)",
+          "color-mix(in oklch, #536174 35%, white)",
+          "color-mix(in oklch, #536174 15%, white)"
+        ]
+      },
+      "auth-canvas": {
+        "role": "neutral",
+        "displayName": "Auth Canvas",
+        "canonical": "#fffefd",
+        "tonalRamp": [
+          "color-mix(in oklch, #fffefd 25%, black)",
+          "color-mix(in oklch, #fffefd 45%, black)",
+          "color-mix(in oklch, #fffefd 65%, black)",
+          "#fffefd",
+          "color-mix(in oklch, #fffefd 80%, white)",
+          "color-mix(in oklch, #fffefd 60%, white)",
+          "color-mix(in oklch, #fffefd 35%, white)",
+          "color-mix(in oklch, #fffefd 15%, white)"
+        ]
+      },
+      "auth-action": {
+        "role": "primary",
+        "displayName": "Auth Action",
+        "canonical": "#145a50",
+        "tonalRamp": [
+          "color-mix(in oklch, #145a50 25%, black)",
+          "color-mix(in oklch, #145a50 45%, black)",
+          "color-mix(in oklch, #145a50 65%, black)",
+          "#145a50",
+          "color-mix(in oklch, #145a50 80%, white)",
+          "color-mix(in oklch, #145a50 60%, white)",
+          "color-mix(in oklch, #145a50 35%, white)",
+          "color-mix(in oklch, #145a50 15%, white)"
+        ]
+      },
+      "auth-field-fill": {
+        "role": "neutral",
+        "displayName": "Auth Field Fill",
+        "canonical": "#f0f7ff",
+        "tonalRamp": [
+          "color-mix(in oklch, #f0f7ff 25%, black)",
+          "color-mix(in oklch, #f0f7ff 45%, black)",
+          "color-mix(in oklch, #f0f7ff 65%, black)",
+          "#f0f7ff",
+          "color-mix(in oklch, #f0f7ff 80%, white)",
+          "color-mix(in oklch, #f0f7ff 60%, white)",
+          "color-mix(in oklch, #f0f7ff 35%, white)",
+          "color-mix(in oklch, #f0f7ff 15%, white)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Workspace display",
+        "purpose": "The single signed-in page title."
+      },
+      "title": {
+        "displayName": "Panel title",
+        "purpose": "Primary work areas and bounded settings groups."
+      },
+      "body": {
+        "displayName": "Workspace body",
+        "purpose": "Forms, records, descriptions, and response copy."
+      },
+      "label": {
+        "displayName": "Control label",
+        "purpose": "Fields, compact actions, and table labels."
+      },
+      "numeric": {
+        "displayName": "Metric value",
+        "purpose": "Operational counts and recorded values."
+      },
+      "auth-display": {
+        "displayName": "Auth display",
+        "purpose": "The public auth headline only."
+      },
+      "auth-body": { "displayName": "Auth body", "purpose": "Public auth supporting copy." }
+    },
+    "shadows": [
+      {
+        "name": "navigation",
+        "value": "0 10px 28px rgb(20 37 42 / 8%)",
+        "purpose": "Separates the white navigation capsule from the warm canvas."
+      },
+      {
+        "name": "panel",
+        "value": "0 11px 29px rgb(25 34 36 / 7%)",
+        "purpose": "Standard bounded work areas and review cards."
+      },
+      {
+        "name": "metric",
+        "value": "0 9px 23px rgb(25 34 36 / 6%)",
+        "purpose": "Metric cards and compact record groups."
+      },
+      {
+        "name": "button-rest",
+        "value": "0 3px 8px rgb(7 69 61 / 13%)",
+        "purpose": "Primary button at rest."
+      },
+      {
+        "name": "button-hover",
+        "value": "0 8px 18px rgb(12 74 66 / 14%)",
+        "purpose": "Interactive lift on enabled workspace buttons."
+      },
+      {
+        "name": "dialog",
+        "value": "-20px 0 45px rgb(12 43 47 / 12%)",
+        "purpose": "Right-side dialog over the darkened backdrop."
+      },
+      {
+        "name": "auth-card",
+        "value": "0 24px 58px rgb(39 43 45 / 11%)",
+        "purpose": "Public auth form card only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "workspace-interaction",
+        "value": "0.18s cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Button lift and return."
+      },
+      {
+        "name": "workspace-color",
+        "value": "0.18s ease",
+        "purpose": "Navigation and control fill, border, and color changes."
+      },
+      {
+        "name": "auth-card-enter",
+        "value": "0.65s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Public auth card opacity and blur entrance."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Cuts global animations while workspace hover transforms are removed."
+      }
+    ],
+    "breakpoints": [
+      { "name": "workspace-phone", "value": "700px" },
+      { "name": "auth-phone", "value": "760px" },
+      { "name": "workspace-stack", "value": "1000px" },
+      { "name": "workspace-dense", "value": "1250px" },
+      { "name": "auth-stack", "value": "1350px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Workspace Navigation",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "The white navigation capsule with identity, six visible destinations, and Sign out.",
+      "html": "<div class=\"ds-nav-shell\"><div class=\"ds-nav-identity\"><span>Growth OS</span><strong>Northline Studio</strong></div><nav class=\"ds-nav\" aria-label=\"Workspace\"><button aria-current=\"page\">Today</button><button>Customers</button><button>Campaigns</button><button>Reviews</button><button>Results</button><button>Settings</button></nav><button class=\"ds-nav-signout\">Sign out</button></div>",
+      "css": ".ds-nav-shell { display:grid; grid-template-columns:210px minmax(0,1fr) auto; align-items:center; min-height:86px; padding:0 26px 0 30px; border:1px solid #e4e9e7; border-radius:15px; background:rgb(255 255 255 / 96%); color:#122238; box-shadow:0 10px 28px rgb(20 37 42 / 8%); font-family:Manrope,sans-serif; } .ds-nav-identity { display:grid; gap:2px; padding-right:24px; border-right:1px solid #e1e6e8; } .ds-nav-identity span { color:#5e6c74; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; } .ds-nav-identity strong { font-size:17px; font-weight:800; } .ds-nav { display:flex; gap:7px; padding-left:26px; } .ds-nav button, .ds-nav-signout { min-height:50px; padding:9px 17px; border:0; border-radius:11px; background:transparent; color:#314a6b; font:600 15px Manrope,sans-serif; cursor:pointer; transition:background .18s ease,color .18s ease,transform .18s ease; } .ds-nav button[aria-current='page'] { background:#eaf7f2; color:#0e524b; font-weight:800; } .ds-nav button:not([aria-current='page']):hover, .ds-nav-signout:hover { background:#f0f7f5; color:#0e524b; transform:translateY(-1px); } .ds-nav button:focus-visible, .ds-nav-signout:focus-visible { outline:3px solid #0b8a69; outline-offset:3px; } .ds-nav-signout { min-height:42px; margin-left:16px; border:1px solid #cbd9dd; border-radius:6px; color:#0b504b; font-weight:800; white-space:nowrap; } @media (max-width:1000px) { .ds-nav-shell { grid-template-columns:1fr auto; gap:8px; padding-block:12px; } .ds-nav-identity { border-right:0; } .ds-nav { grid-column:1 / -1; grid-row:2; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); padding:7px 0 0; border-top:1px solid #e5ebed; } .ds-nav-signout { grid-column:2; grid-row:1; } } @media (max-width:700px) { .ds-nav { grid-template-columns:repeat(3,minmax(0,1fr)); } .ds-nav button { min-height:52px; padding-inline:8px; font-size:11px; } }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The next user-reviewed action in a signed-in workflow.",
+      "html": "<button class=\"ds-btn-primary\">Save draft</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; min-height:47px; padding:10px 19px; border:1px solid #0c514b; border-radius:6px; background:linear-gradient(110deg,#0e4e49,#135b54); color:#fff; box-shadow:0 3px 8px rgb(7 69 61 / 13%); font:800 14px Manrope,sans-serif; cursor:pointer; transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s ease,box-shadow .18s ease; } .ds-btn-primary:hover { transform:translateY(-2px); background:linear-gradient(110deg,#0b413d,#0d5049); box-shadow:0 8px 18px rgb(12 74 66 / 14%); } .ds-btn-primary:focus-visible { outline:3px solid #0b8a69; outline-offset:3px; } .ds-btn-primary:active { transform:translateY(0) scale(.99); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "An alternate, export, reopen, or manual status action.",
+      "html": "<button class=\"ds-btn-secondary\">Copy response</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; justify-content:center; min-height:47px; padding:10px 19px; border:1px solid #b8d6d3; border-radius:6px; background:#fff; color:#0e504c; font:800 14px Manrope,sans-serif; cursor:pointer; transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s ease,border-color .18s ease,box-shadow .18s ease; } .ds-btn-secondary:hover { transform:translateY(-2px); border-color:#62bca4; background:#f3fbf7; box-shadow:0 8px 18px rgb(12 74 66 / 14%); } .ds-btn-secondary:focus-visible { outline:3px solid #0b8a69; outline-offset:3px; } .ds-btn-secondary:active { transform:translateY(0) scale(.99); }"
+    },
+    {
+      "name": "Workspace Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "A compact labeled field with a green focus ring.",
+      "html": "<label class=\"ds-field\"><span>Response text</span><textarea rows=\"4\">Thank you, Mina. We appreciate you taking the time to share this.</textarea></label>",
+      "css": ".ds-field { display:grid; gap:6px; color:#28425f; font-family:Manrope,sans-serif; } .ds-field span { font-size:13px; font-weight:800; } .ds-field textarea { min-height:104px; padding:11px 14px; border:1px solid #cbd5df; border-radius:6px; background:#fff; color:#172a42; font:400 15px/1.45 Manrope,sans-serif; resize:vertical; } .ds-field textarea:hover { border-color:#aabac8; } .ds-field textarea:focus-visible { border-color:#0e7564; box-shadow:0 0 0 3px rgb(25 128 100 / 12%); outline:0; }"
+    },
+    {
+      "name": "Workspace Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "A bounded form, report, or settings group.",
+      "html": "<section class=\"ds-panel\"><h2>Reporting period</h2><p>Both dates are included in the report.</p></section>",
+      "css": ".ds-panel { padding:24px 27px; border:1px solid #e6e9e9; border-radius:15px; background:#fff; color:#172a42; box-shadow:0 11px 29px rgb(25 34 36 / 7%); font-family:Manrope,sans-serif; } .ds-panel h2 { margin:0 0 4px; color:#11233a; font-size:22px; font-weight:800; letter-spacing:-.025em; } .ds-panel p { margin:0; color:#536b88; font-size:14px; line-height:1.5; }"
+    },
+    {
+      "name": "Icon Well",
+      "kind": "custom",
+      "refersTo": "icon-well",
+      "description": "A pale mint support shape for a labeled subject or section.",
+      "html": "<span class=\"ds-icon-well\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/></svg></span>",
+      "css": ".ds-icon-well { display:inline-grid; place-items:center; width:60px; height:60px; border-radius:15px; background:#e1f8ef; color:#0b6860; }"
+    },
+    {
+      "name": "State Pill",
+      "kind": "chip",
+      "refersTo": "state-pill",
+      "description": "A written lifecycle, eligibility, campaign, or review state.",
+      "html": "<span class=\"ds-state-pill\">Draft saved</span>",
+      "css": ".ds-state-pill { display:inline-flex; align-items:center; width:fit-content; padding:8px 12px; border:0; border-radius:999px; background:#e5f9f1; color:#155e52; font:700 12px Manrope,sans-serif; }"
+    },
+    {
+      "name": "Result Metric",
+      "kind": "card",
+      "description": "A compact operational total with an icon well and tabular value.",
+      "html": "<div class=\"ds-metric\"><span class=\"ds-metric-icon\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" width=\"21\" height=\"21\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 3v18h18\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/></svg></span><span>Bookings recorded</span><strong>12</strong></div>",
+      "css": ".ds-metric { display:grid; grid-template-columns:62px 1fr; grid-template-rows:1fr auto; gap:2px 10px; min-height:117px; padding:15px 14px; border:1px solid #e5e9eb; border-radius:13px; background:#fff; box-shadow:0 9px 23px rgb(25 34 36 / 6%); font-family:Manrope,sans-serif; } .ds-metric-icon { grid-row:1 / 3; display:grid; place-items:center; width:55px; height:55px; align-self:center; border-radius:15px; background:#e1f8ef; color:#0b6860; } .ds-metric > span:not(.ds-metric-icon) { align-self:end; color:#365473; font-size:12px; line-height:1.3; } .ds-metric strong { align-self:start; color:#0e2139; font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.2; }"
+    },
+    {
+      "name": "Public Auth Card",
+      "kind": "card",
+      "refersTo": "auth-card",
+      "description": "The scoped registration and sign-in card from the public auth reference.",
+      "html": "<section class=\"ds-auth-card\"><h2>Create your workspace</h2><p>Start with your business details.</p><label><span>Email</span><input type=\"email\" placeholder=\"owner@example.com\" /></label><button>Create account</button></section>",
+      "css": ".ds-auth-card { width:min(100%,542px); padding:42px 41px 37px; border:1px solid #e0e1e2; border-radius:17px; background:rgb(255 255 255 / 95%); color:#142033; box-shadow:0 24px 58px rgb(39 43 45 / 11%); font-family:Manrope,sans-serif; } .ds-auth-card h2 { margin:0; font-size:28px; font-weight:800; letter-spacing:-.035em; } .ds-auth-card > p { margin:6px 0 30px; color:#536174; font-size:18px; font-weight:500; } .ds-auth-card label { display:grid; gap:7px; } .ds-auth-card label span { font-size:17px; font-weight:700; } .ds-auth-card input { height:54px; padding:0 18px; border:1px solid #d7dfe8; border-radius:6px; background:#f0f7ff; color:#142033; font:500 16px Manrope,sans-serif; } .ds-auth-card input:hover { border-color:#b9c9d6; } .ds-auth-card input:focus-visible { border-color:#138267; box-shadow:0 0 0 3px rgb(24 146 108 / 15%); outline:0; } .ds-auth-card button { width:100%; min-height:62px; margin-top:25px; border:0; border-radius:7px; background:#145a50; color:#fff; font:800 20px Manrope,sans-serif; cursor:pointer; } .ds-auth-card button:hover { background:#0c4a42; } .ds-auth-card button:focus-visible { outline:3px solid #0b8a69; outline-offset:3px; } .ds-auth-card button:active { transform:translateY(1px); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calm Front Desk",
+    "overview": "The authenticated Growth OS workspace follows the supplied product references. It uses a warm white canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, white rounded panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.\n\nThe workspace should feel composed rather than sparse. Each page starts with one large title and a short description, then moves directly into the primary task. Tables, split work areas, metric cards, and settings groups follow the fixed reference compositions. Soft shadows separate work areas without making every row float.",
+    "keyCharacteristics": [
+      "Warm white canvas with restrained mint curves, dots, and leaf detail at the edges.",
+      "Navy headings and copy with deep-green primary actions.",
+      "White panels with 15px corners and low-contrast neutral shadows.",
+      "Pale icon wells, status pills, and line icons that support scanning.",
+      "A white navigation capsule that keeps all six destinations visible."
+    ],
+    "rules": [
+      {
+        "name": "The Auth Boundary Rule",
+        "body": "The auth page keeps its larger marketing headline, 542px form card, and page-specific decorative composition. Do not copy that exact layout into signed-in work screens.",
+        "section": "overview"
+      },
+      {
+        "name": "The Green Action Rule",
+        "body": "Use deep green for the next useful action, active location, or positive stored value. Do not spread it across neutral reading content.",
+        "section": "colors"
+      },
+      {
+        "name": "The Semantic Status Rule",
+        "body": "Keep amber, red, blue, violet, and green status colors attached to text labels. Color never replaces the state name.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Page Title Rule",
+        "body": "Each work screen gets one large title. Use panel titles, labels, and metadata for every level beneath it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Dense Copy Rule",
+        "body": "Keep descriptions short and factual. The visual system creates room for work, not promotional copy inside the app.",
+        "section": "typography"
+      },
+      {
+        "name": "The Reference Composition Rule",
+        "body": "Keep each page's implemented grid and content order. The supplied screenshots are the composition authority for Customers, Campaigns, Reviews, Results, and Settings.",
+        "section": "layout"
+      },
+      {
+        "name": "The Phone Task Order Rule",
+        "body": "When a split collapses, put the current record or result before secondary creation and import tools.",
+        "section": "layout"
+      },
+      {
+        "name": "The Soft Separation Rule",
+        "body": "Use low-opacity shadows on navigation, bounded panels, metrics, and dialogs. Table rows and text groups rely on borders and spacing.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Quiet Backdrop Rule",
+        "body": "Organic shapes and the leaf plate remain peripheral. Do not place detailed imagery under controls or records.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Rounded Hierarchy Rule",
+        "body": "Match radius to component scale. Do not apply one large radius to every object.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Pill Meaning Rule",
+        "body": "Use full pills for lifecycle, eligibility, campaign state, review state, and small identity badges. Do not turn ordinary buttons or panels into capsules.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Visible State Rule",
+        "body": "Selected, active, pending, success, warning, and destructive states need text plus a visible fill, border, or control change.",
+        "section": "components"
+      },
+      {
+        "name": "The Reviewed Action Rule",
+        "body": "Primary actions identify the next user-reviewed step. Secondary and quiet actions hold exports, alternate paths, reopen actions, and manual status marks.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep the warm white, mint, navy, and green palette consistent across every signed-in page.",
+      "Do preserve the reference-led page compositions and the complete six-destination navigation.",
+      "Do use white rounded panels and soft shadows for bounded work areas, not every record row.",
+      "Do pair status color with a written state and keep product claims tied to stored data.",
+      "Do preserve the 47px workspace control height, visible focus treatment, and reduced-motion behavior.",
+      "Do keep the public auth composition and its Demo labels scoped to the auth flow."
+    ],
+    "donts": [
+      "Don't restore the old dark square register treatment inside the authenticated workspace.",
+      "Don't place organic imagery, dots, or mint curves under dense text, fields, charts, or table values.",
+      "Don't hide phone destinations behind a menu when the two-row grid fits.",
+      "Don't turn every row into a floating card or every control into a pill.",
+      "Don't use red, amber, blue, or violet without a named state or subject role.",
+      "Don't present the auth page's illustrative metrics as verified outcomes."
+    ]
+  }
+}
