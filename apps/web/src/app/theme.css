@@ -169,19 +169,9 @@ body:has(.app-shell) .loading-wave {
 html[data-theme='dark'] .loading-wave {
   color: #b5f0db;
 }
-@media (max-width: 700px) {
+@media (max-width: 700px), (hover: none) and (pointer: coarse) {
   .loading-wave {
-    top: 12px;
-    right: 12px;
-    width: 52px;
-    height: 52px;
-  }
-  .loading-wave-disc {
-    width: 44px;
-    height: 44px;
-  }
-  body:has(.app-shell) .loading-wave {
-    top: 196px;
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
