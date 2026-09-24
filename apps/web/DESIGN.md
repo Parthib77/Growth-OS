@@ -1,16 +1,16 @@
 ---
 name: Growth OS
-description: An off-white appointment-business workspace with mint support, navy hierarchy, and deep-green actions.
+description: A muted sage appointment-business workspace with warm paper panels, navy hierarchy, and deep-green actions.
 colors:
-  mineral: '#f7f7f3'
-  paper: '#fdfcf8'
+  mineral: '#e4ebe5'
+  paper: '#f1f0e8'
   ink: '#122238'
   ink-2: '#125a51'
   ochre: '#a35b13'
   clay: '#a22525'
-  line: '#dce0d8'
+  line: '#c9d2c9'
   text: '#172a42'
-  canvas: '#f7f7f3'
+  canvas: '#e4ebe5'
   mint-backdrop: '#e9f7f1'
   mint-active: '#eaf7f2'
   mint-well: '#e1f8ef'
@@ -18,9 +18,9 @@ colors:
   focus: '#0b8a69'
   auth-navy: '#142033'
   auth-slate: '#536174'
-  auth-canvas: '#f7f7f3'
+  auth-canvas: '#e4ebe5'
   auth-action: '#145a50'
-  auth-field-fill: '#eef3ee'
+  auth-field-fill: '#e5ebe5'
 typography:
   display:
     fontFamily: 'Manrope, sans-serif'
@@ -148,27 +148,27 @@ components:
 
 **Creative North Star: "The Calm Front Desk"**
 
-The authenticated Growth OS workspace follows the supplied product references. It uses an off-white canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, pale off-white panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.
+The authenticated Growth OS workspace follows the supplied product references. It uses a muted sage canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, warm paper panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.
 
 The workspace should feel composed rather than sparse. Each page starts with one large title and a short description, then moves directly into the primary task. Tables, split work areas, metric cards, and settings groups follow the fixed reference compositions. Soft shadows separate work areas without making every row float.
 
 **Key Characteristics:**
 
-- Soft off-white canvas with restrained mint curves, dots, and leaf detail at the edges.
+- Muted sage canvas with restrained mint curves, dots, and leaf detail at the edges.
 - Navy headings and copy with deep-green primary actions.
-- Pale off-white panels with 15px corners and low-contrast neutral shadows.
+- Warm paper panels with 15px corners and low-contrast neutral shadows.
 - Pale icon wells, status pills, and line icons that support scanning.
 - A pale paper navigation capsule that keeps all six destinations visible.
 
 ### Public auth continuity
 
-The public registration, sign-in, and password-reset views retain the user-supplied September 2026 reference composition. Their off-white canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card remain accurate. The `1.2k+` and `94%` figures are illustrative and carry visible Demo badges. Replace them with supported results before public marketing use.
+The public registration, sign-in, and password-reset views retain the user-supplied September 2026 reference composition. Their muted sage canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card remain accurate. The `1.2k+` and `94%` figures are illustrative and carry visible Demo badges. Replace them with supported results before public marketing use.
 
 **The Auth Boundary Rule.** The auth page keeps its larger marketing headline, 542px form card, and page-specific decorative composition. Do not copy that exact layout into signed-in work screens.
 
 ## Colors
 
-The workspace palette uses soft off-white and pale mint for atmosphere, navy for hierarchy, and deep green for action. Amber and red remain semantic.
+The workspace palette uses muted sage and pale mint for atmosphere, navy for hierarchy, and deep green for action. Amber and red remain semantic.
 
 ### Primary
 
@@ -201,7 +201,7 @@ The workspace palette uses soft off-white and pale mint for atmosphere, navy for
 
 ### Public auth palette
 
-The auth page keeps soft off-white (`auth-canvas`), navy (`auth-navy`), and slate (`auth-slate`). Its headline uses a scoped green text gradient, the primary action uses `auth-action`, and email and password fields use `auth-field-fill`.
+The auth page keeps muted sage (`auth-canvas`), navy (`auth-navy`), and slate (`auth-slate`). Its headline uses a scoped green text gradient, the primary action uses `auth-action`, and email and password fields use `auth-field-fill`.
 
 ## Typography
 
@@ -272,7 +272,7 @@ The public auth form card keeps its 17px radius, 6px fields, 7px action, circula
 
 - **Shape:** 6px corners, a 47px minimum height, and `10px 19px` padding.
 - **Primary:** A short deep-green gradient, white text, a dark green border, and a small resting shadow.
-- **Secondary / Quiet:** Pale off-white fill with a muted mint border and deep-green text.
+- **Secondary / Quiet:** Soft sage fill with a muted mint border and deep-green text.
 - **Danger:** Pale red fill, red border, and red text.
 - **Hover / Active:** Hover lifts by 2px and strengthens the shadow. Active returns to the baseline and scales to 0.99. Reduced-motion mode removes the lift.
 - **Focus / Disabled:** Keyboard focus uses a 3px green outline with a 3px offset. Disabled controls reduce opacity, remove the shadow, and use a not-allowed cursor.
@@ -285,15 +285,15 @@ The public auth form card keeps its 17px radius, 6px fields, 7px action, circula
 
 ### Cards / Containers
 
-- **Navigation:** Off-white translucent capsule, 15px corners, subtle border, and a low neutral shadow.
-- **Panel:** Off-white fill, 15px corners, one-pixel cool border, and a low neutral shadow.
-- **Metric:** Off-white fill, 13px corners, icon well, label, and bold tabular value.
+- **Navigation:** Warm paper capsule, 15px corners, subtle border, and a low neutral shadow.
+- **Panel:** Warm paper fill, 15px corners, one-pixel cool border, and a low neutral shadow.
+- **Metric:** Warm paper fill, 13px corners, icon well, label, and bold tabular value.
 - **Table:** A rounded outer panel with a pale header band. Data rows stay flat and use dividers or a very light hover fill.
 - **Organic Backdrop:** One mint shape, one outlined curve, a small dot field, and the leaf plate at the page edge.
 
 ### Inputs / Fields
 
-- **Style:** Pale off-white fill, 6px corners, one-pixel cool border, 47px minimum height, and `11px 14px` padding.
+- **Style:** Soft sage fill, 6px corners, one-pixel cool border, 47px minimum height, and `11px 14px` padding.
 - **Focus:** Border changes to green and a translucent 3px green ring appears outside it.
 - **Text areas:** Keep the same field treatment, a 104px minimum height, and vertical resizing.
 - **Placeholder:** Muted slate remains legible but secondary to entered text.
