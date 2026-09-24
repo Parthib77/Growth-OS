@@ -1,0 +1,495 @@
+/* The theme switch reveals the new page from the control at the lower right. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-reveal 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-origin-x) var(--theme-origin-y));
+  }
+  to {
+    clip-path: circle(var(--theme-radius) at var(--theme-origin-x) var(--theme-origin-y));
+  }
+}
+
+.theme-toggle {
+  position: fixed;
+  z-index: 4;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 1px solid #b8d6d3;
+  border-radius: 999px;
+  background: #fff;
+  color: #0e504c;
+  box-shadow: 0 8px 24px rgb(20 37 42 / 17%);
+  font:
+    800 13px/1 Manrope,
+    sans-serif;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+.theme-toggle:focus-visible {
+  outline: 3px solid #0b8a69;
+  outline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgb(20 37 42 / 23%);
+  }
+}
+@media (max-width: 560px) {
+  .theme-toggle {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: 48px;
+    height: 48px;
+    padding: 0;
+  }
+  .theme-toggle span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
+  .theme-toggle {
+    transition:
+      background 160ms ease,
+      color 160ms ease;
+  }
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --mineral: #0c151b;
+  --paper: #17252e;
+  --ink: #e9f2f2;
+  --ink-2: #8ce1c8;
+  --ochre: #f0c17c;
+  --clay: #f69b92;
+  --line: #344751;
+  --text: #e0ebed;
+  background: #0c151b;
+}
+html[data-theme='dark'] .theme-toggle {
+  border-color: #52766f;
+  background: #18342f;
+  color: #e6fff3;
+}
+html[data-theme='dark'] .theme-toggle:focus-visible {
+  outline-color: #9ce7c8;
+}
+html[data-theme='dark'] ::selection {
+  background: #2b806c;
+  color: #fff;
+}
+
+/* Public registration and sign-in */
+html[data-theme='dark'] .auth-shell {
+  --auth-navy: #edf5f7;
+  --auth-green: #91e2c9;
+  --auth-slate: #b4c6cf;
+  background: radial-gradient(ellipse 850px 630px at 87% 22%, #17362f 0, transparent 68%), #0c151b;
+  color: var(--auth-navy);
+}
+html[data-theme='dark'] .auth-shell::before {
+  background: rgb(24 47 48 / 38%);
+}
+html[data-theme='dark'] .auth-shell::after {
+  border-color: #31454b;
+  background: #14242a;
+}
+html[data-theme='dark'] .auth-background-orbit {
+  border-color: #33474c;
+}
+html[data-theme='dark'] .auth-background-glow {
+  background: #172d2a;
+}
+html[data-theme='dark'] .auth-background-dots {
+  opacity: 0.5;
+}
+html[data-theme='dark'] .auth-background-leaves {
+  opacity: 0.13;
+}
+html[data-theme='dark'] .auth-kicker,
+html[data-theme='dark'] .auth-icon-circle,
+html[data-theme='dark'] .auth-demo-badge {
+  background: #1b3b35;
+  color: #a4ead2;
+}
+html[data-theme='dark'] .auth-benefit:not(:last-child),
+html[data-theme='dark'] .auth-metric:not(:last-child),
+html[data-theme='dark'] .auth-metrics,
+html[data-theme='dark'] .auth-card-footer {
+  border-color: #344750;
+}
+html[data-theme='dark'] .auth-card {
+  border-color: #38505a;
+  background: #192831;
+  box-shadow: 0 24px 58px rgb(0 0 0 / 28%);
+}
+html[data-theme='dark'] .auth-context h1,
+html[data-theme='dark'] .auth-card h2,
+html[data-theme='dark'] .auth-field-label {
+  color: #edf5f7;
+}
+html[data-theme='dark'] .auth-headline-emphasis {
+  background: none;
+  color: #9cead1;
+}
+html[data-theme='dark'] .auth-input-wrap input {
+  border-color: #4b626c;
+  background: #101e27;
+  color: #eaf4f5;
+}
+html[data-theme='dark'] .auth-input-wrap input[type='email'],
+html[data-theme='dark'] .auth-input-wrap input[type='password'] {
+  background: #172d37;
+}
+html[data-theme='dark'] .auth-input-wrap input::placeholder,
+html[data-theme='dark'] .auth-input-icon,
+html[data-theme='dark'] .auth-password-toggle {
+  color: #a9bdc7;
+}
+html[data-theme='dark'] .auth-password-toggle:hover,
+html[data-theme='dark'] .auth-password-toggle:focus-visible {
+  background: #29434c;
+}
+html[data-theme='dark'] .auth-submit {
+  background: #197562;
+}
+html[data-theme='dark'] .auth-submit:hover {
+  background: #228a74;
+}
+html[data-theme='dark'] .auth-inline-link,
+html[data-theme='dark'] .auth-forgot-link {
+  color: #9be8cf;
+}
+html[data-theme='dark'] .auth-shell .status,
+html[data-theme='dark'] .auth-shell .status.success {
+  border-color: #3c7467;
+  background: #183a34;
+  color: #b9f1dc;
+}
+html[data-theme='dark'] .auth-shell .status.error {
+  border-color: #9e6267;
+  background: #3d282d;
+  color: #ffc0bb;
+}
+html[data-theme='dark'] .auth-shell .status.pending {
+  border-color: #8b6941;
+  background: #382e24;
+  color: #f4d6a4;
+}
+
+/* Signed-in workspace */
+html[data-theme='dark'] .app-shell {
+  --mineral: #0c151b;
+  --paper: #17252e;
+  --ink: #e9f2f2;
+  --ink-2: #8ce1c8;
+  --ochre: #f0c17c;
+  --clay: #f69b92;
+  --line: #344751;
+  --text: #e0ebed;
+  background-color: #0c151b;
+  background-image: radial-gradient(ellipse 500px 430px at 100% 0, #16332e 0, transparent 78%);
+  color: var(--text);
+}
+html[data-theme='dark'] .app-shell::before {
+  background: #18362f;
+}
+html[data-theme='dark'] .workspace-backdrop-curve {
+  border-color: #39534e;
+}
+html[data-theme='dark'] .workspace-backdrop-dots {
+  opacity: 0.45;
+}
+html[data-theme='dark'] .app-shell .app-nav-shell,
+html[data-theme='dark'] .workspace-today-badge,
+html[data-theme='dark'] .app-shell .panel,
+html[data-theme='dark'] .app-shell .settings-section,
+html[data-theme='dark'] .app-shell .results-ledger,
+html[data-theme='dark'] .app-shell .recorded-value,
+html[data-theme='dark'] .app-shell .review-record,
+html[data-theme='dark'] .result-metric-card,
+html[data-theme='dark'] .app-shell .summary-row div,
+html[data-theme='dark'] .app-shell .register,
+html[data-theme='dark'] .app-shell .dialog {
+  border-color: #344751;
+  background: #17252e;
+  color: #e0ebed;
+  box-shadow: 0 11px 29px rgb(0 0 0 / 17%);
+}
+html[data-theme='dark'] .app-shell .app-nav-shell,
+html[data-theme='dark'] .app-shell .app-nav-link,
+html[data-theme='dark'] .app-shell .app-nav-signout {
+  color: #e0ebed;
+}
+html[data-theme='dark'] .app-shell .app-identity,
+html[data-theme='dark'] .app-shell .app-nav-signout::before,
+html[data-theme='dark'] .app-shell .review-original,
+html[data-theme='dark'] .app-shell .review-original blockquote,
+html[data-theme='dark'] .app-shell .danger-section .workspace-panel-heading {
+  border-color: #344751;
+}
+html[data-theme='dark'] .app-shell .app-identity span,
+html[data-theme='dark'] .app-shell .screen-intro,
+html[data-theme='dark'] .workspace-today-badge small,
+html[data-theme='dark'] .workspace-panel-heading p,
+html[data-theme='dark'] .app-shell .muted,
+html[data-theme='dark'] .app-shell .intro,
+html[data-theme='dark'] .app-shell .settings-note,
+html[data-theme='dark'] .app-shell .customer-row small,
+html[data-theme='dark'] .app-shell .campaign-item small,
+html[data-theme='dark'] .app-shell .recorded-value p,
+html[data-theme='dark'] .app-shell .settings-secondary p,
+html[data-theme='dark'] .campaign-message-preview small,
+html[data-theme='dark'] .customer-count {
+  color: #b1c5ce;
+}
+html[data-theme='dark'] .app-shell .app-identity em {
+  background: #24463c;
+  color: #c3f4dd;
+}
+html[data-theme='dark'] .app-shell .summary-row span,
+html[data-theme='dark'] .app-shell .record-value,
+html[data-theme='dark'] .app-shell .record-next,
+html[data-theme='dark'] .app-shell .record-reason,
+html[data-theme='dark'] .app-shell .review-meta,
+html[data-theme='dark'] .app-shell .field small {
+  color: #b1c5ce;
+}
+html[data-theme='dark'] .app-shell .topbar h1,
+html[data-theme='dark'] .workspace-panel-heading h2,
+html[data-theme='dark'] .app-shell .toolbar h2,
+html[data-theme='dark'] .app-shell .customer-list h2,
+html[data-theme='dark'] .app-shell .customer-row strong,
+html[data-theme='dark'] .app-shell .campaign-item strong,
+html[data-theme='dark'] .result-metric-card strong,
+html[data-theme='dark'] .app-shell .record-main strong,
+html[data-theme='dark'] .app-shell .empty h2,
+html[data-theme='dark'] .app-shell .empty h3 {
+  color: #edf5f7;
+}
+html[data-theme='dark'] .app-shell .app-nav-link[aria-current='page'],
+html[data-theme='dark'] .app-shell .app-nav-link:not([aria-current='page']):hover,
+html[data-theme='dark'] .app-shell .app-nav-signout:hover {
+  background: #24443e;
+  color: #b5f0db;
+}
+html[data-theme='dark'] .app-shell .app-nav-signout,
+html[data-theme='dark'] .app-shell .button.secondary,
+html[data-theme='dark'] .app-shell .button.quiet,
+html[data-theme='dark'] .campaign-filter-tabs button,
+html[data-theme='dark'] .app-shell .legal-links a {
+  border-color: #52736e;
+  background: #1d3338;
+  color: #d7f4e8;
+}
+html[data-theme='dark'] .app-shell .field span:not(.sr-only),
+html[data-theme='dark'] .app-shell dt {
+  color: #c8dce8;
+}
+html[data-theme='dark'] .app-shell .field input,
+html[data-theme='dark'] .app-shell .field select,
+html[data-theme='dark'] .app-shell .field textarea,
+html[data-theme='dark'] .app-shell .campaign-search input,
+html[data-theme='dark'] .app-shell .recipient-card input {
+  border-color: #526672;
+  background: #101e27;
+  color: #eaf4f5;
+}
+html[data-theme='dark'] .app-shell input::placeholder,
+html[data-theme='dark'] .app-shell textarea::placeholder {
+  color: #a7bcc6;
+}
+html[data-theme='dark'] .workspace-icon-well,
+html[data-theme='dark'] .customer-avatar,
+html[data-theme='dark'] .review-avatar,
+html[data-theme='dark'] .customer-more {
+  background: #204940;
+  color: #a9ead1;
+}
+html[data-theme='dark'] .workspace-icon-well.blue {
+  background: #203b56;
+  color: #a8d5ff;
+}
+html[data-theme='dark'] .workspace-icon-well.red {
+  background: #533134;
+  color: #ffb5b5;
+}
+html[data-theme='dark'] .app-shell .button.primary {
+  border-color: #2d927c;
+  background: linear-gradient(110deg, #176a5b, #247f6b);
+}
+html[data-theme='dark'] .app-shell .button.primary:hover:not(:disabled) {
+  background: linear-gradient(110deg, #1d806b, #2b927b);
+}
+html[data-theme='dark'] .app-shell .button.secondary:hover:not(:disabled),
+html[data-theme='dark'] .app-shell .button.quiet:hover:not(:disabled),
+html[data-theme='dark'] .app-shell .legal-links a:hover {
+  background: #254740;
+}
+html[data-theme='dark'] .app-shell .button.danger,
+html[data-theme='dark'] .app-shell .danger-section,
+html[data-theme='dark'] .app-shell .deletion-confirmation {
+  border-color: #78474c;
+  background: #39262c;
+  color: #ffb9b4;
+}
+html[data-theme='dark'] .app-shell .danger-section h2 {
+  color: #ffb9b4;
+}
+html[data-theme='dark'] .app-shell .status,
+html[data-theme='dark'] .app-shell .recorded-value .muted,
+html[data-theme='dark'] .campaign-message-preview,
+html[data-theme='dark'] .app-shell .import-disclosure summary {
+  border-color: #3c7467;
+  background: #183a34;
+  color: #b9f1dc;
+}
+html[data-theme='dark'] .app-shell .status.error {
+  border-color: #9e6267;
+  background: #3d282d;
+  color: #ffc0bb;
+}
+html[data-theme='dark'] .app-shell .status.pending,
+html[data-theme='dark'] .app-shell .reason-box {
+  border-color: #8b6941;
+  background: #382e24;
+  color: #f4d6a4;
+}
+html[data-theme='dark'] .app-shell .empty {
+  border-color: #526672;
+  background: #14252b;
+  color: #b1c5ce;
+}
+html[data-theme='dark'] .customer-table-head,
+html[data-theme='dark'] .campaign-table-head {
+  background: #22343e;
+  color: #c1d3dd;
+}
+html[data-theme='dark'] .app-shell .customer-row {
+  border-color: #344751;
+  background: #17252e;
+  color: #c8dce8;
+}
+html[data-theme='dark'] .app-shell .customer-row:hover,
+html[data-theme='dark'] .app-shell .record:hover,
+html[data-theme='dark'] .app-shell .campaign-item.selected,
+html[data-theme='dark'] .app-shell .campaign-item:hover {
+  background: #20393a;
+}
+html[data-theme='dark'] .app-shell .campaign-item {
+  border-color: #344751;
+  background: #1b2c34;
+  color: #b1c5ce;
+}
+html[data-theme='dark'] .campaign-filter-tabs button.active {
+  border-color: #448e78;
+  background: #234d40;
+  color: #c3f4dd;
+}
+html[data-theme='dark'] .campaign-filter-tabs button:hover:not(.active) {
+  background: #29443f;
+}
+html[data-theme='dark'] .lifecycle-pill,
+html[data-theme='dark'] .eligibility-pill,
+html[data-theme='dark'] .campaign-state,
+html[data-theme='dark'] .app-shell .state-label {
+  background: #24463c;
+  color: #c3f4dd;
+}
+html[data-theme='dark'] .lifecycle-pill.enquiry,
+html[data-theme='dark'] .campaign-state.completed {
+  background: #383153;
+  color: #ded0ff;
+}
+html[data-theme='dark'] .lifecycle-pill.contacted,
+html[data-theme='dark'] .campaign-state.ready {
+  background: #223d59;
+  color: #bedbff;
+}
+html[data-theme='dark'] .lifecycle-pill.lost,
+html[data-theme='dark'] .campaign-state.draft {
+  background: #34434b;
+  color: #d5e2e7;
+}
+html[data-theme='dark'] .eligibility-pill.suppressed,
+html[data-theme='dark'] .app-shell .state-label.unanswered {
+  background: #4a3926;
+  color: #f9d49a;
+}
+html[data-theme='dark'] .app-shell .review-original blockquote,
+html[data-theme='dark'] .app-shell .legal-links a {
+  color: #d6e8ed;
+}
+html[data-theme='dark'] .result-metric-card > span,
+html[data-theme='dark'] .results-chart-y-axis,
+html[data-theme='dark'] .results-chart-label {
+  color: #b1c5ce;
+}
+html[data-theme='dark'] .results-chart {
+  border-color: #526672;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 39px, #344751 40px);
+}
+html[data-theme='dark'] .results-chart-bar-area strong,
+html[data-theme='dark'] .app-shell .recorded-value > strong,
+html[data-theme='dark'] .app-shell .summary-row strong {
+  color: #9ce8cf;
+}
+html[data-theme='dark'] .results-chart-bar {
+  background: linear-gradient(#2e9b7b, #77d5b2);
+}
+html[data-theme='dark'] .app-shell .recorded-value {
+  border-color: #344751;
+}
+html[data-theme='dark'] .app-shell .dialog-backdrop {
+  background: rgb(0 0 0 / 66%);
+}
+
+/* Legal pages and browser-owned form surfaces */
+html[data-theme='dark'] .legal-shell {
+  background: #0c151b;
+}
+html[data-theme='dark'] .legal-document {
+  border-color: #344751;
+  background: #17252e;
+  color: #e0ebed;
+}
+html[data-theme='dark'] .legal-warning,
+html[data-theme='dark'] .legal-placeholder {
+  border-color: #8b6941;
+  background: #382e24;
+  color: #f4d6a4;
+}
+html[data-theme='dark'] input,
+html[data-theme='dark'] select,
+html[data-theme='dark'] textarea {
+  caret-color: #a3efd0;
+}
+html[data-theme='dark'] .app-shell button:focus-visible,
+html[data-theme='dark'] .app-shell a:focus-visible,
+html[data-theme='dark'] .app-shell summary:focus-visible {
+  outline-color: #9ce7c8;
+}

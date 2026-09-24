@@ -9,6 +9,8 @@ import '@fontsource/manrope/700.css';
 import '@fontsource/manrope/800.css';
 import './globals.css';
 import './workspace.css';
+import './theme.css';
+import { ThemeToggle } from './theme-toggle';
 
 export const metadata: Metadata = {
   title: 'Growth OS',
@@ -17,8 +19,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{const saved=localStorage.getItem('growthos-theme');document.documentElement.dataset.theme=saved==='dark'||saved==='light'?saved:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch{document.documentElement.dataset.theme='light'}`,
+          }}
+        />
+      </head>
+      <body>
+        {children}
+        <ThemeToggle />
+      </body>
     </html>
   );
 }

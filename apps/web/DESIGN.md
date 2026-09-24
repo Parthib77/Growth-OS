@@ -317,11 +317,17 @@ Desktop customer and campaign lists use explicit column headers. Customer record
 
 **The Reviewed Action Rule.** Primary actions identify the next user-reviewed step. Secondary and quiet actions hold exports, alternate paths, reopen actions, and manual status marks.
 
+## Dark mode
+
+The alternate theme keeps the same mint, navy, and green identity at lower luminance. Its canvas is `#0c151b`, raised panels are `#17252e`, primary text is `#e0ebed`, muted text is `#b1c5ce`, and the primary action remains green. Warning, danger, lifecycle, and campaign states retain distinct labeled treatments. Public auth, all six workspace screens, dialogs, and legal drafts use the same theme choice.
+
+A fixed control on the right switches themes. The choice is saved locally and applied before the page renders; without a saved choice, the operating system preference is used. Where supported, a circular view transition reveals the new theme from the control. Reduced-motion users get an immediate state change. The control stays keyboard accessible and shows its current pressed state.
+
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** keep the warm white, mint, navy, and green palette consistent across every signed-in page.
+- **Do** keep the light palette and its darker mint, navy, and green counterpart consistent across every signed-in page.
 - **Do** preserve the reference-led page compositions and the complete six-destination navigation.
 - **Do** use white rounded panels and soft shadows for bounded work areas, not every record row.
 - **Do** pair status color with a written state and keep product claims tied to stored data.
