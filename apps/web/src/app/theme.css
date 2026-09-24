@@ -246,6 +246,12 @@ html[data-theme='light'] .app-shell {
     url('/assets/plates/leaves.png'),
     radial-gradient(ellipse 430px 410px at 0 63%, #d9e8db 0, transparent 73%);
 }
+@media (max-width: 700px) {
+  html[data-theme='light'] .app-shell {
+    background-image: radial-gradient(ellipse 430px 410px at 0 63%, #d9e8db 0, transparent 73%);
+    background-attachment: scroll;
+  }
+}
 html[data-theme='light'] .app-shell::before {
   background: #d8e9dc;
 }
