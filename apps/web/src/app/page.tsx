@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { BarChart3, PlusCircle, UsersRound } from 'lucide-react';
 import { z } from 'zod';
 import {
@@ -128,6 +129,8 @@ export default function Home() {
   const [showCustomer, setShowCustomer] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const bookingSubmission = useRef<{ fingerprint: string; key: string } | null>(null);
+  const screenTransition = useRef<ViewTransition | null>(null);
+  const screenEntryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   async function refreshCsrf() {
     const value = await request('/api/v1/auth/csrf', CsrfResponseSchema);
@@ -176,12 +179,48 @@ export default function Home() {
   }, [screen]);
   useEffect(() => {
     if (screen === 'auth' || screen === 'onboarding') return;
-    requestAnimationFrame(() => document.getElementById('screen-title')?.focus());
+    requestAnimationFrame(() =>
+      document.getElementById('screen-title')?.focus({ preventScroll: true }),
+    );
   }, [screen]);
 
-  function navigate(destination: AppScreen) {
-    setStatus({ kind: 'idle' });
-    setScreen(destination);
+  function navigate(destination: AppScreen, allowMotion = true) {
+    if (screen === destination) return;
+    const switchScreen = () => {
+      setStatus({ kind: 'idle' });
+      setScreen(destination);
+      window.scrollTo(0, 0);
+    };
+    const root = document.documentElement;
+    screenTransition.current?.skipTransition();
+    if (screenEntryTimer.current) clearTimeout(screenEntryTimer.current);
+    if (!allowMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      screenTransition.current = null;
+      delete root.dataset.workspaceTransition;
+      switchScreen();
+      return;
+    }
+
+    if (window.matchMedia('(pointer: coarse)').matches || !document.startViewTransition) {
+      screenTransition.current = null;
+      root.dataset.workspaceTransition = 'entering';
+      switchScreen();
+      screenEntryTimer.current = setTimeout(() => {
+        delete root.dataset.workspaceTransition;
+        screenEntryTimer.current = null;
+      }, 190);
+      return;
+    }
+
+    root.dataset.workspaceTransition = 'crossfade';
+    const transition = document.startViewTransition(() => flushSync(switchScreen));
+    screenTransition.current = transition;
+    const finish = () => {
+      if (screenTransition.current !== transition) return;
+      screenTransition.current = null;
+      delete root.dataset.workspaceTransition;
+    };
+    void transition.finished.then(finish, finish);
   }
 
   async function submitAuth(event: FormEvent<HTMLFormElement>) {

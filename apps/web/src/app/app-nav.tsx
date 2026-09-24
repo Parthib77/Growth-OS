@@ -22,7 +22,7 @@ export function AppNav({
   active: AppScreen;
   businessName: string;
   isDemo: boolean;
-  onNavigate: (screen: AppScreen) => void;
+  onNavigate: (screen: AppScreen, allowMotion?: boolean) => void;
   onSignOut: () => void;
   signOutPending: boolean;
 }) {
@@ -42,7 +42,7 @@ export function AppNav({
             key={destination.screen}
             className="app-nav-link"
             aria-current={active === destination.screen ? 'page' : undefined}
-            onClick={() => onNavigate(destination.screen)}
+            onClick={(event) => onNavigate(destination.screen, event.detail !== 0)}
           >
             <destination.icon aria-hidden="true" size={21} strokeWidth={2} />
             {destination.label}

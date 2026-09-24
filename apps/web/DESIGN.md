@@ -304,6 +304,7 @@ The public auth form card keeps its 17px radius, 6px fields, 7px action, circula
 - **Active:** Pale mint fill with deep-green text and weight 800.
 - **Hover:** Inactive destinations receive a quieter mint fill and a 1px lift.
 - **Compact:** At 1000px, the six destinations move to a full second row. At 700px, they form a three-column by two-row grid.
+- **Switching screens:** Pointer navigation keeps the capsule still while the page content crossfades over 190ms. Keyboard navigation, reduced-motion mode, and browsers without View Transitions switch immediately. The new screen starts at the top and its title receives focus without scrolling the navigation out of place.
 
 ### Icon wells
 
