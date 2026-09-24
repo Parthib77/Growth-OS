@@ -1,16 +1,16 @@
 ---
 name: Growth OS
-description: A bright appointment-business workspace with warm white canvas, mint support, navy hierarchy, and deep-green actions.
+description: A warm ivory appointment-business workspace with mint support, navy hierarchy, and deep-green actions.
 colors:
-  mineral: '#f8fbf9'
-  paper: '#ffffff'
+  mineral: '#f2ede4'
+  paper: '#fbf7ef'
   ink: '#122238'
   ink-2: '#125a51'
   ochre: '#a35b13'
   clay: '#a22525'
-  line: '#dce3e5'
+  line: '#d9d4ca'
   text: '#172a42'
-  canvas: '#fffdfb'
+  canvas: '#f2ede4'
   mint-backdrop: '#e9f7f1'
   mint-active: '#eaf7f2'
   mint-well: '#e1f8ef'
@@ -18,9 +18,9 @@ colors:
   focus: '#0b8a69'
   auth-navy: '#142033'
   auth-slate: '#536174'
-  auth-canvas: '#fffefd'
+  auth-canvas: '#f2ede4'
   auth-action: '#145a50'
-  auth-field-fill: '#f0f7ff'
+  auth-field-fill: '#eef3ee'
 typography:
   display:
     fontFamily: 'Manrope, sans-serif'
@@ -148,27 +148,27 @@ components:
 
 **Creative North Star: "The Calm Front Desk"**
 
-The authenticated Growth OS workspace follows the supplied product references. It uses a warm white canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, white rounded panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.
+The authenticated Growth OS workspace follows the supplied product references. It uses a warm ivory canvas, quiet mint organic shapes, navy hierarchy, deep-green actions, pale paper panels, and small icon-led cues. The result is an Operate interface for scanning customer records, preparing reviewed follow-ups, handling reviews, reading stored results, and managing business settings.
 
 The workspace should feel composed rather than sparse. Each page starts with one large title and a short description, then moves directly into the primary task. Tables, split work areas, metric cards, and settings groups follow the fixed reference compositions. Soft shadows separate work areas without making every row float.
 
 **Key Characteristics:**
 
-- Warm white canvas with restrained mint curves, dots, and leaf detail at the edges.
+- Warm ivory canvas with restrained mint curves, dots, and leaf detail at the edges.
 - Navy headings and copy with deep-green primary actions.
 - White panels with 15px corners and low-contrast neutral shadows.
 - Pale icon wells, status pills, and line icons that support scanning.
-- A white navigation capsule that keeps all six destinations visible.
+- A pale paper navigation capsule that keeps all six destinations visible.
 
 ### Public auth continuity
 
-The public registration, sign-in, and password-reset views retain the user-supplied September 2026 reference. Their warm white canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card remain accurate. The `1.2k+` and `94%` figures are illustrative and carry visible Demo badges. Replace them with supported results before public marketing use.
+The public registration, sign-in, and password-reset views retain the user-supplied September 2026 reference composition. Their warm ivory canvas, Manrope type, navy and green headline, mint underline, circular icon wells, curved background, foliage image, and soft-shadowed form card remain accurate. The `1.2k+` and `94%` figures are illustrative and carry visible Demo badges. Replace them with supported results before public marketing use.
 
 **The Auth Boundary Rule.** The auth page keeps its larger marketing headline, 542px form card, and page-specific decorative composition. Do not copy that exact layout into signed-in work screens.
 
 ## Colors
 
-The workspace palette uses warm white and pale mint for atmosphere, navy for hierarchy, and deep green for action. Amber and red remain semantic.
+The workspace palette uses warm ivory and pale mint for atmosphere, navy for hierarchy, and deep green for action. Amber and red remain semantic.
 
 ### Primary
 
@@ -201,7 +201,7 @@ The workspace palette uses warm white and pale mint for atmosphere, navy for hie
 
 ### Public auth palette
 
-The auth page keeps warm white (`auth-canvas`), navy (`auth-navy`), and slate (`auth-slate`). Its headline uses a scoped green text gradient, the primary action uses `auth-action`, and email and password fields use `auth-field-fill`.
+The auth page keeps warm ivory (`auth-canvas`), navy (`auth-navy`), and slate (`auth-slate`). Its headline uses a scoped green text gradient, the primary action uses `auth-action`, and email and password fields use `auth-field-fill`.
 
 ## Typography
 
@@ -329,7 +329,7 @@ A fixed control on the right switches themes. The choice is saved locally and ap
 
 - **Do** keep the light palette and its darker mint, navy, and green counterpart consistent across every signed-in page.
 - **Do** preserve the reference-led page compositions and the complete six-destination navigation.
-- **Do** use white rounded panels and soft shadows for bounded work areas, not every record row.
+- **Do** use pale paper panels and soft shadows for bounded work areas, not every record row.
 - **Do** pair status color with a written state and keep product claims tied to stored data.
 - **Do** preserve the 47px workspace control height, visible focus treatment, and reduced-motion behavior.
 - **Do** keep the public auth composition and its Demo labels scoped to the auth flow.
