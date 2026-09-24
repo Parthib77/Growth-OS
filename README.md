@@ -2,6 +2,8 @@
 
 Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, consent-aware campaigns, booking capture, reviews, stored Results, exports, settings, and account deletion.
 
+The production site is [Growth OS on Vercel](https://web-eight-wine-91.vercel.app). Deployment and database setup are documented in [docs/vercel-deployment.md](docs/vercel-deployment.md).
+
 ## Start the supported stack
 
 Install Docker Desktop, then run:

@@ -5,6 +5,9 @@ const apiOrigin =
 const nextConfig = {
   output: 'standalone',
   allowedDevOrigins: ['127.0.0.1'],
+  typescript: {
+    tsconfigPath: process.env.NODE_ENV === 'production' ? 'tsconfig.build.json' : 'tsconfig.json',
+  },
   async rewrites() {
     return [
       {

@@ -12,3 +12,7 @@ test-results/
 .impeccable/build/
 *.log
 *.tsbuildinfo
+
+.vercel
+apps/api/.agents/
+apps/api/skills-lock.json

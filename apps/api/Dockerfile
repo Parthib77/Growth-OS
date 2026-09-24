@@ -26,4 +26,4 @@ COPY --from=build --chown=node:node /app/packages/contracts/dist ./packages/cont
 COPY --from=build --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
 USER node
 EXPOSE 4000
-CMD ["node", "apps/api/dist/server.js"]
+CMD ["node", "apps/api/dist/local-server.js"]

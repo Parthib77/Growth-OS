@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "dev": "tsx watch src/local-server.ts",
+    "build": "npm run build --workspace @growthos/contracts && tsc -p tsconfig.build.json",
+    "check:vercel-entrypoint": "node scripts/check-vercel-entrypoint.mjs",
+    "start": "node dist/local-server.js",
     "seed:demo": "tsx src/scripts/seed-demo.ts",
     "migrate:indexes": "tsx src/scripts/migrate-indexes.ts",
     "check:openapi": "tsx src/scripts/check-openapi.ts",
@@ -21,6 +22,12 @@
     "express-rate-limit": "8.7.0",
     "helmet": "8.1.0",
     "mongoose": "9.10.1",
+    "@types/node": "24.5.2",
     "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "1.4.10",
+    "@types/express": "5.0.3",
+    "typescript": "7.0.2"
   }
 }
