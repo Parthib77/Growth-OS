@@ -1,6 +1,29 @@
 import { z } from 'zod';
 import { ErrorResponseSchema } from '@growthos/contracts';
 
+let pendingRequests = 0;
+const requestListeners = new Set<() => void>();
+
+export function subscribeToRequestActivity(listener: () => void): () => void {
+  requestListeners.add(listener);
+  return () => requestListeners.delete(listener);
+}
+
+export function hasPendingRequests(): boolean {
+  return pendingRequests > 0;
+}
+
+async function trackedFetch(path: string, init: RequestInit): Promise<Response> {
+  pendingRequests += 1;
+  requestListeners.forEach((listener) => listener());
+  try {
+    return await fetch(path, init);
+  } finally {
+    pendingRequests -= 1;
+    requestListeners.forEach((listener) => listener());
+  }
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -19,7 +42,7 @@ export async function request<T>(
 ): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(path, {
+    response = await trackedFetch(path, {
       credentials: 'include',
       ...init,
       headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
@@ -45,7 +68,7 @@ export async function request<T>(
 export async function download(path: string, fallbackName: string): Promise<void> {
   let response: Response;
   try {
-    response = await fetch(path, { credentials: 'include' });
+    response = await trackedFetch(path, { credentials: 'include' });
   } catch {
     throw new ApiError(
       'Connection lost. Check your internet connection and try again.',

@@ -11,6 +11,7 @@ import './globals.css';
 import './workspace.css';
 import './theme.css';
 import { ThemeToggle } from './theme-toggle';
+import { LoadingWave } from './loading-wave';
 
 export const metadata: Metadata = {
   title: 'Growth OS',
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         {children}
+        <LoadingWave />
         <ThemeToggle />
       </body>
     </html>

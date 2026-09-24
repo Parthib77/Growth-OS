@@ -323,6 +323,10 @@ The alternate theme keeps the same mint, navy, and green identity at lower lumin
 
 A fixed control on the right switches themes. The choice is saved locally and applied before the page renders; without a saved choice, the operating system preference is used. Where supported, a circular view transition reveals the new theme from the control. Reduced-motion users get an immediate state change. The control stays keyboard accessible and shows its current pressed state.
 
+## Request activity
+
+A small wave indicator appears at the upper right after a request remains pending for 180ms. It uses deep-green ink in light mode and pale mint in dark mode. The bars shimmer while five beads move through the disc; the pattern rests in a readable wave when reduced motion is requested. The indicator clears after the request completes, with a short minimum display time to avoid flashing.
+
 ## Do's and Don'ts
 
 ### Do:
