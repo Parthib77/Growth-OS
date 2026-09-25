@@ -10,6 +10,7 @@ import '@fontsource/manrope/800.css';
 import './globals.css';
 import './workspace.css';
 import './theme.css';
+import './auth-reference.css';
 import { ThemeToggle } from './theme-toggle';
 import { LoadingWave } from './loading-wave';
 

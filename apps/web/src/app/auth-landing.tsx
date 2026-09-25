@@ -171,9 +171,9 @@ export function AuthLanding({
           >
             <defs>
               <linearGradient id="auth-underline-gradient" x1="0" x2="1">
-                <stop offset="0" stopColor="#b7cfc3" />
-                <stop offset="0.55" stopColor="#c9f3d8" />
-                <stop offset="1" stopColor="#a9ffd0" />
+                <stop offset="0" stopColor="#3b8b77" />
+                <stop offset="0.55" stopColor="#6cdca7" />
+                <stop offset="1" stopColor="#02d56b" />
               </linearGradient>
             </defs>
             <path
