@@ -79,14 +79,25 @@ test('sign-in matches the compact desktop split in light and dark modes', async 
   expect(headline).not.toBeNull();
   expect(card).not.toBeNull();
   if (!headline || !card) return;
-  expect(headline.x).toBeGreaterThan(320);
-  expect(headline.x).toBeLessThan(360);
+  expect(headline.x).toBeGreaterThan(295);
+  expect(headline.x).toBeLessThan(335);
   expect(card.x).toBeGreaterThan(1060);
   expect(card.x).toBeLessThan(1120);
   expect(card.width).toBeGreaterThanOrEqual(390);
   expect(card.width).toBeLessThanOrEqual(400);
   expect(headline.x + headline.width).toBeLessThan(card.x);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(1815);
+
+  const lightMaterial = await page.locator('.auth-card').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { color: style.backgroundColor, blur: style.backdropFilter };
+  });
+  expect(lightMaterial.color).toMatch(/^rgba\(.+, 0\.[0-9]+\)$/);
+  expect(lightMaterial.blur).toContain('blur(24px)');
+  const headlineSize = await page
+    .locator('.auth-context h1')
+    .evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
+  expect(headlineSize).toBeGreaterThanOrEqual(64);
 
   const lightCard = await page
     .locator('.auth-card')
@@ -95,6 +106,15 @@ test('sign-in matches the compact desktop split in light and dark modes', async 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.getByRole('heading', { name: 'Sign in to Today.' })).toBeVisible();
   await expect(page.locator('.auth-card')).not.toHaveCSS('background-color', lightCard);
+  const darkMaterial = await page.locator('.auth-card').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      color: style.backgroundColor,
+      border: getComputedStyle(element, '::before').backgroundImage,
+    };
+  });
+  expect(darkMaterial.color).toMatch(/^rgba\(.+, 0\.[0-9]+\)$/);
+  expect(darkMaterial.border).toContain('conic-gradient');
 });
 
 test('sign-in stacks cleanly on a phone in both themes', async ({ page }) => {

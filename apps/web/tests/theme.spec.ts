@@ -17,7 +17,7 @@ test('theme switch changes the whole public site and persists across routes', as
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgb(25, 40, 49)');
+  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgba(19, 39, 44, 0.68)');
   const authAccessibility = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa'])
     .analyze();
