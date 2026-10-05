@@ -156,7 +156,6 @@ export function AuthLanding({
   const isRegister = mode === 'register';
   const isSignIn = mode === 'sign-in';
   const pending = status.kind === 'pending';
-  const [scrolled, setScrolled] = useState(false);
   function focusRegistration() {
     onCreateAccount();
     requestAnimationFrame(() =>
@@ -164,9 +163,6 @@ export function AuthLanding({
     );
   }
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 16);
-    update();
-    window.addEventListener('scroll', update, { passive: true });
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -185,7 +181,6 @@ export function AuthLanding({
         observer.observe(element);
       });
     return () => {
-      window.removeEventListener('scroll', update);
       observer.disconnect();
     };
   }, []);
@@ -201,31 +196,13 @@ export function AuthLanding({
         <path d="M740 480 C1000 280 980 670 1260 320 S1480 30 1640 -60" />
         <path d="M680 760 C1000 830 1100 620 1660 390" />
       </svg>
-      <header className={`growth-nav${scrolled ? ' is-scrolled' : ''}`}>
+      <header className="growth-nav">
         <a href="/" className="growth-logo" aria-label="GrowthOS home">
           <Leaf aria-hidden="true" />
           <span>
             Growth<span>OS</span>
           </span>
         </a>
-        <nav aria-label="Main navigation">
-          <a href="#growth-features">Product</a>
-          <a href="#growth-pipeline">Solutions</a>
-          <a href="/privacy">Privacy</a>
-        </nav>
-        <div className="growth-nav-actions">
-          <button type="button" className="growth-secondary" onClick={onBackToSignIn}>
-            Sign in
-          </button>
-          <button
-            type="button"
-            className="auth-submit"
-            aria-label="Create account — start registration"
-            onClick={focusRegistration}
-          >
-            Create account <ArrowRight size={20} />
-          </button>
-        </div>
       </header>
       <div className="auth-background-orbit" aria-hidden="true" />
       <div className="auth-background-glow" aria-hidden="true" />

@@ -690,7 +690,12 @@
   gap: 28px;
 }
 :root .auth-shell.growth-landing > .auth-metrics .auth-icon-circle {
-  display: flex;
+  display: grid;
+  place-items: center;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
 }
 :root .auth-shell.growth-landing > .auth-metrics .auth-metric {
   align-items: center;
@@ -855,4 +860,67 @@ html[data-theme='dark'] body:has(.growth-landing) .theme-toggle {
 :root .auth-shell.growth-landing > .auth-metrics {
   width: 100%;
   justify-self: stretch;
+}
+
+/* Keep the landing background continuous behind its theme control. */
+body:has(.growth-landing) {
+  background: radial-gradient(ellipse at 85% 65%, #e9dfc9, transparent 65%), #faf7f0;
+  background-attachment: scroll;
+}
+html[data-theme='dark'] body:has(.growth-landing) {
+  background: radial-gradient(ellipse at 85% 65%, #06473f, transparent 65%), #041b23;
+  background-attachment: scroll;
+}
+:root .auth-shell.growth-landing,
+:root[data-theme='dark'] .auth-shell.growth-landing {
+  background: transparent;
+}
+:root .auth-shell.growth-landing > .auth-metrics .auth-icon-circle {
+  display: grid;
+  place-items: center;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+}
+:root .auth-shell.growth-landing .auth-metric > div {
+  min-width: 0;
+}
+:root .auth-shell.growth-landing .auth-metric strong,
+:root .auth-shell.growth-landing .auth-metric p {
+  white-space: normal;
+}
+:root .auth-shell.growth-landing .auth-metric strong {
+  flex-wrap: wrap;
+}
+:root .auth-shell.growth-landing .auth-kicker {
+  color: #b5ffdf;
+  background: linear-gradient(125deg, #063f35, #081d28 60%, #075143);
+  border: 1px solid #020b0d;
+  box-shadow:
+    0 0 18px #20cba32b,
+    inset 0 1px 0 #8fffe02b;
+  text-shadow: 0 0 8px #40e8bd35;
+}
+:root .auth-shell.growth-landing .auth-kicker > span {
+  background: #40e8bd;
+  box-shadow: 0 0 10px #40e8bd66;
+}
+
+:root .auth-shell.growth-landing .auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+:root .auth-shell.growth-landing .auth-field-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+:root .auth-shell.growth-landing .auth-form {
+  gap: 24px;
+}
+:root .auth-shell.growth-landing .growth-password-hint {
+  margin: 0;
 }
