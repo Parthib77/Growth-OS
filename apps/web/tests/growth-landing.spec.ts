@@ -47,8 +47,9 @@ for (const theme of ['light', 'dark']) {
       const headerBefore = await page.locator('.growth-nav').boundingBox();
       await page.evaluate(() => window.scrollTo(0, 500));
       const headerAfter = await page.locator('.growth-nav').boundingBox();
-      expect(headerAfter, `header moves at ${width}px`).toEqual(headerBefore);
-      expect(headerAfter?.y).toBe(0);
+      const scrollOffset = await page.evaluate(() => window.scrollY);
+      expect(headerAfter!.y + scrollOffset).toBeCloseTo(headerBefore!.y, 1);
+      expect(headerAfter!.width).toBe(headerBefore!.width);
       await page.evaluate(() => window.scrollTo(0, 0));
       const safety = await page.evaluate(() => {
         const selectors = [

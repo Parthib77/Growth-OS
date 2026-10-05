@@ -929,39 +929,11 @@ html[data-theme='dark'] body:has(.growth-landing) {
   margin: 0;
 }
 
-/* Reserve the header's space while its logo and divider stay at the viewport edge. */
-.growth-header-slot {
-  grid-column: 1 / -1;
-  width: 100%;
-  height: 88px;
-  flex: 0 0 88px;
-}
+/* The logo and divider scroll together with the landing background. */
 :root .auth-shell.growth-landing .growth-nav {
-  position: fixed;
-  inset: 0 0 auto;
-  height: 88px;
-  min-height: 88px;
-  padding-inline: max(24px, calc((100vw - 1520px) / 2));
-  background: var(--landing-bg);
-  border-bottom: 1px solid var(--landing-border);
+  position: relative;
+  top: auto;
+  background: transparent;
   animation: none;
   transform: none;
-  z-index: 100;
-}
-html:has(.growth-landing) {
-  scroll-padding-top: 112px;
-}
-@media (max-width: 800px) {
-  .growth-header-slot {
-    height: 76px;
-    flex-basis: 76px;
-  }
-  :root .auth-shell.growth-landing .growth-nav {
-    height: 76px;
-    min-height: 76px;
-    padding-inline: 20px;
-  }
-  html:has(.growth-landing) {
-    scroll-padding-top: 100px;
-  }
 }

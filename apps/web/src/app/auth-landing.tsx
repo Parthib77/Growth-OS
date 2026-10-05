@@ -196,16 +196,14 @@ export function AuthLanding({
         <path d="M740 480 C1000 280 980 670 1260 320 S1480 30 1640 -60" />
         <path d="M680 760 C1000 830 1100 620 1660 390" />
       </svg>
-      <div className="growth-header-slot">
-        <header className="growth-nav">
-          <a href="/" className="growth-logo" aria-label="GrowthOS home">
-            <Leaf aria-hidden="true" />
-            <span>
-              Growth<span>OS</span>
-            </span>
-          </a>
-        </header>
-      </div>
+      <header className="growth-nav">
+        <a href="/" className="growth-logo" aria-label="GrowthOS home">
+          <Leaf aria-hidden="true" />
+          <span>
+            Growth<span>OS</span>
+          </span>
+        </a>
+      </header>
       <div className="auth-background-orbit" aria-hidden="true" />
       <div className="auth-background-glow" aria-hidden="true" />
       <div className="auth-background-dots" aria-hidden="true" />
