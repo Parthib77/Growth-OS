@@ -993,3 +993,11 @@ html[data-theme='dark'] body:has(.growth-landing) {
     height: 36px;
   }
 }
+
+:root .auth-shell.growth-landing .growth-logo,
+:root .auth-shell.growth-landing .growth-logo span span,
+.app-identity > span:first-child {
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
