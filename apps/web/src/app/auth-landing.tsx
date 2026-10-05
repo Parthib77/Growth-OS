@@ -167,7 +167,27 @@ export function AuthLanding({
     const update = () => setScrolled(window.scrollY > 16);
     update();
     window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-revealed');
+          if (performance.now() > 2500) entry.target.classList.add('after-intro');
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15 },
+    );
+    document
+      .querySelectorAll('.growth-analytics, .auth-benefits, .auth-metrics')
+      .forEach((element) => {
+        element.classList.add('growth-reveal');
+        observer.observe(element);
+      });
+    return () => {
+      window.removeEventListener('scroll', update);
+      observer.disconnect();
+    };
   }, []);
 
   return (
