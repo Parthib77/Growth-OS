@@ -410,6 +410,8 @@
   pointer-events: none;
 }
 :root .auth-shell.growth-landing .auth-background-leaves {
+  mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 20%, transparent 100%);
   opacity: 0.18;
   pointer-events: none;
   z-index: 0;
