@@ -43,6 +43,13 @@ for (const theme of ['light', 'dark']) {
     await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible();
     for (const [width, height] of sizes) {
       await page.setViewportSize({ width, height });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      const headerBefore = await page.locator('.growth-nav').boundingBox();
+      await page.evaluate(() => window.scrollTo(0, 500));
+      const headerAfter = await page.locator('.growth-nav').boundingBox();
+      expect(headerAfter, `header moves at ${width}px`).toEqual(headerBefore);
+      expect(headerAfter?.y).toBe(0);
+      await page.evaluate(() => window.scrollTo(0, 0));
       const safety = await page.evaluate(() => {
         const selectors = [
           '.growth-nav',
