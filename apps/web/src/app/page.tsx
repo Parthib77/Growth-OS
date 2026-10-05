@@ -455,6 +455,10 @@ export default function Home() {
       <AuthLanding
         mode={authMode}
         status={status}
+        onCreateAccount={() => {
+          setStatus({ kind: 'idle' });
+          setAuthMode('register');
+        }}
         onSubmitAuth={submitAuth}
         onSubmitResetRequest={submitPasswordResetRequest}
         onSubmitReset={submitPasswordReset}

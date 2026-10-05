@@ -11,6 +11,7 @@ import './globals.css';
 import './workspace.css';
 import './theme.css';
 import './auth-reference.css';
+import './growth-landing.css';
 import { ThemeToggle } from './theme-toggle';
 import { LoadingWave } from './loading-wave';
 

@@ -40,6 +40,7 @@ export function ThemeToggle() {
 
     if (
       document.startViewTransition &&
+      !document.querySelector('.growth-landing') &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ) {
       document.startViewTransition(applyTheme);

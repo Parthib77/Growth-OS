@@ -1,0 +1,823 @@
+:root .auth-shell.growth-landing {
+  --landing-bg: #faf7f0;
+  --landing-surface: rgba(255, 255, 255, 0.86);
+  --landing-text: #112038;
+  --landing-muted: #536178;
+  --landing-accent: #007864;
+  --landing-border: #d5ded8;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 0.7fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 32px;
+  padding: 0 max(24px, calc((100vw - 1520px) / 2));
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 85% 65%, #e9dfc9, transparent 65%), var(--landing-bg);
+  color: var(--landing-text);
+  isolation: isolate;
+  overflow: clip;
+  align-items: start;
+  font-family: Manrope, sans-serif;
+}
+:root[data-theme='dark'] .auth-shell.growth-landing {
+  --landing-bg: #041b23;
+  --landing-surface: rgba(9, 35, 43, 0.87);
+  --landing-text: #f3f7fa;
+  --landing-muted: #b8c9d5;
+  --landing-accent: #40e8bd;
+  --landing-border: #346369;
+  background: radial-gradient(ellipse at 85% 65%, #06473f, transparent 65%), var(--landing-bg);
+}
+:root .auth-shell.growth-landing > * {
+  min-width: 0;
+}
+:root .auth-shell.growth-landing:before,
+:root .auth-shell.growth-landing:after {
+  display: none;
+}
+.growth-nav {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 88px;
+  border-bottom: 1px solid var(--landing-border);
+  position: relative;
+  z-index: 30;
+  animation: growth-enter 0.4s 0.15s both;
+}
+.growth-logo {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--landing-text);
+  text-decoration: none;
+}
+.growth-logo > svg {
+  width: 42px;
+  height: 42px;
+  color: var(--landing-accent);
+}
+.growth-logo span span {
+  font-weight: 400;
+}
+.growth-nav nav,
+.growth-nav-actions {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+.growth-nav nav a {
+  color: var(--landing-text);
+  text-decoration: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.growth-nav .auth-submit {
+  width: auto;
+}
+:root .auth-shell.growth-landing .auth-left {
+  grid-column: 1;
+  max-width: none;
+  padding-top: 28px;
+  display: flex;
+  flex-direction: column;
+}
+:root .auth-shell.growth-landing .auth-context h1 {
+  font-size: clamp(36px, 4.1vw, 68px);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+  color: var(--landing-text);
+  margin-top: 24px;
+}
+:root .auth-shell.growth-landing .auth-context h1 span {
+  display: block;
+  animation: growth-enter 0.55s 0.35s both;
+}
+:root .auth-shell.growth-landing .auth-context h1 span + span {
+  animation-delay: 0.45s;
+}
+:root .auth-shell.growth-landing .auth-headline-emphasis {
+  color: var(--landing-accent);
+  background: none;
+  -webkit-text-fill-color: var(--landing-accent);
+}
+:root .auth-shell.growth-landing .auth-kicker {
+  background: color-mix(in srgb, var(--landing-accent) 10%, transparent);
+  color: var(--landing-accent);
+  animation: growth-enter 0.35s 0.25s both;
+}
+:root .auth-shell.growth-landing .auth-description {
+  font-size: clamp(17px, 1.4vw, 23px);
+  line-height: 1.5;
+  color: var(--landing-muted);
+  animation: growth-enter 0.45s 0.7s both;
+}
+:root .auth-shell.growth-landing .auth-desktop-break {
+  display: none;
+}
+:root .auth-shell.growth-landing .auth-underline {
+  height: 14px;
+  margin: 0;
+  width: 90%;
+}
+:root .auth-shell.growth-landing .auth-underline path {
+  stroke-width: 3;
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: growth-draw 0.6s 0.65s forwards;
+}
+.growth-hero-actions {
+  display: flex;
+  gap: 18px;
+  margin: 28px 0;
+  animation: growth-enter 0.4s 0.85s both;
+}
+.growth-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 1px solid var(--landing-border);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--landing-text);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+:root .auth-shell.growth-landing .auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--landing-accent);
+  color: var(--landing-bg);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  min-height: 50px;
+  padding: 14px 22px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: none;
+}
+:root .auth-shell.growth-landing .auth-details {
+  padding: 0;
+}
+:root .auth-shell.growth-landing .auth-benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+:root .auth-shell.growth-landing .auth-benefit {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 20px;
+  border: 1px solid var(--landing-border);
+  border-radius: 18px;
+  background: var(--landing-surface);
+  animation: growth-enter 0.4s 1.4s both;
+}
+:root .auth-shell.growth-landing .auth-benefit:nth-child(2) {
+  animation-delay: 1.48s;
+}
+:root .auth-shell.growth-landing .auth-benefit:nth-child(3) {
+  animation-delay: 1.56s;
+}
+:root .auth-shell.growth-landing .auth-benefit strong {
+  color: var(--landing-text);
+  font-size: 16px;
+  min-height: 44px;
+  display: block;
+  margin-top: 12px;
+}
+:root .auth-shell.growth-landing .auth-benefit p,
+:root .auth-shell.growth-landing .auth-metric p {
+  color: var(--landing-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+:root .auth-shell.growth-landing .auth-icon-circle {
+  background: color-mix(in srgb, var(--landing-accent) 12%, transparent);
+  color: var(--landing-accent);
+  flex-shrink: 0;
+}
+:root .auth-shell.growth-landing .auth-metrics {
+  display: flex;
+  gap: 20px;
+  margin: 30px 0;
+  animation: growth-enter 0.4s 1.6s both;
+}
+:root .auth-shell.growth-landing .auth-metric {
+  padding: 0;
+  min-width: 0;
+  gap: 10px;
+}
+:root .auth-shell.growth-landing .auth-metric strong {
+  font-size: 25px;
+  color: var(--landing-text);
+}
+:root .auth-shell.growth-landing .auth-metric .auth-icon-circle {
+  display: none;
+}
+:root .auth-shell.growth-landing .auth-demo-badge {
+  color: var(--landing-accent);
+  background: color-mix(in srgb, var(--landing-accent) 10%, transparent);
+  font-size: 10px;
+}
+.growth-analytics {
+  grid-column: 2;
+  padding-top: 32px;
+  display: grid;
+  gap: 28px;
+  position: relative;
+  z-index: 10;
+}
+.growth-bookings,
+.growth-pipeline {
+  padding: 22px;
+  border: 1px solid var(--landing-border);
+  border-radius: 20px;
+  background: var(--landing-surface);
+  box-shadow: 0 16px 40px #001a1612;
+  animation: growth-enter 0.5s 1s both;
+}
+.growth-pipeline {
+  animation-delay: 1.1s;
+}
+.growth-card-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.growth-big-number {
+  display: block;
+  font-size: 38px;
+  margin-top: 12px;
+}
+.growth-big-number small {
+  font-size: 14px;
+  color: var(--landing-accent);
+}
+.growth-bookings > p {
+  font-size: 14px;
+  color: var(--landing-muted);
+  margin: 0 0 20px;
+}
+.growth-chart {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  height: 125px;
+}
+.growth-chart-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: end;
+  gap: 8px;
+  height: 100%;
+}
+.growth-chart button {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(
+    var(--landing-accent),
+    color-mix(in srgb, var(--landing-accent) 25%, transparent)
+  );
+  transform-origin: bottom;
+  animation: growth-bar 0.55s both;
+  position: relative;
+  cursor: pointer;
+}
+.growth-chart button span {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  opacity: 0;
+  background: var(--landing-accent);
+  color: var(--landing-bg);
+  padding: 4px;
+  border-radius: 5px;
+  pointer-events: none;
+  transition: 0.18s;
+}
+.growth-chart button:focus-visible span,
+.growth-chart button:hover span {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+.growth-chart-column small {
+  font-size: 10px;
+  color: var(--landing-muted);
+}
+.growth-stage {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+  font-size: 12px;
+}
+.growth-stage > span {
+  display: flex;
+  padding: 8px;
+  border-radius: 50%;
+  color: var(--landing-accent);
+  background: color-mix(in srgb, var(--landing-accent) 12%, transparent);
+}
+.growth-stage p {
+  flex: 1;
+  color: var(--landing-muted);
+  margin: 0;
+}
+:root .auth-shell.growth-landing .auth-card {
+  grid-column: 3;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 28px;
+  border: 1px solid var(--landing-border);
+  border-radius: 24px;
+  background: var(--landing-surface);
+  color: var(--landing-text);
+  box-shadow: 0 20px 60px #001a1614;
+  backdrop-filter: blur(12px);
+  animation: growth-enter 0.5s 1.2s both;
+}
+:root .auth-shell.growth-landing .auth-card:before,
+:root .auth-shell.growth-landing .auth-card:after {
+  display: none;
+}
+:root .auth-shell.growth-landing .auth-card h2 {
+  font-size: 29px;
+  color: var(--landing-text);
+  letter-spacing: -0.035em;
+}
+:root .auth-shell.growth-landing .auth-card-description {
+  color: var(--landing-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+:root .auth-shell.growth-landing .auth-field-label {
+  color: var(--landing-text);
+}
+:root .auth-shell.growth-landing .auth-input-wrap input {
+  height: 50px;
+  background: transparent;
+  border: 1px solid var(--landing-border);
+  color: var(--landing-text);
+  border-radius: 10px;
+}
+:root .auth-shell.growth-landing .auth-input-wrap input::placeholder {
+  color: var(--landing-muted);
+}
+:root .auth-shell.growth-landing .auth-input-icon,
+:root .auth-shell.growth-landing .auth-password-toggle {
+  color: var(--landing-muted);
+}
+:root .auth-shell.growth-landing .auth-card-footer {
+  color: var(--landing-muted);
+}
+:root .auth-shell.growth-landing .auth-inline-link,
+:root .auth-shell.growth-landing .auth-forgot-link {
+  color: var(--landing-accent);
+}
+:root .auth-shell.growth-landing :is(button, a, input):focus-visible {
+  outline: 3px solid var(--landing-accent);
+  outline-offset: 4px;
+}
+:root .auth-shell.growth-landing .auth-background-glow,
+:root .auth-shell.growth-landing .auth-background-orbit {
+  display: none;
+}
+:root .auth-shell.growth-landing .auth-background-dots {
+  opacity: 0.2;
+  pointer-events: none;
+}
+:root .auth-shell.growth-landing .auth-background-leaves {
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+:root .auth-shell.growth-landing :is(button, a, input) {
+  transition:
+    color 0.3s,
+    background-color 0.3s,
+    border-color 0.3s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+@keyframes growth-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes growth-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes growth-bar {
+  from {
+    transform: scaleY(0.02);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (hover: hover) {
+  :root .auth-shell.growth-landing .auth-benefit:hover {
+    transform: translateY(-4px);
+    border-color: var(--landing-accent);
+  }
+  :root .auth-shell.growth-landing :is(.auth-submit, .growth-secondary):hover {
+    transform: translateY(-1px);
+  }
+  :root .auth-shell.growth-landing .auth-submit:hover svg {
+    transform: translateX(3px);
+  }
+}
+@media (max-width: 1200px) {
+  :root .auth-shell.growth-landing {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 24px;
+  }
+  .growth-analytics {
+    grid-column: 1;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+    margin-bottom: 30px;
+  }
+  :root .auth-shell.growth-landing .auth-card {
+    grid-column: 2;
+    grid-row: 2/4;
+  }
+  :root .auth-shell.growth-landing .auth-context h1 {
+    font-size: clamp(36px, 4.7vw, 60px);
+  }
+  .growth-nav nav {
+    gap: 20px;
+  }
+  :root .auth-shell.growth-landing .auth-benefits {
+    gap: 10px;
+  }
+  :root .auth-shell.growth-landing .auth-benefit {
+    padding: 14px;
+  }
+  :root .auth-shell.growth-landing .auth-metrics {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 800px) {
+  :root .auth-shell.growth-landing {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 90px;
+    gap: 24px;
+  }
+  .growth-nav {
+    width: 100%;
+    min-height: 76px;
+  }
+  .growth-logo {
+    font-size: 24px;
+  }
+  .growth-logo > svg {
+    width: 32px;
+  }
+  .growth-nav nav,
+  .growth-nav-actions .auth-submit {
+    display: none;
+  }
+  .growth-nav-actions {
+    gap: 0;
+  }
+  :root .auth-shell.growth-landing .auth-left {
+    display: contents;
+  }
+  :root .auth-shell.growth-landing .auth-context {
+    order: 1;
+    width: 100%;
+  }
+  .growth-hero-actions {
+    order: 2;
+    width: 100%;
+    margin: 0;
+  }
+  :root .auth-shell.growth-landing .auth-card {
+    order: 3;
+  }
+  .growth-analytics {
+    order: 4;
+    width: 100%;
+    margin: 0;
+    grid-template-columns: 1fr 1fr;
+  }
+  :root .auth-shell.growth-landing .auth-details {
+    order: 5;
+    width: 100%;
+  }
+  :root .auth-shell.growth-landing .auth-context h1 {
+    font-size: clamp(32px, 7.2vw, 54px);
+  }
+  :root .auth-shell.growth-landing .auth-description {
+    font-size: 18px;
+  }
+  :root .auth-shell.growth-landing .auth-benefits {
+    grid-template-columns: 1fr;
+  }
+  :root .auth-shell.growth-landing .auth-benefit strong {
+    min-height: 0;
+  }
+  :root .auth-shell.growth-landing .auth-benefit {
+    padding: 22px;
+  }
+  :root .auth-shell.growth-landing .auth-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  :root .auth-shell.growth-landing .auth-metric:last-child {
+    grid-column: 1/-1;
+  }
+  :root .auth-shell.growth-landing .auth-card h2 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 480px) {
+  .growth-hero-actions {
+    flex-direction: column;
+  }
+  .growth-analytics {
+    grid-template-columns: 1fr;
+  }
+  :root .auth-shell.growth-landing .auth-card {
+    padding: 22px;
+  }
+  :root .auth-shell.growth-landing .auth-kicker {
+    font-size: 10px;
+  }
+  :root .auth-shell.growth-landing .auth-context h1 {
+    font-size: clamp(30px, 8.5vw, 39px);
+  }
+  .growth-nav-actions .growth-secondary {
+    padding: 10px 14px;
+  }
+  :root .auth-shell.growth-landing .auth-metric strong {
+    font-size: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root .auth-shell.growth-landing * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  :root .auth-shell.growth-landing .auth-underline path {
+    stroke-dashoffset: 0;
+  }
+}
+.growth-nav {
+  width: 100%;
+}
+.growth-hero-actions > .auth-submit {
+  width: auto;
+  flex: 1;
+}
+.growth-hero-actions > .growth-secondary {
+  flex: 1;
+}
+.growth-landing .auth-benefit {
+  gap: 0;
+}
+.growth-landing .auth-benefit strong {
+  margin-top: 14px;
+}
+.growth-landing .auth-card {
+  scroll-margin-top: 24px;
+}
+.growth-landing .auth-form {
+  gap: 22px;
+}
+.growth-stepper {
+  display: flex;
+  justify-content: space-between;
+  margin: 24px 0;
+  color: var(--landing-muted);
+  font-size: 11px;
+  gap: 12px;
+}
+.growth-stepper span {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+  flex: 1;
+}
+.growth-stepper b {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--landing-border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
+}
+.growth-stepper span:first-child b {
+  background: var(--landing-accent);
+  color: var(--landing-bg);
+}
+.growth-security {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--landing-muted);
+  margin: 22px 0 0;
+}
+.growth-landing .auth-benefit > div {
+  width: 100%;
+}
+.growth-landing .auth-benefit p {
+  margin: 0;
+}
+.growth-landing .auth-submit:active {
+  transform: scale(0.985);
+}
+.growth-landing .auth-card,
+.growth-landing .auth-benefit,
+.growth-landing .growth-bookings,
+.growth-landing .growth-pipeline {
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s,
+    transform 0.2s;
+}
+.growth-landing .auth-input-wrap:focus-within {
+  border-radius: 10px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--landing-accent) 12%, transparent);
+}
+:root .auth-shell.growth-landing > .auth-metrics {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 30px;
+  padding: 24px 0;
+  border-top: 1px solid var(--landing-border);
+  gap: 28px;
+}
+:root .auth-shell.growth-landing > .auth-metrics .auth-icon-circle {
+  display: flex;
+}
+:root .auth-shell.growth-landing > .auth-metrics .auth-metric {
+  align-items: center;
+  border: 0;
+}
+:root .auth-shell.growth-landing {
+  padding-bottom: 24px;
+}
+body:has(.growth-landing) .theme-toggle {
+  position: relative;
+  inset: auto;
+  display: flex;
+  width: max-content;
+  margin: 0 24px 24px auto;
+  transform: none;
+}
+@media (max-width: 800px) {
+  :root .auth-shell.growth-landing > .auth-metrics {
+    order: 6;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 24px;
+  }
+  :root .auth-shell.growth-landing > .auth-metrics .auth-metric:last-child {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 480px) {
+  :root .auth-shell.growth-landing > .auth-metrics {
+    grid-template-columns: 1fr;
+  }
+  :root .auth-shell.growth-landing > .auth-metrics .auth-metric:last-child {
+    grid-column: auto;
+  }
+}
+.growth-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 1100px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.2;
+}
+.growth-paths path {
+  fill: none;
+  stroke: var(--landing-accent);
+  stroke-width: 1.5;
+}
+.growth-nav.is-scrolled {
+  background: var(--landing-surface);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 22px #001a1609;
+}
+.growth-nav {
+  position: sticky;
+  top: 0;
+  transition:
+    background-color 0.25s,
+    box-shadow 0.25s;
+}
+.growth-landing .auth-icon-circle {
+  flex-basis: auto;
+}
+.growth-landing .auth-benefit strong {
+  padding-top: 0;
+}
+.growth-stepper {
+  position: relative;
+}
+.growth-stepper:before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 17%;
+  right: 17%;
+  height: 1px;
+  background: var(--landing-border);
+  z-index: 0;
+}
+.growth-stepper span {
+  position: relative;
+}
+.growth-stepper b {
+  background: var(--landing-surface);
+}
+body:has(.growth-landing) {
+  background: #faf7f0;
+}
+html[data-theme='dark'] body:has(.growth-landing) {
+  background: #041b23;
+}
+body:has(.growth-landing) .theme-toggle {
+  background: #faf7f0;
+  border-color: #d5ded8;
+  color: #007864;
+}
+html[data-theme='dark'] body:has(.growth-landing) .theme-toggle {
+  background: #09232b;
+  border-color: #346369;
+  color: #40e8bd;
+}
+.growth-form-status {
+  min-height: 40px;
+}
+.growth-form-status .status {
+  margin: 12px 0 0;
+}
+.growth-landing .auth-form {
+  transition: opacity 0.18s;
+}
+.growth-landing .auth-password-toggle {
+  width: 44px;
+  height: 44px;
+}
+.growth-landing .auth-input-wrap input {
+  padding-left: 48px;
+}
+@media (min-width: 1201px) {
+  :root .auth-shell.growth-landing .growth-analytics,
+  :root .auth-shell.growth-landing .auth-card {
+    grid-row: 2;
+  }
+}
+.growth-password-hint {
+  font-size: 12px;
+  color: var(--landing-muted);
+  line-height: 1.5;
+}

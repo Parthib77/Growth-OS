@@ -1,8 +1,14 @@
 'use client';
 
-import { useId, useState, type FormEventHandler } from 'react';
+import { useEffect, useId, useState, type FormEventHandler } from 'react';
 import {
   ArrowRight,
+  Leaf,
+  PlayCircle,
+  CalendarDays,
+  MessageSquare,
+  Clock3,
+  CircleCheck,
   BarChart3,
   Building2,
   Eye,
@@ -27,6 +33,7 @@ type AuthLandingProps = {
   onSwitchMode: () => void;
   onForgotPassword: () => void;
   onBackToSignIn: () => void;
+  onCreateAccount: () => void;
 };
 
 function AuthInput({
@@ -63,6 +70,9 @@ function AuthInput({
           autoComplete={autoComplete}
           required
           minLength={isPassword && autoComplete === 'new-password' ? 12 : undefined}
+          aria-describedby={
+            isPassword && autoComplete === 'new-password' ? `${inputId}-hint` : undefined
+          }
         />
         {isPassword && (
           <button
@@ -76,6 +86,11 @@ function AuthInput({
           </button>
         )}
       </span>
+      {isPassword && autoComplete === 'new-password' && (
+        <small id={`${inputId}-hint`} className="growth-password-hint">
+          Use at least 12 characters.
+        </small>
+      )}
     </div>
   );
 }
@@ -136,13 +151,62 @@ export function AuthLanding({
   onSwitchMode,
   onForgotPassword,
   onBackToSignIn,
+  onCreateAccount,
 }: AuthLandingProps) {
   const isRegister = mode === 'register';
   const isSignIn = mode === 'sign-in';
   const pending = status.kind === 'pending';
+  const [scrolled, setScrolled] = useState(false);
+  function focusRegistration() {
+    onCreateAccount();
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLInputElement>('.auth-card input')?.focus(),
+    );
+  }
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 16);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, []);
 
   return (
-    <main className="auth-shell">
+    <main className="auth-shell growth-landing">
+      <svg
+        className="growth-paths"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <path d="M740 480 C1000 280 980 670 1260 320 S1480 30 1640 -60" />
+        <path d="M680 760 C1000 830 1100 620 1660 390" />
+      </svg>
+      <header className={`growth-nav${scrolled ? ' is-scrolled' : ''}`}>
+        <a href="/" className="growth-logo" aria-label="Growth OS home">
+          <Leaf aria-hidden="true" />
+          <span>
+            Growth<span>OS</span>
+          </span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="#growth-features">Product</a>
+          <a href="#growth-pipeline">Solutions</a>
+          <a href="/privacy">Privacy</a>
+        </nav>
+        <div className="growth-nav-actions">
+          <button type="button" className="growth-secondary" onClick={onBackToSignIn}>
+            Sign in
+          </button>
+          <button
+            type="button"
+            className="auth-submit"
+            aria-label="Start registration"
+            onClick={focusRegistration}
+          >
+            Create account <ArrowRight size={20} />
+          </button>
+        </div>
+      </header>
       <div className="auth-background-orbit" aria-hidden="true" />
       <div className="auth-background-glow" aria-hidden="true" />
       <div className="auth-background-dots" aria-hidden="true" />
@@ -191,7 +255,15 @@ export function AuthLanding({
             so nothing falls through the cracks.
           </p>
         </section>
-        <div className="auth-details">
+        <div className="growth-hero-actions">
+          <button type="button" className="auth-submit" onClick={focusRegistration}>
+            Create your free account <ArrowRight size={22} />
+          </button>
+          <a className="growth-secondary" href="#growth-pipeline">
+            <PlayCircle size={30} /> Explore the workflow
+          </a>
+        </div>
+        <div className="auth-details" id="growth-features">
           <div className="auth-benefits" aria-label="Benefits">
             {benefits.map(({ icon: Icon, title, description }) => (
               <div className="auth-benefit" key={title}>
@@ -205,29 +277,13 @@ export function AuthLanding({
               </div>
             ))}
           </div>
-          <div className="auth-metrics" aria-label="Growth OS at a glance">
-            {metrics.map(({ icon: Icon, value, description, illustrative }) => (
-              <div className="auth-metric" key={value}>
-                <span className="auth-icon-circle">
-                  <Icon size={30} strokeWidth={2.2} aria-hidden="true" />
-                </span>
-                <div>
-                  <strong>
-                    {value}
-                    {illustrative && <span className="auth-demo-badge">Demo</span>}
-                  </strong>
-                  <p>{description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
       <section className="auth-card" aria-labelledby="auth-card-heading">
         <h2 id="auth-card-heading">
           {isRegister
-            ? 'Start with one reliable register.'
+            ? 'Create your account'
             : isSignIn
               ? 'Sign in to Today.'
               : mode === 'request-reset'
@@ -236,13 +292,26 @@ export function AuthLanding({
         </h2>
         <p className="auth-card-description">
           {isRegister
-            ? 'Create your account to get started in minutes.'
+            ? 'Get started in minutes. No credit card required.'
             : isSignIn
               ? 'Pick up where your team left off.'
               : mode === 'request-reset'
                 ? 'Enter your account email to request a reset link.'
                 : 'Use at least 12 characters. This link works once.'}
         </p>
+        {isRegister && (
+          <div className="growth-stepper" aria-label="Account setup: step 1 of 3">
+            <span aria-current="step">
+              <b>1</b>Account details
+            </span>
+            <span>
+              <b>2</b>Business info
+            </span>
+            <span>
+              <b>3</b>You’re in!
+            </span>
+          </div>
+        )}
 
         {mode === 'request-reset' ? (
           <form className="auth-form" onSubmit={onSubmitResetRequest}>
@@ -288,7 +357,7 @@ export function AuthLanding({
               label="Email"
               name="email"
               type="email"
-              placeholder="demo@growthos.local"
+              placeholder="you@company.com"
               autoComplete="email"
               icon={Mail}
             />
@@ -301,7 +370,13 @@ export function AuthLanding({
               icon={LockKeyhole}
             />
             <button className="auth-submit" disabled={pending}>
-              {pending ? 'Working…' : isRegister ? 'Create account' : 'Sign in'}{' '}
+              {pending
+                ? isRegister
+                  ? 'Creating account…'
+                  : 'Signing in…'
+                : isRegister
+                  ? 'Create account'
+                  : 'Sign in'}{' '}
               <ArrowRight size={22} aria-hidden="true" />
             </button>
           </form>
@@ -333,8 +408,73 @@ export function AuthLanding({
             </button>
           )}
         </div>
-        <StatusLine status={status} />
+        <div className="growth-form-status">
+          <StatusLine status={status} />
+        </div>
+        <p className="growth-security">
+          <LockKeyhole size={17} aria-hidden="true" /> Your workspace, securely connected.
+        </p>
       </section>
+      <aside className="growth-analytics" aria-label="Illustrative analytics">
+        <section className="growth-bookings">
+          <div className="growth-card-label">
+            Bookings this month <span className="auth-demo-badge">Demo</span>
+          </div>
+          <strong className="growth-big-number">
+            287 <small>↑ 32%</small>
+          </strong>
+          <p>Booked appointments</p>
+          <div className="growth-chart" aria-label="Sample monthly bookings from March to August">
+            {[92, 120, 151, 180, 228, 287].map((value, index) => (
+              <div className="growth-chart-column" key={value}>
+                <button
+                  type="button"
+                  style={{ height: `${value / 3}px`, animationDelay: `${1150 + index * 40}ms` }}
+                  aria-label={`${['March', 'April', 'May', 'June', 'July', 'August'][index]}: ${value} sample bookings`}
+                >
+                  <span>{value}</span>
+                </button>
+                <small>{['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'][index]}</small>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="growth-pipeline" id="growth-pipeline">
+          <div className="growth-card-label">
+            Your pipeline <span className="auth-demo-badge">Sample</span>
+          </div>
+          {[
+            { icon: MessageSquare, label: 'New enquiries', value: '1,245' },
+            { icon: Clock3, label: 'In follow-up', value: '892' },
+            { icon: CalendarDays, label: 'Appointments booked', value: '287' },
+            { icon: CircleCheck, label: 'Closed won', value: '176' },
+          ].map(({ icon: Icon, label, value }) => (
+            <div className="growth-stage" key={label}>
+              <span>
+                <Icon size={22} />
+              </span>
+              <p>{label}</p>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </section>
+      </aside>
+      <div className="auth-metrics" aria-label="Growth OS at a glance">
+        {metrics.map(({ icon: Icon, value, description, illustrative }) => (
+          <div className="auth-metric" key={value}>
+            <span className="auth-icon-circle">
+              <Icon size={30} strokeWidth={2.2} aria-hidden="true" />
+            </span>
+            <div>
+              <strong>
+                {value}
+                {illustrative && <span className="auth-demo-badge">Demo</span>}
+              </strong>
+              <p>{description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
