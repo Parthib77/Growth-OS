@@ -821,3 +821,24 @@ html[data-theme='dark'] body:has(.growth-landing) .theme-toggle {
   color: var(--landing-muted);
   line-height: 1.5;
 }
+@media (max-width: 800px) {
+  :root .auth-shell.growth-landing .growth-nav-actions .auth-submit {
+    display: none;
+  }
+  .growth-nav {
+    gap: 12px;
+  }
+  .growth-nav-actions .growth-secondary {
+    white-space: nowrap;
+  }
+}
+@media (max-width: 480px) {
+  .growth-logo {
+    font-size: 22px;
+    gap: 8px;
+  }
+  .growth-logo > svg {
+    width: 28px;
+    flex-shrink: 0;
+  }
+}

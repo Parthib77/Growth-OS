@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import dynamic from 'next/dynamic';
 import { BarChart3, PlusCircle, UsersRound } from 'lucide-react';
 import { z } from 'zod';
 import {
@@ -24,15 +25,20 @@ import {
 } from '@growthos/contracts';
 import { commandIdFor, formValues, localDateTimeToUtc, request } from './api-client';
 import { Field, StatusLine, type Status } from './ui';
-import { TodayDialogs } from './dialogs';
-import { CustomersView } from './customers-view';
-import { CampaignsView } from './campaigns-view';
 import { AppNav, type AppScreen } from './app-nav';
-import { ReviewsView } from './reviews-view';
-import { ResultsView } from './results-view';
-import { SettingsView } from './settings-view';
 import { AuthLanding, type AuthMode } from './auth-landing';
 import { IconWell, TodayBadge } from './workspace-ui';
+
+const TodayDialogs = dynamic(() => import('./dialogs').then((module) => module.TodayDialogs));
+const CustomersView = dynamic(() =>
+  import('./customers-view').then((module) => module.CustomersView),
+);
+const CampaignsView = dynamic(() =>
+  import('./campaigns-view').then((module) => module.CampaignsView),
+);
+const ReviewsView = dynamic(() => import('./reviews-view').then((module) => module.ReviewsView));
+const ResultsView = dynamic(() => import('./results-view').then((module) => module.ResultsView));
+const SettingsView = dynamic(() => import('./settings-view').then((module) => module.SettingsView));
 
 type Customer = {
   id: string;

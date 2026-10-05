@@ -182,7 +182,7 @@ export function AuthLanding({
         <path d="M680 760 C1000 830 1100 620 1660 390" />
       </svg>
       <header className={`growth-nav${scrolled ? ' is-scrolled' : ''}`}>
-        <a href="/" className="growth-logo" aria-label="Growth OS home">
+        <a href="/" className="growth-logo" aria-label="GrowthOS home">
           <Leaf aria-hidden="true" />
           <span>
             Growth<span>OS</span>
@@ -200,7 +200,7 @@ export function AuthLanding({
           <button
             type="button"
             className="auth-submit"
-            aria-label="Start registration"
+            aria-label="Create account — start registration"
             onClick={focusRegistration}
           >
             Create account <ArrowRight size={20} />

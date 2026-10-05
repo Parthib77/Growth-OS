@@ -53,12 +53,18 @@ for (const theme of ['light', 'dark']) {
           '.auth-card',
           '.auth-benefit',
           '.auth-metrics',
+          '.growth-nav button',
+          '.growth-nav a',
+          '.auth-card input',
+          '.growth-hero-actions button',
+          '.growth-hero-actions a',
+          '.theme-toggle',
         ];
         const offenders = selectors.flatMap((selector) =>
           Array.from(document.querySelectorAll(selector))
             .filter((el) => {
               const r = el.getBoundingClientRect();
-              return r.left < -0.5 || r.right > innerWidth + 0.5;
+              return r.width > 0 && (r.left < -0.5 || r.right > innerWidth + 0.5);
             })
             .map(() => selector),
         );
