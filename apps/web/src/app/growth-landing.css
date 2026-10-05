@@ -852,3 +852,7 @@ html[data-theme='dark'] body:has(.growth-landing) .theme-toggle {
   :is(.auth-benefit, .growth-bookings, .growth-pipeline, .growth-chart button) {
   animation-delay: 0s !important;
 }
+:root .auth-shell.growth-landing > .auth-metrics {
+  width: 100%;
+  justify-self: stretch;
+}
