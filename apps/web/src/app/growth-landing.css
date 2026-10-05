@@ -784,9 +784,11 @@ body:has(.growth-landing) .theme-toggle {
   background: var(--landing-surface);
 }
 body:has(.growth-landing) {
+  display: flow-root;
   background: #faf7f0;
 }
 html[data-theme='dark'] body:has(.growth-landing) {
+  display: flow-root;
   background: #041b23;
 }
 body:has(.growth-landing) .theme-toggle {
@@ -864,10 +866,12 @@ html[data-theme='dark'] body:has(.growth-landing) .theme-toggle {
 
 /* Keep the landing background continuous behind its theme control. */
 body:has(.growth-landing) {
+  display: flow-root;
   background: radial-gradient(ellipse at 85% 65%, #e9dfc9, transparent 65%), #faf7f0;
   background-attachment: scroll;
 }
 html[data-theme='dark'] body:has(.growth-landing) {
+  display: flow-root;
   background: radial-gradient(ellipse at 85% 65%, #06473f, transparent 65%), #041b23;
   background-attachment: scroll;
 }
