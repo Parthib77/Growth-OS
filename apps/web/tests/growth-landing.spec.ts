@@ -43,6 +43,7 @@ for (const theme of ['light', 'dark']) {
     await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible();
     for (const [width, height] of sizes) {
       await page.setViewportSize({ width, height });
+      await page.waitForTimeout(350); // Let responsive color/size transitions settle before measuring.
       await page.evaluate(() => window.scrollTo(0, 0));
       const headerBefore = await page.locator('.growth-nav').boundingBox();
       await page.evaluate(() => window.scrollTo(0, 500));
