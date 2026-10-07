@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, type CSSProperties } from 'react';
 import {
   BarChart3,
   CalendarDays,
@@ -213,7 +213,11 @@ export function ResultsView({
                       <strong>{measure.value}</strong>
                       <span
                         className="results-chart-bar"
-                        style={{ height: `${Math.max(3, (measure.value / chartMaximum) * 100)}%` }}
+                        style={
+                          {
+                            '--chart-value': `${Math.max(3, (measure.value / chartMaximum) * 100)}%`,
+                          } as CSSProperties
+                        }
                       />
                     </div>
                     <span className="results-chart-label">{measure.label}</span>

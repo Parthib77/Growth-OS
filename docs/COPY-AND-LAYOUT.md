@@ -10,6 +10,7 @@ Audience: independent consultants and freelancers. Primary action: Try the demo.
 - Explained manual sending beside the campaign action and shared data before the demo action.
 - Kept recorded booking fees distinct from payments, with reporting details available on request.
 - Fixed tablet navigation clipping and reporting-button overflow. Stacked phone forms, aligned icon containers and increased label/input spacing.
+- Replaced crowded mobile chart columns with labelled horizontal bars, keeping all six measures visible.
 - Moved the theme control into normal page flow so it cannot cover dashboard content. The header remains in normal page flow.
 - Preserved the existing light oak and cream palette changes and Cinzel brand type.
 - Protected the shared demo from account deletion. Improved error text when a hosting proxy returns a non-JSON response.

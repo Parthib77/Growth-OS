@@ -67,7 +67,7 @@ export function CampaignsView({
   const [etag, setEtag] = useState('');
   const [name, setName] = useState('');
   const [template, setTemplate] = useState(
-    'Hi {first_name}, your {service} at {business_name} is ready.',
+    'Hi {first_name}, would you like to discuss {service} with {business_name}?',
   );
   const [lifecycle, setLifecycle] = useState('');
   const [service, setService] = useState('');
@@ -386,8 +386,8 @@ export function CampaignsView({
               />
             </label>
             <p id="campaign-help" className="muted">
-              Supported variables: {'{first_name}'}, {'{service}'}, {'{business_name}'}. Links are
-              prepared only; delivery is never claimed.
+              Use {'{first_name}'}, {'{service}'} and {'{business_name}'} to personalise your
+              message.
             </p>
             <div className="button-row campaign-compose-actions">
               <button className="button primary" disabled={status.kind === 'pending'}>
@@ -435,14 +435,16 @@ export function CampaignsView({
             </IconWell>
             <div>
               <h2 id="campaign-list-title">Campaigns</h2>
-              <p>Manage your permission-aware follow-up campaigns.</p>
+              <p>Review drafts and recorded outcomes.</p>
             </div>
             <button
               className="button primary"
               onClick={() => {
                 setSelected(null);
                 setName('');
-                setTemplate('Hi {first_name}, your {service} at {business_name} is ready.');
+                setTemplate(
+                  'Hi {first_name}, would you like to discuss {service} with {business_name}?',
+                );
                 setLifecycle('');
                 setService('');
                 setSource('');

@@ -48,6 +48,23 @@ test('the main demo action opens the example consultancy and all views fit their
           .map((element) => element.textContent?.trim());
       });
       expect(outside, `${screen} at ${width}px`).toEqual([]);
+      if (screen === 'Results' && width < 700) {
+        const overlapping = await page.locator('.results-chart-label').evaluateAll((labels) => {
+          const boxes = labels.map((label) => label.getBoundingClientRect());
+          return boxes.some((box, index) =>
+            boxes
+              .slice(index + 1)
+              .some(
+                (other) =>
+                  box.left < other.right &&
+                  box.right > other.left &&
+                  box.top < other.bottom &&
+                  box.bottom > other.top,
+              ),
+          );
+        });
+        expect(overlapping, `Chart labels overlap at ${width}px`).toBe(false);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
         width,
       );

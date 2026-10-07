@@ -196,6 +196,14 @@
   align-items: center;
   gap: 12px;
 }
+.results-chart-bar {
+  height: var(--chart-value);
+}
+.results-definition summary {
+  min-height: 44px;
+  padding-block: 12px;
+  cursor: pointer;
+}
 body:has(.app-shell) .theme-toggle {
   position: relative;
   inset: auto;
@@ -329,6 +337,61 @@ body:has(.app-shell) .theme-toggle {
   }
 }
 @media (max-width: 700px) {
+  .app-shell .results-ledger .workspace-panel-heading {
+    display: grid;
+    grid-template-columns: 49px minmax(0, 1fr);
+    align-items: center;
+  }
+  .app-shell .results-ledger .workspace-panel-heading > p {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  .app-shell .results-chart {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    min-height: 0;
+    padding: 8px 0 20px;
+    background: none;
+    overflow: visible;
+  }
+  .app-shell .results-chart-y-axis {
+    display: none;
+  }
+  .app-shell .results-chart-column {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    text-align: left;
+  }
+  .app-shell .results-chart-label {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .app-shell .results-chart-bar-area {
+    grid-column: 2;
+    grid-row: 1;
+    height: 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .app-shell .results-chart-bar-area strong {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .app-shell .results-chart-bar {
+    grid-column: 1;
+    grid-row: 1;
+    width: var(--chart-value);
+    height: 12px;
+    border-radius: 4px;
+  }
   .app-shell .app-nav {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

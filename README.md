@@ -1,8 +1,10 @@
 # Growth OS
 
-Growth OS is a consent-aware daily workspace for salons and other appointment businesses. The implemented workflow covers account creation, onboarding, customer records and CSV import, the Today register, consent-aware campaigns, booking capture, reviews, stored Results, exports, settings, and account deletion.
+Growth OS helps independent consultants and freelancers keep client enquiries, follow-ups and booking records together. Check who needs a reply, draft a message and record the outcome.
 
 The production site is [Growth OS on Vercel](https://web-eight-wine-91.vercel.app). Deployment and database setup are documented in [docs/vercel-deployment.md](docs/vercel-deployment.md).
+
+Choose **Try the demo** to open Northline Consulting, a fictional consultancy with three sample clients. No signup is needed. The demo is shared, so use sample details only. See the [copy and layout changes](docs/COPY-AND-LAYOUT.md) for the latest update.
 
 ## Start the supported stack
 
@@ -61,6 +63,18 @@ Sign in at `http://localhost:3000` with:
 - Password: `DemoWorkspace!2026`
 
 Every authenticated screen labels this account as `Demo workspace`. Override the credentials on the first seed with `GROWTHOS_DEMO_EMAIL` and `GROWTHOS_DEMO_PASSWORD` when preparing a shared environment; later seed runs never replace account changes.
+
+For the consultancy sample used by the landing page, seed it with:
+
+```powershell
+$env:DEMO_SEED_GUARD='seed-growthos-demo'
+$env:GROWTHOS_DEMO_PROFILE='consultancy'
+$env:GROWTHOS_DEMO_EMAIL='consultant-demo@growthos.local'
+$env:GROWTHOS_DEMO_PASSWORD='ConsultantDemo!2026'
+npm run seed:demo
+```
+
+These are public demo credentials. This creates a separate sample workspace and leaves the original studio fixture untouched.
 
 ## Configure password reset delivery
 
