@@ -4,11 +4,9 @@ import { useEffect, useId, useState, type FormEventHandler } from 'react';
 import {
   ArrowRight,
   Leaf,
-  PlayCircle,
   CalendarDays,
   MessageSquare,
   Clock3,
-  CircleCheck,
   BarChart3,
   Building2,
   Eye,
@@ -34,6 +32,7 @@ type AuthLandingProps = {
   onForgotPassword: () => void;
   onBackToSignIn: () => void;
   onCreateAccount: () => void;
+  onTryDemo: () => void;
 };
 
 function AuthInput({
@@ -98,46 +97,38 @@ function AuthInput({
 const benefits = [
   {
     icon: Zap,
-    title: 'Faster responses',
-    description: (
-      <>
-        Convert interest
-        <br />
-        while it&apos;s hot.
-      </>
-    ),
+    title: 'Keep the enquiry',
+    description: <>Save the brief and next step.</>,
   },
   {
     icon: ShieldCheck,
-    title: 'Consent-aware follow-ups',
-    description: (
-      <>
-        Stay compliant
-        <br />
-        and build trust.
-      </>
-    ),
+    title: 'Check permission',
+    description: <>See who can receive a follow-up.</>,
   },
   {
     icon: BarChart3,
-    title: 'Track every outcome',
-    description: (
-      <>
-        See what&apos;s working
-        <br />
-        and keep momentum.
-      </>
-    ),
+    title: 'Record the booking',
+    description: <>Link the appointment to the enquiry.</>,
   },
 ];
 
 const metrics = [
-  { icon: UsersRound, value: '1.2k+', description: 'enquiries managed', illustrative: true },
-  { icon: BarChart3, value: '94%', description: 'follow-up rate', illustrative: true },
+  {
+    icon: UsersRound,
+    value: 'Client notes',
+    description: 'Brief, service and contact history',
+    illustrative: false,
+  },
+  {
+    icon: BarChart3,
+    value: 'Booking records',
+    description: 'Appointments and agreed value',
+    illustrative: false,
+  },
   {
     icon: ShieldCheck,
-    value: 'Trusted workflow',
-    description: 'Built for growing businesses',
+    value: 'Manual sending',
+    description: 'You send and record each message',
     illustrative: false,
   },
 ];
@@ -152,6 +143,7 @@ export function AuthLanding({
   onForgotPassword,
   onBackToSignIn,
   onCreateAccount,
+  onTryDemo,
 }: AuthLandingProps) {
   const isRegister = mode === 'register';
   const isSignIn = mode === 'sign-in';
@@ -218,11 +210,11 @@ export function AuthLanding({
         <section className="auth-context" aria-label="Why Growth OS">
           <div className="auth-kicker">
             <span />
-            Lead follow-up, simplified
+            For independent consultants
           </div>
           <h1>
-            <span>Turn enquiries into</span>
-            <span className="auth-headline-emphasis">booked appointments.</span>
+            <span>Keep client enquiries</span>
+            <span className="auth-headline-emphasis">moving forward.</span>
           </h1>
           <svg
             className="auth-underline"
@@ -246,19 +238,20 @@ export function AuthLanding({
             />
           </svg>
           <p className="auth-description">
-            Capture the original context, respect contact permission,
-            <br className="auth-desktop-break" />
-            and keep recorded outcomes connected to the work —<br className="auth-desktop-break" />
-            so nothing falls through the cracks.
+            Keep the brief, follow-up and booking together. See who needs a reply before you start
+            your day.
           </p>
         </section>
+        <p className="growth-demo-note">
+          No signup needed for the demo. Shared sample data, visible to other visitors.
+        </p>
         <div className="growth-hero-actions">
-          <button type="button" className="auth-submit" onClick={focusRegistration}>
-            Create your free account <ArrowRight size={22} />
+          <button type="button" className="auth-submit" onClick={onTryDemo} disabled={pending}>
+            {pending ? 'Opening demo…' : 'Try the demo'} <ArrowRight size={22} />
           </button>
-          <a className="growth-secondary" href="#growth-pipeline">
-            <PlayCircle size={30} /> Explore the workflow
-          </a>
+          <button type="button" className="growth-secondary" onClick={focusRegistration}>
+            Create a workspace <ArrowRight size={22} aria-hidden="true" />
+          </button>
         </div>
         <div className="auth-details" id="growth-features">
           <div className="auth-benefits" aria-label="Benefits">
@@ -289,9 +282,9 @@ export function AuthLanding({
         </h2>
         <p className="auth-card-description">
           {isRegister
-            ? 'Get started in minutes. No credit card required.'
+            ? 'Save your own client enquiries and follow-ups.'
             : isSignIn
-              ? 'Pick up where your team left off.'
+              ? 'Open your client list and follow-ups.'
               : mode === 'request-reset'
                 ? 'Enter your account email to request a reset link.'
                 : 'Use at least 12 characters. This link works once.'}
@@ -409,42 +402,26 @@ export function AuthLanding({
           <StatusLine status={status} />
         </div>
         <p className="growth-security">
-          <LockKeyhole size={17} aria-hidden="true" /> Your workspace, securely connected.
+          <LockKeyhole size={17} aria-hidden="true" /> Keep personal client details out of the
+          shared demo.
         </p>
       </section>
-      <aside className="growth-analytics" aria-label="Illustrative analytics">
+      <aside className="growth-analytics" aria-label="Northline Consulting example">
         <section className="growth-bookings">
           <div className="growth-card-label">
-            Bookings this month <span className="auth-demo-badge">Demo</span>
+            Northline Consulting <span className="auth-demo-badge">Demo</span>
           </div>
-          <strong className="growth-big-number">
-            287 <small>↑ 32%</small>
-          </strong>
-          <p>Booked appointments</p>
-          <div className="growth-chart" aria-label="Sample monthly bookings from March to August">
-            {[92, 120, 151, 180, 228, 287].map((value, index) => (
-              <div className="growth-chart-column" key={value}>
-                <button
-                  type="button"
-                  style={{ height: `${value / 3}px`, animationDelay: `${1150 + index * 40}ms` }}
-                  aria-label={`${['March', 'April', 'May', 'June', 'July', 'August'][index]}: ${value} sample bookings`}
-                >
-                  <span>{value}</span>
-                </button>
-                <small>{['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'][index]}</small>
-              </div>
-            ))}
-          </div>
+          <strong className="growth-big-number">One client story</strong>
+          <p>Fictional consultancy. Follow Mina’s project enquiry through the demo.</p>
         </section>
         <section className="growth-pipeline" id="growth-pipeline">
           <div className="growth-card-label">
-            Your pipeline <span className="auth-demo-badge">Sample</span>
+            A small client list <span className="auth-demo-badge">Sample</span>
           </div>
           {[
-            { icon: MessageSquare, label: 'New enquiries', value: '1,245' },
-            { icon: Clock3, label: 'In follow-up', value: '892' },
-            { icon: CalendarDays, label: 'Appointments booked', value: '287' },
-            { icon: CircleCheck, label: 'Closed won', value: '176' },
+            { icon: MessageSquare, label: 'Mina: project enquiry', value: 'Brief' },
+            { icon: Clock3, label: 'Priya: no contact permission', value: 'Hold' },
+            { icon: CalendarDays, label: 'Jordan: discovery call', value: 'Booked' },
           ].map(({ icon: Icon, label, value }) => (
             <div className="growth-stage" key={label}>
               <span>

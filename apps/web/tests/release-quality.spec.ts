@@ -25,15 +25,15 @@ test('main screens remain accessible and responsive from tablet through wide des
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByText('Loading bookings and results…')).toBeHidden({ timeout: 15_000 });
-  await expect(page.locator('#screen-title')).toHaveText('Who needs attention?', {
+  await expect(page.locator('#screen-title')).toHaveText('Enquiries to follow up', {
     timeout: 15_000,
   });
   monitoringAuthenticatedFlow = true;
 
   const destinations = [
-    { button: 'Today', heading: 'Who needs attention?' },
+    { button: 'Today', heading: 'Enquiries to follow up' },
     { button: 'Customers', heading: 'Customers' },
-    { button: 'Campaigns', heading: 'Permission-aware follow-up' },
+    { button: 'Campaigns', heading: 'Client follow-ups' },
     { button: 'Reviews', heading: 'Reviews' },
     { button: 'Results', heading: 'Results' },
     { button: 'Settings', heading: 'Settings' },

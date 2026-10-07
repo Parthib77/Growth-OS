@@ -1,0 +1,376 @@
+/* Shared spacing rules keep the same controls usable at every screen size. */
+.growth-demo-note {
+  margin: 20px 0 0;
+  max-width: 55ch;
+  color: var(--landing-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+:root .auth-shell.growth-landing {
+  grid-template-columns: minmax(0, 1.4fr) minmax(340px, 1fr);
+  gap: 32px;
+  max-width: none;
+}
+:root .auth-shell.growth-landing .auth-card {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  padding: clamp(24px, 3vw, 40px);
+}
+:root .auth-shell.growth-landing .growth-analytics {
+  grid-column: 1;
+  grid-row: 3;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0;
+  gap: 20px;
+  margin: 0;
+}
+:root .auth-shell.growth-landing .auth-benefit strong {
+  min-height: 0;
+  margin: 14px 0 8px;
+  line-height: 1.4;
+}
+:root .auth-shell.growth-landing .auth-icon-circle {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+}
+:root .auth-shell.growth-landing .auth-icon-circle svg {
+  flex: none;
+}
+.growth-landing .growth-big-number {
+  font-size: 26px;
+  line-height: 1.3;
+  margin: 18px 0 12px;
+}
+.growth-landing .growth-bookings > p {
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+.growth-landing .growth-card-label {
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 1.5;
+}
+.growth-landing .growth-stage {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 10px;
+}
+.growth-landing .growth-stage > span {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.growth-landing .growth-stage p {
+  line-height: 1.5;
+}
+.growth-landing .auth-field {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.growth-landing .auth-field-label {
+  font-weight: 800;
+  line-height: 1.5;
+}
+.growth-landing .auth-input-wrap {
+  min-width: 0;
+}
+:root .auth-shell.growth-landing .auth-input-wrap {
+  height: 52px;
+}
+:root .auth-shell.growth-landing .auth-input-wrap input {
+  height: 52px;
+  font-size: 16px;
+}
+:root .auth-shell.growth-landing .auth-underline {
+  margin: 14px 0 12px;
+}
+.growth-landing .auth-form {
+  gap: 24px;
+}
+.growth-landing .auth-security,
+.growth-landing .growth-security {
+  align-items: start;
+  line-height: 1.6;
+  text-align: left;
+}
+.growth-landing .growth-security svg {
+  flex: none;
+  margin-top: 2px;
+}
+.growth-landing .auth-metric > div {
+  min-width: 0;
+}
+:root .auth-shell.growth-landing .auth-metric strong {
+  font-size: 20px;
+  line-height: 1.4;
+}
+.growth-landing .auth-metric p {
+  margin: 8px 0 0;
+}
+.growth-landing .auth-submit svg,
+.growth-secondary svg {
+  flex: none;
+}
+
+.app-shell
+  :is(
+    .panel,
+    .field,
+    .workspace-panel-heading > div,
+    .review-record,
+    .recipient-card,
+    .result-metric-card > div,
+    .topbar > div,
+    .app-identity
+  ) {
+  min-width: 0;
+}
+.app-shell .field {
+  display: grid;
+  gap: 10px;
+}
+.app-shell :is(input, select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.app-shell .workspace-panel-heading {
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.app-shell .workspace-panel-heading h2 {
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+.app-shell .workspace-panel-heading p {
+  margin: 0;
+  line-height: 1.6;
+}
+.app-shell .workspace-icon-well {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+.app-shell .workspace-icon-well svg {
+  flex: none;
+  max-width: 65%;
+  max-height: 65%;
+}
+.app-shell :is(.button, .app-nav-signout, .app-nav-link) {
+  min-height: 44px;
+  line-height: 1.4;
+}
+.app-shell :is(.button, .app-nav-signout, .app-nav-link) svg {
+  flex-shrink: 0;
+}
+.app-shell .screen-intro {
+  max-width: 64ch;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+.app-shell
+  :is(
+    .customer-row,
+    .recipient-card,
+    .campaign-item,
+    .review-meta,
+    .app-identity,
+    .settings-section
+  ) {
+  overflow-wrap: anywhere;
+}
+.app-shell .toolbar > div:last-child:has(> .button) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-shell .toolbar h2:has(> svg) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+body:has(.app-shell) .theme-toggle {
+  position: relative;
+  inset: auto;
+  display: flex;
+  width: max-content;
+  margin: 0 24px 24px auto;
+  transform: none;
+}
+.theme-toggle {
+  transition-property: transform, box-shadow;
+}
+:root .auth-shell.growth-landing :is(button, a, input),
+:root
+  .auth-shell.growth-landing
+  :is(.auth-card, .auth-benefit, .growth-bookings, .growth-pipeline) {
+  transition-property: transform, box-shadow;
+}
+.app-shell .dialog-backdrop {
+  overflow: hidden;
+}
+.app-shell .dialog {
+  max-width: 100%;
+  height: 100dvh;
+  overflow-x: hidden;
+  animation: dialog-appear 160ms ease-out;
+}
+@keyframes dialog-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .dialog {
+    animation: none;
+  }
+}
+@media (max-width: 1250px) {
+  .app-shell .app-nav-shell {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+  .app-shell .app-identity {
+    border-right: 0;
+    padding-right: 0;
+  }
+  .app-shell .app-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding: 12px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .app-shell .app-nav-link {
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 4px;
+    font-size: 13px;
+  }
+  .app-shell .app-nav-signout {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .app-shell .app-nav-signout::before {
+    display: none;
+  }
+  .app-shell .results-filter {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .app-shell .results-filter-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto;
+  }
+}
+
+@media (max-width: 1000px) {
+  :root .auth-shell.growth-landing {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 1fr);
+    gap: 24px;
+  }
+  :root .auth-shell.growth-landing .auth-benefits {
+    grid-template-columns: 1fr;
+  }
+  :root .auth-shell.growth-landing .auth-benefit {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+  }
+  :root .auth-shell.growth-landing .auth-benefit strong {
+    margin-top: 0;
+  }
+  :root .auth-shell.growth-landing .growth-analytics {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 800px) {
+  :root .auth-shell.growth-landing {
+    padding: 0 20px 24px;
+  }
+  :root .auth-shell.growth-landing .auth-left {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    order: 1;
+  }
+  .growth-demo-note {
+    order: 1;
+  }
+  .growth-hero-actions {
+    margin: 24px 0;
+  }
+  :root .auth-shell.growth-landing .auth-details {
+    order: 3;
+  }
+  :root .auth-shell.growth-landing .auth-card {
+    order: 3;
+  }
+  :root .auth-shell.growth-landing .growth-analytics {
+    order: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :root .auth-shell.growth-landing > .auth-metrics {
+    grid-template-columns: 1fr;
+  }
+  :root .auth-shell.growth-landing > .auth-metrics .auth-metric:last-child {
+    grid-column: auto;
+  }
+}
+@media (max-width: 700px) {
+  .app-shell .app-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .app-shell .results-filter-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app-shell .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .app-shell .topbar h1 {
+    font-size: clamp(28px, 8vw, 38px);
+    overflow-wrap: anywhere;
+  }
+  .app-shell .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .app-shell .results-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app-shell .toolbar > div:last-child:has(> .button) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .app-shell .workspace-panel-heading {
+    gap: 12px;
+  }
+}
+@media (max-width: 480px) {
+  :root .auth-shell.growth-landing .growth-analytics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root .auth-shell.growth-landing .auth-card {
+    padding: 24px 20px;
+  }
+  .growth-hero-actions > :is(button, a) {
+    width: 100%;
+  }
+  .growth-stepper {
+    gap: 8px;
+    font-size: 11px;
+  }
+}

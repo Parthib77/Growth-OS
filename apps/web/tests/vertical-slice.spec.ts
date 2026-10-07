@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('real app exposes an accessible registration surface', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /reliable register/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Keep client enquiries/i })).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(
     results.violations.filter((item) => ['serious', 'critical'].includes(item.impact || '')).length,
@@ -30,7 +30,7 @@ test('an offline registration preserves input and recovers after reconnection', 
 
   await context.setOffline(false);
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Set your follow-up defaults/i })).toBeVisible();
 });
 
 test('seeded demo signs in to the real database and stays clearly labeled', async ({ page }) => {
@@ -41,7 +41,7 @@ test('seeded demo signs in to the real database and stays clearly labeled', asyn
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
   await expect(page.getByText('Demo workspace', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mina Chen/ })).toBeVisible();
   await page.getByRole('button', { name: 'Reviews' }).click();
   await expect(page.getByText('Demo workspace', { exact: true })).toBeVisible();
@@ -103,7 +103,7 @@ test('password reset uses a single-use link and returns to the authenticated wor
   await page.getByLabel('Confirm new password').fill(newPassword);
   await page.getByRole('button', { name: 'Update password' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
   await expect(page.getByText('Password updated. You are signed in.')).toBeVisible();
 });
 
@@ -117,12 +117,12 @@ test('full workflow stores the booking and recorded value in Results', async ({
   await page.getByLabel('Password').fill('correct horse battery staple');
   await page.getByRole('button', { name: 'Create account' }).click();
 
-  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Set your follow-up defaults/i })).toBeVisible();
   await page.getByLabel('Timezone').fill('America/Los_Angeles');
   await page.getByLabel('Follow-up after (days)').fill('2');
   await page.getByRole('button', { name: 'Save and open Today' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
   await page
     .getByRole('button', { name: /add enquiry/i })
     .first()
@@ -158,7 +158,7 @@ test('customer register supports add, search, detail history, and consent withdr
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill('correct horse battery staple');
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Set your follow-up defaults/i })).toBeVisible();
   await page.getByLabel('Timezone').fill('America/Los_Angeles');
   await page.getByRole('button', { name: 'Save and open Today' }).click();
   await page.getByRole('button', { name: 'Customers' }).click();
@@ -190,7 +190,7 @@ test('campaign workflow reviews recipients, opens a WhatsApp link, and records s
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill('correct horse battery staple');
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Set your follow-up defaults/i })).toBeVisible();
   await page.getByLabel('Timezone').fill('America/Los_Angeles');
   await page.getByRole('button', { name: 'Save and open Today' }).click();
   await page.getByRole('button', { name: 'Add enquiry' }).first().click();
@@ -199,7 +199,7 @@ test('campaign workflow reviews recipients, opens a WhatsApp link, and records s
   await page.getByLabel('Service').fill('Massage');
   await page.getByRole('button', { name: 'Save enquiry' }).click();
   await page.getByRole('button', { name: 'Campaigns' }).click();
-  await expect(page.getByRole('heading', { name: /permission-aware follow-up/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Client follow-ups/i })).toBeVisible();
   await page.getByLabel('Campaign name').fill('Spring follow-up');
   await expect(page.getByLabel('Campaign name')).toHaveValue('Spring follow-up');
   await page.getByRole('button', { name: 'Save draft' }).click();
@@ -226,7 +226,7 @@ test('reviews, filtered results, settings, exports, legal drafts, and deletion w
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill('correct horse battery staple');
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page.getByRole('heading', { name: /make the workspace useful/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Set your follow-up defaults/i })).toBeVisible();
   await page.getByLabel('Timezone').fill('America/Los_Angeles');
   await page.getByRole('button', { name: 'Save and open Today' }).click();
 
@@ -299,6 +299,6 @@ test('reviews, filtered results, settings, exports, legal drafts, and deletion w
   await page.getByLabel('Business name confirmation').fill('Completion Salon');
   await page.getByLabel('Current password').fill('correct horse battery staple');
   await page.getByRole('button', { name: 'Delete account permanently' }).click();
-  await expect(page.getByRole('heading', { name: /reliable register/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Keep client enquiries/i })).toBeVisible();
   await expect(page.getByText('Account and workspace deleted.')).toBeVisible();
 });

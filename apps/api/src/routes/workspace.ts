@@ -275,6 +275,8 @@ export function registerWorkspaceRoutes(router: Router, config: AppConfig): void
         _id: auth.workspaceId,
         ownerUserId: auth.userId,
       });
+      if (workspace?.isDemo)
+        throw new AppError('FORBIDDEN', 'The shared demo account cannot be deleted.', 403);
       if (
         !user ||
         !workspace ||

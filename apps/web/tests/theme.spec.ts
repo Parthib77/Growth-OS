@@ -17,7 +17,7 @@ test('theme switch changes the whole public site and persists across routes', as
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgba(19, 39, 44, 0.68)');
+  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgba(9, 35, 43, 0.87)');
   const authAccessibility = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa'])
     .analyze();
@@ -40,7 +40,7 @@ test('dark mode covers every signed-in destination without page overflow', async
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Switch to dark mode' }).click();
   await expect(page.locator('.app-nav-shell')).toHaveCSS('background-color', 'rgb(23, 37, 46)');

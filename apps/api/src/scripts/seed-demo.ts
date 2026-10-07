@@ -9,6 +9,7 @@ const config = readConfig();
 await connectDatabase(config);
 try {
   const result = await seedDemoWorkspace({
+    profile: process.env.GROWTHOS_DEMO_PROFILE === 'consultancy' ? 'consultancy' : undefined,
     email: process.env.GROWTHOS_DEMO_EMAIL,
     password: process.env.GROWTHOS_DEMO_PASSWORD,
   });

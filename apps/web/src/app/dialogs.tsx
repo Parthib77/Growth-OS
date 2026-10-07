@@ -163,7 +163,7 @@ export function TodayDialogs({
             </button>
           )}
           <p className="muted small">
-            A booking is stored with an idempotency key and appears in Results.
+            Save the appointment and agreed value to your booking records.
           </p>
         </DialogFrame>
       )}

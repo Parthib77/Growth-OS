@@ -82,6 +82,7 @@ export async function seedDemoWorkspace(
     email?: string;
     password?: string;
     now?: Date;
+    profile?: 'consultancy';
   } = {},
 ): Promise<DemoSeedResult> {
   const email = input.email?.trim() || DEMO_ACCOUNT.email;
@@ -93,6 +94,17 @@ export async function seedDemoWorkspace(
   const existing = await findExistingDemo(normalizedEmail);
   if (existing) return existing;
 
+  const consultancy = input.profile === 'consultancy';
+  const businessName = consultancy ? 'Northline Consulting' : DEMO_ACCOUNT.businessName;
+  const service = (name: string) =>
+    consultancy
+      ? ({
+          'Color consultation': 'Project consultation',
+          Balayage: 'Brand strategy',
+          'Cut and finish': 'Discovery call',
+          'Texture treatment': 'Website review',
+        }[name] ?? name)
+      : name;
   const now = input.now ? new Date(input.now) : new Date();
   if (Number.isNaN(now.getTime())) throw new Error('The demo seed time is invalid.');
   const ids = {
@@ -144,12 +156,12 @@ export async function seedDemoWorkspace(
           {
             _id: ids.workspace,
             ownerUserId: ids.user,
-            businessName: DEMO_ACCOUNT.businessName,
-            category: 'Salon',
+            businessName,
+            category: consultancy ? 'Consulting' : 'Salon',
             timezone: 'America/Los_Angeles',
             currency: 'USD',
             defaultCountryCode: '+1',
-            bookingLink: 'https://example.com/northline-studio/book',
+            bookingLink: '',
             followUpDays: 3,
             reviewResponseTemplate:
               'Thank you, {reviewer_name}. We appreciate you taking the time to share this.',
@@ -172,11 +184,11 @@ export async function seedDemoWorkspace(
             email: 'mina.chen@example.test',
             normalizedEmail: 'mina.chen@example.test',
             source: 'Referral',
-            service: 'Color consultation',
+            service: service('Color consultation'),
             quotedMinorUnits: 14500,
             lifecycle: 'enquiry',
             lastInteractionAt: daysFrom(now, -5),
-            serviceInterests: ['Color consultation', 'Balayage'],
+            serviceInterests: [service('Color consultation'), service('Balayage')],
             internalNotes: 'Prefers weekday afternoon appointments.',
           },
           {
@@ -189,12 +201,12 @@ export async function seedDemoWorkspace(
             email: 'jordan.lee@example.test',
             normalizedEmail: 'jordan.lee@example.test',
             source: 'Instagram',
-            service: 'Cut and finish',
+            service: service('Cut and finish'),
             quotedMinorUnits: 9800,
             lifecycle: 'booked',
             lastInteractionAt: daysFrom(now, -1),
-            serviceInterests: ['Cut and finish'],
-            internalNotes: 'First visit.',
+            serviceInterests: [service('Cut and finish')],
+            internalNotes: consultancy ? 'First discovery call.' : 'First visit.',
           },
           {
             _id: ids.priya,
@@ -206,11 +218,11 @@ export async function seedDemoWorkspace(
             email: 'priya.shah@example.test',
             normalizedEmail: 'priya.shah@example.test',
             source: 'Website',
-            service: 'Texture treatment',
+            service: service('Texture treatment'),
             quotedMinorUnits: 17500,
             lifecycle: 'contacted',
             lastInteractionAt: daysFrom(now, -4),
-            serviceInterests: ['Texture treatment'],
+            serviceInterests: [service('Texture treatment')],
             internalNotes: 'Asked not to receive WhatsApp follow-ups.',
           },
         ],
@@ -253,8 +265,10 @@ export async function seedDemoWorkspace(
             customerId: ids.mina,
             actorUserId: ids.user,
             kind: 'enquiry',
-            body: 'Asked about maintenance and timing for balayage.',
-            serviceInterest: 'Balayage',
+            body: consultancy
+              ? 'Asked about the scope and timing for a brand strategy project.'
+              : 'Asked about maintenance and timing for balayage.',
+            serviceInterest: service('Balayage'),
             occurredAt: daysFrom(now, -5),
           },
           {
@@ -264,7 +278,7 @@ export async function seedDemoWorkspace(
             actorUserId: ids.user,
             kind: 'message',
             body: 'Confirmed the appointment time and service.',
-            serviceInterest: 'Cut and finish',
+            serviceInterest: service('Cut and finish'),
             occurredAt: daysFrom(now, -1),
           },
           {
@@ -274,7 +288,7 @@ export async function seedDemoWorkspace(
             actorUserId: ids.user,
             kind: 'note',
             body: 'Recorded WhatsApp consent withdrawal.',
-            serviceInterest: 'Texture treatment',
+            serviceInterest: service('Texture treatment'),
             occurredAt: daysFrom(now, -2),
           },
         ],
@@ -330,13 +344,12 @@ export async function seedDemoWorkspace(
             firstName: 'Mina',
             lastName: 'Chen',
             phone: '+1 415 555 0114',
-            service: 'Color consultation',
+            service: service('Color consultation'),
             eligibility: 'eligible',
             reason: null,
             consentRecordId: ids.minaConsent,
             eligibilityCheckedAt: daysFrom(now, -2),
-            personalizedPreview:
-              'Hi Mina, this is Northline Studio. Would you like to book your Color consultation?',
+            personalizedPreview: `Hi Mina, this is ${businessName}. Would you like to book your ${service('Color consultation')}?`,
             removed: false,
             outcome: 'sent',
             outcomeAt: daysFrom(now, -1),
@@ -350,13 +363,12 @@ export async function seedDemoWorkspace(
             firstName: 'Jordan',
             lastName: 'Lee',
             phone: '+1 415 555 0132',
-            service: 'Cut and finish',
+            service: service('Cut and finish'),
             eligibility: 'booked',
             reason: 'Booking recorded',
             consentRecordId: ids.jordanConsent,
             eligibilityCheckedAt: daysFrom(now, -2),
-            personalizedPreview:
-              'Hi Jordan, this is Northline Studio. Would you like to book your Cut and finish?',
+            personalizedPreview: `Hi Jordan, this is ${businessName}. Would you like to book your ${service('Cut and finish')}?`,
             removed: false,
             outcome: 'booked',
             bookingId: ids.booking,
@@ -371,7 +383,7 @@ export async function seedDemoWorkspace(
             _id: ids.booking,
             workspaceId: ids.workspace,
             customerId: ids.jordan,
-            service: 'Cut and finish',
+            service: service('Cut and finish'),
             appointmentAt: daysFrom(now, 2),
             agreedMinorUnits: 9800,
             currency: 'USD',
@@ -401,11 +413,15 @@ export async function seedDemoWorkspace(
             workspaceId: ids.workspace,
             reviewerName: 'Sam K.',
             rating: 4,
-            text: 'Great result and helpful aftercare advice.',
+            text: consultancy
+              ? 'Useful project plan and clear next steps.'
+              : 'Great result and helpful aftercare advice.',
             source: 'Manual import',
             receivedAt: daysFrom(now, -8),
             responseState: 'drafted',
-            responseText: 'Thank you, Sam. We are glad the aftercare guidance was useful.',
+            responseText: consultancy
+              ? 'Thank you, Sam. Glad the project plan helped.'
+              : 'Thank you, Sam. We are glad the aftercare guidance was useful.',
             responseRevisedAt: daysFrom(now, -7),
           },
         ],

@@ -184,66 +184,66 @@ html[data-theme='dark'] .loading-wave {
   }
 }
 
-/* Light mode uses muted sage and paper surfaces to reduce glare. */
+/* Light mode pairs light oak backgrounds with warm cream surfaces. */
 html[data-theme='light'] {
   color-scheme: light;
-  --mineral: #e4ebe5;
-  --paper: #f1f0e8;
-  --line: #c9d2c9;
-  background: #e4ebe5;
+  --mineral: #e5d5bf;
+  --paper: #f5ebdd;
+  --line: #cbb79b;
+  background: #e5d5bf;
 }
 html[data-theme='light'] .theme-toggle {
-  background: #f1f0e8;
-  border-color: #b7cfc5;
+  background: #f5ebdd;
+  border-color: #bfa384;
 }
 html[data-theme='light'] .auth-shell {
   background:
-    radial-gradient(ellipse 850px 620px at 91% 26%, #d9e9dd 0%, transparent 68%),
-    radial-gradient(ellipse 700px 680px at 51% 49%, #edece2 0%, transparent 70%), #e4ebe5;
+    radial-gradient(ellipse 850px 620px at 91% 26%, #dcc3a4 0%, transparent 68%),
+    radial-gradient(ellipse 700px 680px at 51% 49%, #f1e2cc 0%, transparent 70%), #e5d5bf;
 }
 html[data-theme='light'] .auth-shell::before {
-  background: rgb(241 240 232 / 58%);
+  background: rgb(245 235 221 / 58%);
 }
 html[data-theme='light'] .auth-shell::after {
-  border-color: #ccd8cd;
-  background: #e2eae0;
+  border-color: #ceb696;
+  background: #dfc9ac;
 }
 html[data-theme='light'] .auth-background-glow {
-  background: #d8e9dc;
+  background: #d9bc97;
 }
 html[data-theme='light'] .auth-card {
-  border-color: #c9d2c9;
-  background: #f1f0e8;
+  border-color: #cbb79b;
+  background: #f5ebdd;
 }
 html[data-theme='light'] .auth-input-wrap input {
-  background: #e9eee7;
-  border-color: #c5d0c5;
+  background: #eee0cb;
+  border-color: #c5ac8d;
 }
 html[data-theme='light'] .auth-input-wrap input[type='email'],
 html[data-theme='light'] .auth-input-wrap input[type='password'] {
-  background: #e5ebe5;
+  background: #ebdac1;
 }
 html[data-theme='light'] .auth-icon-circle,
 html[data-theme='light'] .auth-kicker {
-  background: #d7eade;
+  background: #ead5b8;
 }
 html[data-theme='light'] .app-shell {
-  --mineral: #e4ebe5;
-  --paper: #f1f0e8;
-  --line: #c9d2c9;
-  background-color: #e4ebe5;
+  --mineral: #e5d5bf;
+  --paper: #f5ebdd;
+  --line: #cbb79b;
+  background-color: #e5d5bf;
   background-image:
     url('/assets/plates/leaves.png'),
-    radial-gradient(ellipse 430px 410px at 0 63%, #d9e8db 0, transparent 73%);
+    radial-gradient(ellipse 430px 410px at 0 63%, #dbc19f 0, transparent 73%);
 }
 @media (max-width: 700px) {
   html[data-theme='light'] .app-shell {
-    background-image: radial-gradient(ellipse 430px 410px at 0 63%, #d9e8db 0, transparent 73%);
+    background-image: radial-gradient(ellipse 430px 410px at 0 63%, #dbc19f 0, transparent 73%);
     background-attachment: scroll;
   }
 }
 html[data-theme='light'] .app-shell::before {
-  background: #d8e9dc;
+  background: #d9bc97;
 }
 html[data-theme='light'] .app-shell .app-nav-shell,
 html[data-theme='light'] .workspace-today-badge,
@@ -256,8 +256,8 @@ html[data-theme='light'] .result-metric-card,
 html[data-theme='light'] .app-shell .summary-row div,
 html[data-theme='light'] .app-shell .register,
 html[data-theme='light'] .app-shell .dialog {
-  background: #f1f0e8;
-  border-color: #c9d2c9;
+  background: #f5ebdd;
+  border-color: #cbb79b;
 }
 html[data-theme='light'] .app-shell .field input,
 html[data-theme='light'] .app-shell .field select,
@@ -268,22 +268,22 @@ html[data-theme='light'] .app-shell .button.secondary,
 html[data-theme='light'] .app-shell .button.quiet,
 html[data-theme='light'] .campaign-filter-tabs button,
 html[data-theme='light'] .app-shell .legal-links a {
-  background: #e9eee7;
+  background: #eee0cb;
 }
 html[data-theme='light'] .customer-table-head,
 html[data-theme='light'] .campaign-table-head {
-  background: #e2e9df;
+  background: #e4ceb0;
 }
 html[data-theme='light'] .app-shell .customer-row,
 html[data-theme='light'] .app-shell .campaign-item,
 html[data-theme='light'] .app-shell .record {
-  background: #f1f0e8;
+  background: #f5ebdd;
 }
 html[data-theme='light'] .app-shell .customer-row:hover,
 html[data-theme='light'] .app-shell .campaign-item:hover,
 html[data-theme='light'] .app-shell .campaign-item.selected,
 html[data-theme='light'] .app-shell .record:hover {
-  background: #dcebdc;
+  background: #e8d4b5;
 }
 html[data-theme='light'] .app-shell .danger-section {
   background: #fff3ef;
@@ -293,11 +293,11 @@ html[data-theme='light'] .app-shell .deletion-confirmation {
   background: #ffebe7;
 }
 html[data-theme='light'] .legal-shell {
-  background: #e4ebe5;
+  background: #e5d5bf;
 }
 html[data-theme='light'] .legal-document {
-  background: #f1f0e8;
-  border-color: #c9d2c9;
+  background: #f5ebdd;
+  border-color: #cbb79b;
 }
 
 html[data-theme='dark'] {

@@ -15,14 +15,14 @@ test('capture and check every signed-in workspace screen', async ({ page }, test
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
 
   const reviewDir = path.resolve('.impeccable/review');
   await mkdir(reviewDir, { recursive: true });
   const screens = [
-    { nav: 'Today', heading: 'Who needs attention?', filename: 'today' },
+    { nav: 'Today', heading: 'Enquiries to follow up', filename: 'today' },
     { nav: 'Customers', heading: 'Customers', filename: 'customers' },
-    { nav: 'Campaigns', heading: 'Permission-aware follow-up', filename: 'campaigns' },
+    { nav: 'Campaigns', heading: 'Client follow-ups', filename: 'campaigns' },
     { nav: 'Reviews', heading: 'Reviews', filename: 'reviews' },
     { nav: 'Results', heading: 'Results', filename: 'results' },
     { nav: 'Settings', heading: 'Settings', filename: 'settings' },

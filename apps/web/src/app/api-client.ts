@@ -55,7 +55,16 @@ export async function request<T>(
     );
   }
   if (response.status === 204) return schema.parse(null);
-  const data: unknown = await response.json();
+  let data: unknown;
+  try {
+    data = await response.json();
+  } catch {
+    throw new ApiError(
+      'The service is temporarily unavailable. Please try again.',
+      'INTERNAL_ERROR',
+      response.status,
+    );
+  }
   if (!response.ok) {
     const parsed = ErrorResponseSchema.safeParse(data);
     if (parsed.success)

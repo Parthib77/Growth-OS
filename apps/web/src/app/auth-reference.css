@@ -246,36 +246,41 @@
 }
 html[data-theme='light'] .auth-shell {
   background:
-    radial-gradient(circle 440px at 74% 49%, rgb(78 219 158 / 27%), transparent 76%),
-    radial-gradient(ellipse 940px 530px at 89% 10%, #ddf7e9 0%, transparent 73%),
-    linear-gradient(118deg, #fffefa 8%, #f2faf4 59%, #e4f8eb 100%);
+    radial-gradient(circle 440px at 74% 49%, rgb(173 125 72 / 20%), transparent 76%),
+    radial-gradient(ellipse 940px 530px at 89% 10%, #e5ceb0 0%, transparent 73%),
+    linear-gradient(118deg, #f5ead9 8%, #ecdbc4 59%, #dcc09d 100%);
 }
 html[data-theme='light'] .auth-shell::before {
-  background: rgb(255 255 252 / 72%);
+  background: rgb(249 238 221 / 62%);
 }
 html[data-theme='light'] .auth-shell::after {
-  border-color: #cddbd1;
-  background: #e9f8ee;
+  border-color: #cbb391;
+  background: #e5ceb0;
 }
 html[data-theme='light'] .auth-background-glow {
-  background: radial-gradient(circle, #a7edc9 0%, rgb(167 237 201 / 14%) 66%, transparent 80%);
+  background: radial-gradient(circle, #c89d6d 0%, rgb(200 157 109 / 14%) 66%, transparent 80%);
 }
 html[data-theme='light'] .auth-card {
-  border-color: rgb(255 255 255 / 85%);
-  background-color: rgb(255 254 250 / 64%);
+  --auth-border-glow: rgb(160 111 61 / 78%);
+  border-color: #d1b99a;
+  background-color: rgb(249 239 222 / 78%);
   background-image: linear-gradient(145deg, rgb(255 255 255 / 24%), transparent 54%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 248 234 / 78%),
+    0 18px 48px rgb(94 65 36 / 17%),
+    0 0 27px rgb(165 118 66 / 12%);
 }
 html[data-theme='light'] .auth-input-wrap input {
-  border-color: #ccd6d8;
-  background: #f3f8ff;
+  border-color: #c7ad8c;
+  background: #f1e3cd;
 }
 html[data-theme='light'] .auth-input-wrap input[type='email'],
 html[data-theme='light'] .auth-input-wrap input[type='password'] {
-  background: #eef5ff;
+  background: #ebdac1;
 }
 html[data-theme='light'] .auth-icon-circle,
 html[data-theme='light'] .auth-kicker {
-  background: #e0f5eb;
+  background: #ead5b8;
 }
 html[data-theme='dark'] .auth-shell {
   --auth-slate: #bccbd1;
@@ -328,7 +333,7 @@ html[data-theme='dark'] .auth-submit:hover {
 }
 @media (prefers-reduced-transparency: reduce) {
   html[data-theme='light'] .auth-card {
-    background-color: #fffefa;
+    background-color: #f5ead9;
     backdrop-filter: none;
   }
   html[data-theme='dark'] .auth-card {
@@ -338,7 +343,7 @@ html[data-theme='dark'] .auth-submit:hover {
 }
 @supports not (backdrop-filter: blur(1px)) {
   html[data-theme='light'] .auth-card {
-    background-color: rgb(255 254 250 / 96%);
+    background-color: rgb(249 239 222 / 96%);
   }
   html[data-theme='dark'] .auth-card {
     background-color: rgb(25 40 49 / 96%);

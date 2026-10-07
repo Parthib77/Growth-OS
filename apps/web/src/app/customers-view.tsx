@@ -262,9 +262,7 @@ export function CustomersView({
           <h1 id="screen-title" tabIndex={-1}>
             Customers
           </h1>
-          <p className="screen-intro">
-            Manage your customers, view their status, and take the next best action.
-          </p>
+          <p className="screen-intro">Find a client’s brief, contact permission and next step.</p>
         </div>
         <TodayBadge />
       </header>
@@ -368,7 +366,7 @@ export function CustomersView({
             <div>
               <h2>Customer register</h2>
               <p>
-                Each customer's status is based on their activity and consent. No hidden scores.
+                Check each client’s stage and contact permission.
               </p>
             </div>
             <span className="customer-count">
@@ -522,8 +520,8 @@ export function CustomersView({
             <div>
               <h2>Import CSV</h2>
               <p>
-                Import customers from a CSV file by pasting the contents below. Required columns:
-                first name, phone, source, and service. Duplicate rows require a deliberate choice.
+                Paste your CSV. Required columns: first name, phone, source and service. Review
+                duplicates before saving.
               </p>
             </div>
           </div>

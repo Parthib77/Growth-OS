@@ -93,6 +93,34 @@ describe('database-backed demo workspace', () => {
     expect(await User.countDocuments({ normalizedEmail: 'ordinary@example.com' })).toBe(1);
   });
 
+  it('opens the consultancy sample and protects it from shared-account deletion', async () => {
+    const email = 'consultant-demo@growthos.local';
+    const password = 'ConsultantDemo!2026';
+    const seeded = await seedDemoWorkspace({ profile: 'consultancy', email, password });
+    const workspace = await Workspace.findById(seeded.workspaceId).lean();
+    expect(workspace?.businessName).toBe('Northline Consulting');
+    expect(workspace?.category).toBe('Consulting');
+    const customers = await Customer.find({ workspaceId: seeded.workspaceId }).lean();
+    expect(customers.map((customer) => customer.service).sort()).toEqual([
+      'Discovery call',
+      'Project consultation',
+      'Website review',
+    ]);
+    const agent = request.agent(createApp({ config }));
+    const csrf = await agent.get('/api/v1/auth/csrf');
+    const login = await agent
+      .post('/api/v1/auth/sign-in')
+      .set('x-csrf-token', csrf.body.csrfToken)
+      .send({ email, password });
+    expect(login.status).toBe(200);
+    const deletion = await agent
+      .delete('/api/v1/workspace/account')
+      .set('x-csrf-token', login.body.csrfToken)
+      .send({ password, businessNameConfirmation: 'Northline Consulting' });
+    expect(deletion.status).toBe(403);
+    expect(await Workspace.exists({ _id: seeded.workspaceId })).toBeTruthy();
+  });
+
   it('converges when two operators seed the same demo concurrently', async () => {
     const email = 'concurrent-demo@growthos.local';
     const attempts = await Promise.all([

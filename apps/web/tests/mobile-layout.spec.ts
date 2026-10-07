@@ -6,7 +6,7 @@ test('mobile workspace decoration and reporting dates stay within the screen', a
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('#screen-title')).toHaveText('Who needs attention?');
+  await expect(page.locator('#screen-title')).toHaveText('Enquiries to follow up');
 
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 720 });

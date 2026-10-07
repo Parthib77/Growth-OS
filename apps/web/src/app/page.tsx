@@ -229,6 +229,29 @@ export default function Home() {
     void transition.finished.then(finish, finish);
   }
 
+  async function tryDemo() {
+    setStatus({ kind: 'pending', message: 'Opening the example workspace…' });
+    try {
+      const token = await refreshCsrf();
+      const result = await request('/api/v1/auth/sign-in', SignInResponseSchema, {
+        method: 'POST',
+        headers: { 'X-CSRF-Token': token },
+        // Public credentials for the shared fictional consultancy, never a private account.
+        body: JSON.stringify({
+          email: 'consultant-demo@growthos.local',
+          password: 'ConsultantDemo!2026',
+        }),
+      });
+      setCsrf(result.csrfToken);
+      await refreshWorkspace();
+      setStatus({ kind: 'success', message: 'Shared demo opened. Use sample details only.' });
+    } catch (error) {
+      setStatus({
+        kind: 'error',
+        message: error instanceof Error ? error.message : 'Unable to open the demo. Try again.',
+      });
+    }
+  }
   async function submitAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus({ kind: 'pending', message: 'Signing you in…' });
@@ -459,6 +482,7 @@ export default function Home() {
   if (screen === 'auth')
     return (
       <AuthLanding
+        onTryDemo={tryDemo}
         mode={authMode}
         status={status}
         onCreateAccount={() => {
@@ -488,11 +512,13 @@ export default function Home() {
       <main className="app-shell">
         <header className="topbar">
           <div>
-            <h1>Make the workspace useful today.</h1>
+            <h1>Set your follow-up defaults</h1>
           </div>
         </header>
         <section className="panel form-panel">
-          <p className="intro">These defaults shape your daily queue. You can change them later.</p>
+          <p className="intro">
+            Choose when enquiries need a follow-up. Change these settings any time.
+          </p>
           <form onSubmit={submitOnboarding}>
             <div className="form-grid">
               <Field
@@ -500,7 +526,7 @@ export default function Home() {
                 name="businessName"
                 defaultValue={workspace?.businessName || ''}
               />
-              <Field label="Business category" name="category" defaultValue="Salon" />
+              <Field label="Business category" name="category" defaultValue="Consulting" />
               <Field label="Timezone" name="timezone" defaultValue="America/Los_Angeles" />
               <Field label="Currency" name="currency" defaultValue="USD" />
               <Field label="Default country code" name="defaultCountryCode" defaultValue="+1" />
@@ -600,11 +626,9 @@ export default function Home() {
       <header className="topbar">
         <div>
           <h1 id="screen-title" tabIndex={-1}>
-            Who needs attention?
+            Enquiries to follow up
           </h1>
-          <p className="screen-intro">
-            Your consent-aware daily queue, bookings, and next actions in one place.
-          </p>
+          <p className="screen-intro">Check the brief and contact permission before replying.</p>
         </div>
         <TodayBadge />
       </header>
@@ -636,9 +660,7 @@ export default function Home() {
             </IconWell>
             <div>
               <h2 id="results-title">Results</h2>
-              <p className="muted">
-                Stored bookings and recorded value from the current workspace.
-              </p>
+              <p className="muted">Bookings and agreed value you have recorded.</p>
             </div>
           </div>
         </div>
@@ -709,9 +731,7 @@ export default function Home() {
             <UsersRound size={24} aria-hidden="true" />
             Priority register
           </h2>
-          <p className="muted">
-            Each reason is based on stored activity and consent. No hidden score.
-          </p>
+          <p className="muted">See why each enquiry needs a follow-up.</p>
         </div>
         <button className="button primary" onClick={() => setShowCustomer(true)}>
           <PlusCircle size={19} aria-hidden="true" />
@@ -721,8 +741,8 @@ export default function Home() {
       <section className="register">
         {today.length === 0 ? (
           <div className="empty">
-            <h3>Nothing needs attention.</h3>
-            <p>Add an enquiry to see the real workflow here.</p>
+            <h3>No follow-ups due</h3>
+            <p>Add an enquiry to start your client list.</p>
             <button className="button secondary" onClick={() => setShowCustomer(true)}>
               Add first enquiry
             </button>

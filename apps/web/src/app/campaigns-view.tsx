@@ -321,12 +321,11 @@ export function CampaignsView({
       <header className="topbar screen-heading">
         <div>
           <h1 id="screen-title" tabIndex={-1}>
-            Permission-aware follow-up
+            Client follow-ups
           </h1>
           <p className="screen-intro">
-            Create and manage follow-up campaigns for customers who have given permission.
-            <br />
-            Send personalised messages at the right time to drive more bookings and revenue.
+            Draft messages for clients with contact permission. You send them manually and record
+            the outcome.
           </p>
         </div>
         <TodayBadge />
@@ -340,8 +339,7 @@ export function CampaignsView({
             <div>
               <h2 id="campaign-composer-title">Create a campaign draft</h2>
               <p>
-                Set up a permission-aware follow-up campaign. Save it as a draft and launch when
-                you're ready.
+                Choose the clients and write your message. Review the draft before activating it.
               </p>
             </div>
           </div>

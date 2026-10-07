@@ -13,12 +13,13 @@ import './workspace.css';
 import './theme.css';
 import './auth-reference.css';
 import './growth-landing.css';
+import './layout-refinements.css';
 import { ThemeToggle } from './theme-toggle';
 import { LoadingWave } from './loading-wave';
 
 export const metadata: Metadata = {
   title: 'Growth OS',
-  description: 'A consent-aware daily workspace for appointment businesses.',
+  description: 'Client enquiries, follow-ups and booking records for independent consultants.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

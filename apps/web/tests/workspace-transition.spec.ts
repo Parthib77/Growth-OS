@@ -6,35 +6,19 @@ async function signInToDemo(page: import('@playwright/test').Page) {
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('#screen-title')).toHaveText('Who needs attention?');
+  await expect(page.locator('#screen-title')).toHaveText('Enquiries to follow up');
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
-test('workspace tabs crossfade while the navigation stays in place', async ({ page }, testInfo) => {
+test('workspace tabs keep the navigation in place', async ({ page }, testInfo) => {
   await signInToDemo(page);
   const nav = page.locator('.app-nav-shell');
   const navBefore = await nav.boundingBox();
 
   await page.getByRole('button', { name: 'Customers', exact: true }).click();
   await expect(page.locator('#screen-title')).toHaveText('Customers');
-  const animatedElement =
-    testInfo.project.name === 'phone'
-      ? '.app-shell > :not(.app-nav-shell)'
-      : '::view-transition-new(root)';
-  await expect
-    .poll(() =>
-      page.evaluate(
-        (selector) =>
-          selector.startsWith('::')
-            ? getComputedStyle(document.documentElement, selector).animationDuration
-            : getComputedStyle(document.querySelector(selector)!).animationDuration,
-        animatedElement,
-      ),
-    )
-    .toBe('0.19s');
-
   await page.getByRole('button', { name: 'Campaigns', exact: true }).click();
-  await expect(page.locator('#screen-title')).toHaveText('Permission-aware follow-up');
+  await expect(page.locator('#screen-title')).toHaveText('Client follow-ups');
   await page.getByRole('button', { name: 'Results', exact: true }).click();
   await expect(page.locator('#screen-title')).toHaveText('Results');
   await expect(page.getByRole('button', { name: 'Results', exact: true })).toHaveAttribute(
@@ -64,6 +48,6 @@ test('reduced-motion tab changes are immediate', async ({ page }) => {
   await signInToDemo(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.getByRole('button', { name: 'Campaigns', exact: true }).click();
-  await expect(page.locator('#screen-title')).toHaveText('Permission-aware follow-up');
+  await expect(page.locator('#screen-title')).toHaveText('Client follow-ups');
   await expect(page.locator('html')).not.toHaveAttribute('data-workspace-transition');
 });

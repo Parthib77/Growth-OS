@@ -47,7 +47,7 @@ test('capture the daily workspace with stored bookings', async ({ page }, testIn
   await page.getByLabel('Email').fill('demo@growthos.local');
   await page.getByLabel('Password').fill('DemoWorkspace!2026');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Who needs attention?' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
   await expect(page.getByText('Cut and finish')).toBeVisible();
 
   const reviewDir = path.resolve(process.env.GROWTHOS_SCREENSHOT_DIR || '.impeccable/review');

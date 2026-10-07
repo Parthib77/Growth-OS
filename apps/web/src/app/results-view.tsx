@@ -124,7 +124,9 @@ export function ResultsView({
           <h1 id="screen-title" tabIndex={-1}>
             Results
           </h1>
-          <p className="screen-intro">Counts come from stored events and bookings in {timezone}.</p>
+          <p className="screen-intro">
+            See the bookings and follow-ups you recorded. Dates use {timezone}.
+          </p>
         </div>
         <TodayBadge />
       </header>
@@ -232,11 +234,12 @@ export function ResultsView({
                   results.recordedBookingValue.minorUnits,
                 )}
               </strong>
-              <p>{results.recordedValueDefinition}</p>
-              <p>{results.bookingDefinition}</p>
-              <p className="muted">
-                Included booking statuses: {results.includedBookingStatuses.join(', ')}.
-              </p>
+              <p>Agreed fees for recorded appointments. Payments are handled outside GrowthOS.</p>
+              <details className="results-definition">
+                <summary>See included bookings</summary>
+                <p>{results.bookingDefinition}</p>
+                <p className="muted">Statuses: {results.includedBookingStatuses.join(', ')}.</p>
+              </details>
             </section>
           </div>
         </>

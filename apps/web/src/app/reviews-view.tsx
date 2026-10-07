@@ -253,7 +253,7 @@ export function ReviewsView({
             Reviews
           </h1>
           <p className="screen-intro">
-            Keep the original review intact while you prepare and track a manual response.
+            Save client feedback and draft your reply. Post it manually, then mark it done.
           </p>
         </div>
         <label className="field compact-field">
@@ -290,9 +290,7 @@ export function ReviewsView({
                 </IconWell>
                 <h2 id="add-review-title">Add a review</h2>
               </div>
-              <p className="muted">
-                Use this for feedback received outside a connected review provider.
-              </p>
+              <p className="muted">Add feedback you received from a client.</p>
               <form onSubmit={createReview}>
                 <div className="form-grid">
                   <Field label="Reviewer name" name="reviewerName" />

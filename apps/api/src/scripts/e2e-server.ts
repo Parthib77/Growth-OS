@@ -21,6 +21,11 @@ const config = readConfig({
 });
 await connectDatabase(config);
 await seedDemoWorkspace();
+await seedDemoWorkspace({
+  profile: 'consultancy',
+  email: 'consultant-demo@growthos.local',
+  password: 'ConsultantDemo!2026',
+});
 const server = createApp({ config }).listen(config.PORT, '127.0.0.1');
 let shuttingDown = false;
 

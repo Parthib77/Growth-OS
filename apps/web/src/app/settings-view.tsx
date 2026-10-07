@@ -130,7 +130,7 @@ export function SettingsView({
             Settings
           </h1>
           <p className="screen-intro">
-            Business defaults, response language, data access, and account control.
+            Update your business details, export records or manage your account.
           </p>
         </div>
       </header>
@@ -143,10 +143,7 @@ export function SettingsView({
             </IconWell>
             <div>
               <h2 id="business-settings-title">Business and follow-up defaults</h2>
-              <p>
-                These settings are used across your workspace for bookings, follow-ups and customer
-                communications.
-              </p>
+              <p>Set your booking details and when follow-ups become due.</p>
             </div>
           </div>
           <form onSubmit={saveSettings}>
@@ -210,8 +207,7 @@ export function SettingsView({
               <div>
                 <h2 id="data-export-title">Data export</h2>
                 <p>
-                  Download a validated JSON copy of workspace settings and business records.
-                  Passwords, sessions, and internal lookup fields are excluded.
+                  Download your settings and business records. Passwords and sessions are excluded.
                 </p>
               </div>
             </div>
@@ -233,10 +229,7 @@ export function SettingsView({
               </IconWell>
               <div>
                 <h2 id="privacy-settings-title">Privacy and legal drafts</h2>
-                <p>
-                  The current policy and terms describe implemented behavior and remain marked for
-                  legal review.
-                </p>
+                <p>Read the current policy and terms. These drafts still need legal review.</p>
               </div>
             </div>
             <div className="legal-links">
@@ -269,7 +262,9 @@ export function SettingsView({
                 </p>
               </div>
             </div>
-            {!showDeletion ? (
+            {workspace.isDemo ? (
+              <p className="muted">Account deletion is unavailable in the shared demo.</p>
+            ) : !showDeletion ? (
               <button type="button" className="button danger" onClick={() => setShowDeletion(true)}>
                 <Trash2 aria-hidden="true" size={19} />
                 Start account deletion
