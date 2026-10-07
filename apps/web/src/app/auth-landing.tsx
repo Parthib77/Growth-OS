@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState, type FormEventHandler } from 'react';
+import { useEffect, useId, useRef, useState, type FormEventHandler } from 'react';
 import {
   ArrowRight,
   Leaf,
@@ -132,6 +132,27 @@ const metrics = [
     illustrative: false,
   },
 ];
+
+function MetricsFlow() {
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const svg = ref.current!;
+    const observer = new IntersectionObserver(([entry]) => {
+      svg.dataset.running = String(entry.isIntersecting);
+    });
+    observer.observe(svg);
+    return () => observer.disconnect();
+  }, []);
+  const paths = [
+    'M0 42 C240 42 310 8 600 30 S960 46 1200 14',
+    'M0 32 C260 32 370 58 600 30 S960 10 1200 32',
+    'M0 38 C280 38 440 26 600 30 S920 36 1200 22',
+  ];
+  return <svg ref={ref} className="growth-metrics-flow" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+    {paths.map(d => <path key={d} d={d} />)}
+    {paths.map((d, index) => <path key={`highlight-${index}`} d={d} pathLength="100" className="growth-flow-highlight" />)}
+  </svg>;
+}
 
 export function AuthLanding({
   mode,
@@ -434,16 +455,7 @@ export function AuthLanding({
         </section>
       </aside>
       <div className="auth-metrics" aria-label="Growth OS at a glance">
-        <svg
-          className="growth-metrics-flow"
-          viewBox="0 0 1200 60"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path d="M0 42 C240 42 310 8 600 30 S960 46 1200 14" />
-          <path d="M0 32 C260 32 370 58 600 30 S960 10 1200 32" />
-          <path d="M0 38 C280 38 440 26 600 30 S920 36 1200 22" />
-        </svg>
+        <MetricsFlow />
         {metrics.map(({ icon: Icon, value, description, illustrative }) => (
           <div className="auth-metric" key={value}>
             <span className="auth-icon-circle">

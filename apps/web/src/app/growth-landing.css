@@ -975,13 +975,27 @@ html[data-theme='dark'] body:has(.growth-landing) {
   fill: none;
   stroke: currentColor;
   stroke-width: 1;
-  opacity: 0.22;
+  opacity: 0.42;
 }
 .growth-metrics-flow path:nth-child(2) {
-  opacity: 0.12;
+  opacity: 0.3;
 }
 .growth-metrics-flow path:nth-child(3) {
-  opacity: 0.35;
+  opacity: 0.55;
+}
+.growth-metrics-flow .growth-flow-highlight {
+  stroke-width: 1.6;
+  stroke-dasharray: 18 82;
+  opacity: 0.9;
+  animation: growth-flow-travel 1.8s linear infinite;
+  animation-play-state: paused;
+}
+.growth-metrics-flow[data-running='true'] .growth-flow-highlight { animation-play-state: running; }
+.growth-metrics-flow .growth-flow-highlight:nth-child(5) { animation-duration: 2.2s; animation-direction: reverse; }
+.growth-metrics-flow .growth-flow-highlight:nth-child(6) { animation-duration: 2.6s; animation-delay: -0.7s; }
+@keyframes growth-flow-travel { to { stroke-dashoffset: -100; } }
+@media (prefers-reduced-motion: reduce) {
+  .growth-metrics-flow .growth-flow-highlight { animation: none; display: none; }
 }
 @media (max-width: 800px) {
   :root .auth-shell.growth-landing > .auth-metrics {
