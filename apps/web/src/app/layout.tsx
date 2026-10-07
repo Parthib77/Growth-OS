@@ -28,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{const saved=localStorage.getItem('growthos-theme');document.documentElement.dataset.theme=saved==='dark'||saved==='light'?saved:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch{document.documentElement.dataset.theme='light'}`,
+            __html: `try{const saved=localStorage.getItem('growthos-theme');document.documentElement.dataset.theme=saved==='dark'||saved==='light'?saved:'dark'}catch{document.documentElement.dataset.theme='dark'}`,
           }}
         />
       </head>

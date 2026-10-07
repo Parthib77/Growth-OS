@@ -17,7 +17,7 @@ test('theme switch changes the whole public site and persists across routes', as
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgba(9, 35, 43, 0.87)');
+  await expect(page.locator('.auth-card')).toHaveCSS('background-color', 'rgba(5, 35, 27, 0.94)');
   const authAccessibility = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa'])
     .analyze();
@@ -43,7 +43,7 @@ test('dark mode covers every signed-in destination without page overflow', async
   await expect(page.getByRole('heading', { name: 'Enquiries to follow up' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Switch to dark mode' }).click();
-  await expect(page.locator('.app-nav-shell')).toHaveCSS('background-color', 'rgb(23, 37, 46)');
+  await expect(page.locator('.app-nav-shell')).toHaveCSS('background-color', 'rgb(9, 41, 31)');
   const workspaceAccessibility = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa'])
     .analyze();

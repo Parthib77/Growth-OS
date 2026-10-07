@@ -437,3 +437,41 @@ body:has(.app-shell) .theme-toggle {
     font-size: 11px;
   }
 }
+/* Deep green canvas and restrained neon highlights for the dark theme. */
+html[data-theme='dark'] body:has(.growth-landing) {
+  background:
+    radial-gradient(ellipse at 82% 32%, rgb(0 130 91 / 24%), transparent 60%),
+    radial-gradient(ellipse at 18% 86%, rgb(0 93 69 / 16%), transparent 56%),
+    #031611;
+}
+:root[data-theme='dark'] .auth-shell.growth-landing {
+  --landing-bg: #031611;
+  --landing-surface: rgb(5 35 27 / 94%);
+  --landing-accent: #40e8bd;
+  --landing-border: #286453;
+  --landing-muted: #bad1c8;
+}
+html[data-theme='dark'] .auth-card {
+  background-color: #07271e;
+  background-image: linear-gradient(145deg, rgb(64 232 189 / 7%), transparent 65%);
+}
+html[data-theme='dark'] .auth-input-wrap input,
+html[data-theme='dark'] .auth-input-wrap input[type='email'],
+html[data-theme='dark'] .auth-input-wrap input[type='password'] {
+  background: #062019;
+}
+html[data-theme='dark'] .app-shell {
+  --mineral: #031611;
+  --paper: #09291f;
+  --line: #315749;
+  background-color: #031611;
+  background-image: radial-gradient(ellipse at 90% 0%, rgb(0 130 91 / 22%), transparent 65%);
+}
+html[data-theme='dark'] .app-shell .panel,
+html[data-theme='dark'] .app-shell .app-nav-shell,
+html[data-theme='dark'] .app-shell .settings-section,
+html[data-theme='dark'] .app-shell .dialog,
+html[data-theme='dark'] .result-metric-card {
+  background: #09291f;
+  border-color: #315749;
+}
