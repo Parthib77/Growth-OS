@@ -263,9 +263,6 @@ export function AuthLanding({
             your day.
           </p>
         </section>
-        <p className="growth-demo-note">
-          No signup needed for the demo. Shared sample data, visible to other visitors.
-        </p>
         <div className="growth-hero-actions">
           <button type="button" className="auth-submit" onClick={onTryDemo} disabled={pending}>
             {pending ? 'Opening demo…' : 'Try the demo'} <ArrowRight size={22} />

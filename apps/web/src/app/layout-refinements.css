@@ -1,4 +1,31 @@
 /* Shared spacing rules keep the same controls usable at every screen size. */
+@font-face {
+  font-family: 'Doulos SIL';
+  src: url('/fonts/doulos/DoulosSILR.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+:root .auth-shell.growth-landing .auth-context h1 {
+  font-family: 'Doulos SIL', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  background: linear-gradient(155deg, #101713 5%, #183e2e 35%, #176348 65%, #008468 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+:root[data-theme='dark'] .auth-shell.growth-landing .auth-context h1 {
+  background-image: linear-gradient(155deg, #f0f7f1 5%, #bedbca 35%, #75cea8 65%, #40e8bd 100%);
+}
+:root .auth-shell.growth-landing .auth-context h1 span {
+  background: none;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  animation: none;
+}
 @media (min-width: 801px) {
   :root .auth-shell.growth-landing .auth-card {
     align-self: stretch;
