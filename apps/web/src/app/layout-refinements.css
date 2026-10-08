@@ -1,4 +1,18 @@
 /* Shared spacing rules keep the same controls usable at every screen size. */
+@media (min-width: 801px) {
+  :root .auth-shell.growth-landing .auth-card {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+  }
+  :root .auth-shell.growth-landing .auth-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 24px;
+  }
+}
 .growth-demo-note {
   margin: 20px 0 0;
   max-width: 55ch;

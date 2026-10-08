@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
@@ -8,12 +9,14 @@ type Theme = 'light' | 'dark';
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('dark');
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const transitionBusy = useRef(false);
 
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
   }, []);
 
   function toggleTheme() {
+    if (transitionBusy.current) return;
     const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
     const button = buttonRef.current;
     const rect = button?.getBoundingClientRect();
@@ -40,10 +43,11 @@ export function ThemeToggle() {
 
     if (
       document.startViewTransition &&
-      !document.querySelector('.growth-landing') &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ) {
-      document.startViewTransition(applyTheme);
+      transitionBusy.current = true;
+      const transition = document.startViewTransition(() => flushSync(applyTheme));
+      void transition.finished.catch(() => {}).finally(() => { transitionBusy.current = false; });
     } else {
       applyTheme();
     }
