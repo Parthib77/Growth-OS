@@ -481,6 +481,27 @@ html[data-theme='dark'] .app-shell {
   background-color: #031611;
   background-image: radial-gradient(ellipse at 90% 0%, rgb(0 130 91 / 22%), transparent 65%);
 }
+:root .auth-shell.growth-landing {
+  --form-gradient: linear-gradient(145deg, #fffdf7 0%, #eef5ed 55%, #dcebe3 100%);
+  --field-gradient: linear-gradient(120deg, #fffefa, #edf4ee);
+}
+:root[data-theme='dark'] .auth-shell.growth-landing {
+  --form-gradient: linear-gradient(145deg, #103f31 0%, #082b22 55%, #041c17 100%);
+  --field-gradient: linear-gradient(120deg, #0b3026, #061e18);
+}
+:root .auth-shell.growth-landing .auth-card {
+  background: var(--form-gradient);
+  backdrop-filter: none;
+}
+:root .auth-shell.growth-landing .auth-input-wrap input {
+  background: var(--field-gradient);
+  color: var(--landing-text);
+  -webkit-text-fill-color: currentColor;
+}
+:root .auth-shell.growth-landing .auth-card :is(h2, label) {
+  color: var(--landing-text);
+  -webkit-text-fill-color: currentColor;
+}
 html[data-theme='dark'] .app-shell .panel,
 html[data-theme='dark'] .app-shell .app-nav-shell,
 html[data-theme='dark'] .app-shell .settings-section,
