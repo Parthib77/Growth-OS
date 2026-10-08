@@ -900,15 +900,27 @@ html[data-theme='dark'] body:has(.growth-landing) {
   flex-wrap: wrap;
 }
 :root .auth-shell.growth-landing .auth-kicker {
+  color: #075343;
+  -webkit-text-fill-color: currentColor;
+  background: linear-gradient(125deg, #f4fff8, #d8f0e3 60%, #c5e8db);
+  border: 1px solid #93bdab;
+  box-shadow:
+    0 4px 18px #12684b14,
+    inset 0 1px 0 #ffffff;
+  text-shadow: none;
+  transition: transform 180ms ease;
+}
+:root[data-theme='dark'] .auth-shell.growth-landing .auth-kicker {
   color: #b5ffdf;
   background: linear-gradient(125deg, #063f35, #081d28 60%, #075143);
-  border: 1px solid #020b0d;
-  box-shadow:
-    0 0 18px #20cba32b,
-    inset 0 1px 0 #8fffe02b;
-  text-shadow: 0 0 8px #40e8bd35;
+  border-color: #286453;
+  box-shadow: 0 0 18px #20cba32b, inset 0 1px 0 #8fffe02b;
 }
 :root .auth-shell.growth-landing .auth-kicker > span {
+  background: #087c5a;
+  box-shadow: 0 0 8px #087c5a33;
+}
+:root[data-theme='dark'] .auth-shell.growth-landing .auth-kicker > span {
   background: #40e8bd;
   box-shadow: 0 0 10px #40e8bd66;
 }
